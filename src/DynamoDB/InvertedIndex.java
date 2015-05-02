@@ -331,7 +331,7 @@ public class InvertedIndex {
 			}
 			fileCount++;
 			Date curr = new Date();
-			System.out.println("Files done: " + fileCount
+			System.err.println("Files done: " + fileCount
 					+ "\n\t lines done: " + lineCount
 					+ "\n\t failedFile: " + failedFile
 					+ "\n\t failedLine: " + failedLine
