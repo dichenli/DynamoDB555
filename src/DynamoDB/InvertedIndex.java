@@ -349,10 +349,10 @@ public class InvertedIndex {
 	
 	public static void main(String[] args) throws Exception {
 		IDF.init();
-		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-00000");
+		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
 		PageRank.init();
-		PageRank.populateFromS3("mapreduce-result", "idfmr/part-r-00000");
+		PageRank.populateFromS3("mapreduce-result", "idfmr/part-r-");
 		createTable();
-		populateFromS3("mapreduce-result", "IndexerResult/part-m-0022");
+		populateFromS3("mapreduce-result", "IndexerResult/part-m-");
 	}
 }
