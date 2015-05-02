@@ -33,13 +33,13 @@ import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm.WordL
  */
 @DynamoDBTable(tableName="InvertedIndex2")
 public class InvertedIndex {
-	
+
 	static String tableName = "InvertedIndex2"; //need to sync with @DynamoDBTable(tableName="xx")
 	static String hashKey = "word";
 	static String rangeKey = "id";
 	static long readCapacity = 1L;
 	static long writeCapacity = 1000L;
-	
+
 	byte[] id; //binary data, docID
 	String word; 
 	HashSet<Integer> positions; //position of the word in document
@@ -50,12 +50,12 @@ public class InvertedIndex {
 
 
 	public InvertedIndex(String word2, byte[] id2, double tf2,
-			HashSet<Integer> positions2/*, int type*/) {
+			HashSet<Integer> positions2, int type) {
 		this.word = word2;
 		this.id = id2;
 		this.positions = positions2;
 		this.tf = tf2;
-		this.type = -1;//type;
+		this.type = type;
 		this.idf = (double)-1;
 		this.pagerank = (double)-1;
 	}
@@ -93,7 +93,7 @@ public class InvertedIndex {
 	public void setTF(double tf) {
 		this.tf = tf;
 	}
-	
+
 	@DynamoDBAttribute(attributeName="idf")
 	public double getIDF() {
 		if(idf == null) {
@@ -104,7 +104,7 @@ public class InvertedIndex {
 	public void setIDF(double idf) {
 		this.idf = idf;
 	}
-	
+
 	@DynamoDBAttribute(attributeName="pagerank")
 	public double getPageRank() {
 		if(pagerank == null) {
@@ -115,7 +115,7 @@ public class InvertedIndex {
 	public void setPageRank(double pagerank) {
 		this.pagerank = pagerank;
 	}
-	
+
 	@DynamoDBAttribute(attributeName="type")
 	public int getType() {
 		return type;
@@ -126,15 +126,16 @@ public class InvertedIndex {
 
 	@Override
 	public String toString() {
-		return word + BinaryUtils.byteArrayToString(id);
+		return word +"\n" + BinaryUtils.byteArrayToString(id)
+				+"\n" + idf + "\t" + pagerank + "\t" + type;
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof InvertedIndex)) {
 			return false;
 		}
-		
+
 		InvertedIndex other2 = (InvertedIndex) other;
 		if(!other2.word.equals(this.word)) {
 			return false;
@@ -144,7 +145,7 @@ public class InvertedIndex {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return word.hashCode() * 31 + Arrays.hashCode(id);
@@ -183,10 +184,10 @@ public class InvertedIndex {
 		}
 
 		String[] posStrs = splited[3].split(",");
-//		if (posStrs.length == 0) {
-//			System.err.println("parseInput: positions wrong: " + line);
-//			return null;
-//		}
+		//		if (posStrs.length == 0) {
+		//			System.err.println("parseInput: positions wrong: " + line);
+		//			return null;
+		//		}
 		HashSet<Integer> positions = new HashSet<Integer>();
 		for (String p : posStrs) {
 			try {
@@ -197,7 +198,7 @@ public class InvertedIndex {
 				return null;
 			}
 		}
-		
+
 		String typeStr = splited[4];
 		int type;
 		try {
@@ -207,10 +208,10 @@ public class InvertedIndex {
 			return null;
 		}
 
-		return new InvertedIndex(word, id, tf, positions/*, type*/);
+		return new InvertedIndex(word, id, tf, positions, type);
 	}
-	
-	
+
+
 	/*
 	 * hash from word to items that has the word
 	 */
@@ -222,10 +223,11 @@ public class InvertedIndex {
 	 * @param item
 	 */
 	public static void insert(InvertedIndex item) {
+//		System.out.println("======insert: \n" + item);
 		if(item == null || item.word == null) {
 			throw new NullPointerException();
 		}
-		
+
 		if(items == null) {
 			items = new HashMap<String, HashSet<InvertedIndex>>();
 		}
@@ -236,21 +238,32 @@ public class InvertedIndex {
 		set.add(item);
 		items.put(item.word, set);
 		countBuffer++;
-		
-		if(items.size() >= 100 || countBuffer >= 1000) { //query to find all idf values of indexes
+
+		if(items.keySet().size() >= 100) { //query to find all idf values of indexes
 			List<IDF> idfs = IDF.batchload(items.keySet());
+//			System.out.println("batchload idfs size: " + idfs.size());
+//			System.out.println("batchload idfs, items.keyset size: " + items.keySet().size());
 			for(IDF idf : idfs) {
 				HashSet<InvertedIndex> iiset = items.get(idf.word); //iiset: InvertedIndexSet
 				for(InvertedIndex ii : iiset) {
 					ii.idf = idf.idf;
+//					System.out.println("====After IDF====\n" + ii);
 					batchInsert(ii);
 				}
 			}
+			for(HashSet<InvertedIndex> iiset : items.values()) {
+				for(InvertedIndex ii : iiset) {
+					batchInsert(ii);
+				}
+			}
+			items = null;
+			countBuffer = 0;
 		}
 	}
-	
+
 	private static ArrayList<InvertedIndex> readyItems; //all items ready to be sent for batchsave
 	private static void batchInsert(InvertedIndex item) {
+//		System.out.println("======BatchInsert: \n" + item);
 		if(readyItems == null) {
 			readyItems = new ArrayList<InvertedIndex>();
 		}
@@ -261,14 +274,16 @@ public class InvertedIndex {
 				set.add(ByteBuffer.wrap(i.id));
 			}
 			List<PageRank> results = PageRank.batchload(set);
-			for(PageRank p : results) {
-				for(InvertedIndex i : readyItems) {
+			for(InvertedIndex i : readyItems) {
+				for(PageRank p : results) {
 					if(Arrays.equals(i.id, p.id)) {
 						i.pagerank = p.rank;
+//						System.out.println("====After PageRank====\n" + i);
+						break;
 					}
 				}
 			}
-			
+
 			try {
 				DynamoTable.mapper.batchSave(readyItems);
 			} catch (Exception e) { //if batch save failed, try individul saves
@@ -280,16 +295,16 @@ public class InvertedIndex {
 			readyItems = null;
 		}
 	}
-	
+
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashRange(
 				tableName, hashKey, ScalarAttributeType.S, 
 				rangeKey, ScalarAttributeType.B, 
 				readCapacity, writeCapacity);
-		
+
 		DynamoTable.createTable(tableName, request);
 	}
-	
+
 	/**
 	 * populate DB from S3 input
 	 */
@@ -301,7 +316,7 @@ public class InvertedIndex {
 		Date last = begin;
 		long failedFile = 0;
 		long failedLine = 0;
-		
+
 		System.out.println("begin to populate InvertedIndex, start date: " + begin.toString());
 		S3Iterator iterator = new S3Iterator(bucketName, prefix);
 		while(iterator.hasNext()) {
@@ -339,7 +354,7 @@ public class InvertedIndex {
 					+ "\n\t average lines per second: " + ((double)(lineCount - lastLineCount)) / TimeUtils.secondsPast(begin, curr));
 			last = curr;
 			lastLineCount = lineCount;
-			
+
 			try {
 				reader.close();
 			} catch (IOException e) {
@@ -347,22 +362,27 @@ public class InvertedIndex {
 			}
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
-//		IDF.init();
-//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
-//		PageRank.init();
-//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
+
+	public static void runDistributed(String[] args) throws Exception {
 		String bucket = "mapreduce-result";
 		String numberStr = args[0];
 		int number = Integer.parseInt(numberStr);
 		createTable();
 		for(int i = 0; i <= 226; i++) {
-			if(i % number == 0) {			
+			if(i % 16 == number) {			
 				String digit = "000" + i;
 				digit = digit.substring(digit.length() - 3, digit.length());
 				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
 			}
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		//		IDF.init();
+		//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
+		//		PageRank.init();
+		//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
+		createTable();
+		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
 	}
 }

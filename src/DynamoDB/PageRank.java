@@ -196,7 +196,7 @@ public class PageRank {
 		}
 
 		Map<String, List<Object>> results = DynamoTable.mapper.batchLoad(keys);
-		List<Object> PageRankResults = results.get("PageRank");
+		List<Object> PageRankResults = results.get(tableName);
 		if(PageRankResults == null) {
 			return new ArrayList<PageRank>(); //empty list
 		}

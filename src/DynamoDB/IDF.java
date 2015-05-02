@@ -136,17 +136,19 @@ public class IDF extends Item{
 	}
 
 	public static List<IDF> batchload(Set<String> words) {
-
+//		System.out.println("batchload IDF words size: " + words.size());
 		ArrayList<Object> keys = new ArrayList<Object>();
 		for(String word : words) {
 			IDF key = new IDF();
 			key.word = word;
+//			System.out.println("batchload IDF: " + word);
 			keys.add(key);
 		}
 
 		Map<String, List<Object>> results = DynamoTable.mapper.batchLoad(keys);
-		List<Object> idfResults = results.get("IDF");
+		List<Object> idfResults = results.get(tableName);
 		if(idfResults == null) {
+			System.out.println("batchload IDF: no results");
 			return new ArrayList<IDF>(); //empty
 		}
 		ArrayList<IDF> lastResult = new ArrayList<IDF>();
@@ -259,7 +261,14 @@ public class IDF extends Item{
 		//		}
 
 		init();
-		populateFromS3("mapreduce-result", "idfmr/part-r-00000");
+//		populateFromS3("mapreduce-result", "idfmr/part-r-00000");
+		IDF item = new IDF();
+		HashSet<String> words = new HashSet<String>();
+		words.add("main");
+		List<IDF> results = batchload(words);
+		for(IDF r : results) {
+			System.out.println(r);
+		}
 	}
 
 }
