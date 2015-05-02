@@ -382,7 +382,8 @@ public class InvertedIndex {
 		//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
 		//		PageRank.init();
 		//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
-		createTable();
-		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
+//		createTable();
+//		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
+		runDistributed(args);
 	}
 }
