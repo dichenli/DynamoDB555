@@ -318,6 +318,7 @@ public class InvertedIndex {
 					InvertedIndex item = InvertedIndex.parseInput(line);
 					if(item != null) {
 						InvertedIndex.insert(item);
+						System.out.println(lineCount);
 					} else {
 						failedLine++;
 					}
@@ -348,9 +349,20 @@ public class InvertedIndex {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		PageRank.init();
-		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
-//		createTable();
-//		populateFromS3("mapreduce-result", "IndexerResult/part-m-");
+//		IDF.init();
+//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
+//		PageRank.init();
+//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
+		String bucket = "mapreduce-result";
+		String numberStr = args[0];
+		int number = Integer.parseInt(numberStr);
+		createTable();
+		for(int i = 0; i <= 226; i++) {
+			if(i % number == 0) {			
+				String digit = "000" + i;
+				digit = digit.substring(digit.length() - 3, digit.length());
+				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
+			}
+		}
 	}
 }
