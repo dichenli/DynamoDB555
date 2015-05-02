@@ -2,4 +2,7 @@
 **/.DS_Store
 .classpath
 .project
+.svn
+.svn/**/*
 .settings
+/bin/

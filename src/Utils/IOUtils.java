@@ -8,6 +8,10 @@ import java.io.*;
 //import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Scanner;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -15,6 +19,26 @@ import java.util.Scanner;
  * static methods to facilitates IO classes
  */
 public class IOUtils {
+	
+	/**
+	 * count number of lines of a file using its scanner to scan line by line
+	 * return number of lines. Return null if input file is illegal. No exception thrown.
+	 * @param file
+	 * @return
+	 */
+	public static Long countLines(File file) {
+		if(!fileExists(file)) {
+			return null;
+		}
+		Scanner sc = getScanner(file);
+		long count = 0;
+		while(sc.hasNextLine()) {
+			sc.nextLine();
+			count++;
+		}
+		sc.close();
+		return count;
+	}
 
 	public static BufferedReader getReader(
 			InputStream is) throws IOException {
@@ -98,19 +122,22 @@ public class IOUtils {
 	public static boolean dirExists(String fileName) {
 		return dirExists(new File(fileName));
 	}
-	
-	public static String fullPath(String rootDir, String relativePath) {
-		while (relativePath.charAt(0) == '/') {
-			relativePath = relativePath.substring(1);
-		}
-		return rootDir + relativePath;
-	}
 
-	public static File getFile(String rootDir, String relativePath) {
-		String path = fullPath(rootDir, relativePath);
-		return new File(path);
-	}
-
+//	public static File getFile(String relativePath) {
+//		String path = MapReduceUtils.fullPath(relativePath);
+//		return new File(path);
+//	}
+//
+//	/**
+//	 * return true if a file or directory exists in file system. It doesn't 
+//	 * differentiate directory or file
+//	 * @param fileName
+//	 * @return
+//	 */
+//	public static boolean fileOrDirExists(String relativePath) {
+//		File file = getFile(relativePath);
+//		return file.exists();
+//	}
 	
 	/**
 	 * return true if the file exists and is a file (not directory)
@@ -208,6 +235,164 @@ public class IOUtils {
 		try {
 			System.out.println("Create file... " + file.getAbsolutePath());
 			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * get file extension from file name by searching for the last "." and return the string
+	 * after it. abc.def.txt will return "txt". abc will return empty string "". abc/ will return
+	 * empty string 
+	 * @throws NullPointerException if input file is null or can't get its file name (not likely)
+	 * @param file
+	 * @return
+	 */
+	public static String getExtension(File file) {
+		if(file.isDirectory()) { // for example, /.dev is a folder, so no extension
+			return "";
+		}
+		String extension = "";
+		String fileName = file.getName();
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+		    extension = fileName.substring(i+1);
+		}
+		return extension;
+	}
+	
+	/**
+	 * will rename the file, newName must be full directory
+	 * @param file
+	 * @param newName
+	 * @return the pointer to the renamed file, or null if fail (like system forbidden)
+	 */
+	public static File rename(File file, String newName) {
+		File newFile = new File(newName);
+		boolean rv = file.renameTo(newFile);
+		if(!rv) {
+			return null;
+		}
+		return newFile;
+	}
+	
+	/**
+	 * add file extension to file name. "/abc" will be renamed to "/abc.txt"
+	 * extension must start with ".", like ".txt", must has more than just "."
+	 * @param file
+	 * @param extension
+	 * @return new file,
+	 * @throws NullPointerException if any argument is null or original file name is null
+	 * @throws IllegalArgumentException if input extension is not beginning with . or is just .
+	 * or if after rename, the new file name is illegal (rename failed)
+	 */
+	public static File appendExtension(File file, String extension) {
+		if(extension.charAt(0) != '.' || extension.length() <= 1) {
+			throw new IllegalArgumentException();
+		}
+		
+		String name = file.getAbsolutePath();
+		
+		if(name.charAt(name.length() - 1) == '/') {
+			name = name.substring(0, name.length() - 1);
+		}
+		name += extension;
+		File newFile = rename(file, name);
+		if(newFile == null) {
+			throw new IllegalArgumentException();
+		}
+		return newFile;
+	}
+	
+	public static boolean deleteFile(File file) {
+		if (!fileExists(file)) {
+			return true;
+		}
+		try {
+			file.delete();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * set chmod for the given file. File must exists
+	 * to set chmod 740, call with user = 7, group = 4, others = 0
+	 * @param file
+	 * @param user
+	 * @param group
+	 * @param others
+	 * @return true if success
+	 */
+	public static boolean setFilePermission(File file, int user, int group, int others) {
+		if(file == null || !fileExists(file) || 
+				user < 0 || group < 0 || others < 0 || 
+				user > 7 || group > 7 || others > 7) {
+			throw new IllegalArgumentException();
+		}
+		
+		//using PosixFilePermission to set file permissions 777
+        Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+        //add owners permission
+        if(BinaryUtils.getBit(user, 3) == 1) {        	
+        	perms.add(PosixFilePermission.OWNER_READ);
+        }
+        if(BinaryUtils.getBit(user, 2) == 1) {        	
+        	perms.add(PosixFilePermission.OWNER_WRITE);
+        }
+        if(BinaryUtils.getBit(user, 1) == 1) {
+        	perms.add(PosixFilePermission.OWNER_EXECUTE);        	
+        }
+        //add group permissions
+        if(BinaryUtils.getBit(group, 3) == 1) {
+        	perms.add(PosixFilePermission.GROUP_READ);
+        }
+        if(BinaryUtils.getBit(group, 2) == 1) {
+        	perms.add(PosixFilePermission.GROUP_WRITE);
+        }
+        if(BinaryUtils.getBit(group, 1) == 1) {
+        	perms.add(PosixFilePermission.GROUP_EXECUTE);
+        }
+        
+        //add others permissions
+        if(BinaryUtils.getBit(others, 3) == 1) {
+        	perms.add(PosixFilePermission.OTHERS_READ);
+        }
+        if(BinaryUtils.getBit(others, 2) == 1) {
+        	perms.add(PosixFilePermission.OTHERS_WRITE);
+        }
+        if(BinaryUtils.getBit(others, 1) == 1) {
+        	perms.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
+         
+        try {
+			Files.setPosixFilePermissions(file.toPath(), perms);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+        return true;
+	}
+	
+	/**
+	 * execute a system command, return true if success
+	 * @param command
+	 * @return
+	 */
+	public static boolean runtimeExec(String command) {
+		Process process = null;
+		try {
+			process = Runtime.getRuntime().exec(command);
+			BufferedReader stdIn 
+			= new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line = null;
+			while ((line = stdIn.readLine()) != null) {
+				System.out.println(line);
+			}
+			stdIn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;

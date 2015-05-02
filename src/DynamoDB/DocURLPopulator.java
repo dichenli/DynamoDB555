@@ -4,6 +4,8 @@
 package DynamoDB;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -32,11 +34,10 @@ public class DocURLPopulator implements Populator {
 	
 	static String tableName = "DocURL"; //need to sync with @DynamoDBTable(tableName="xx")
 	static String keyName = "id";
-	static long readCapacity = 2L;
-	static long writeCapacity = 2L;
+	static long readCapacity = 1L;
+	static long writeCapacity = 1000L;
 	
 	File input;
-	DynamoTable table;
 	Scanner sc;
 	
 	public DocURLPopulator(String fileName) throws Exception {
@@ -61,16 +62,53 @@ public class DocURLPopulator implements Populator {
 	
 	@Override
 	public void populate() {
-		sc = IOUtils.getScanner(input);
+		long total = IOUtils.countLines(input); 
+		Scanner sc = IOUtils.getScanner(input);
+		long count = 0;
+		long current = 0;
+		long begin = new Date().getTime();
+		long last = begin;
+		long failed = 0;
+		
+		ArrayList items = new ArrayList();
 		if(sc == null) {
 			throw new NullPointerException();
 		}
 		while(sc.hasNextLine()) {
-			DocURL item = parseDocURL(sc.nextLine());
+			DocURL item = DocURL.parseInput(sc.nextLine());
 			if(item != null) {
-				DynamoTable.insert(item);	
+				items.add(item);
+				if(items.size() >= 25) {
+					failed += DynamoTable.batchInsert(items);
+					count += items.size();
+					current += items.size();
+					items = new ArrayList<DocURL>();
+				}
+			}
+			
+			if(current >= 500) {
+				long now = new Date().getTime();
+				float time1 = (float)(now - begin) ;
+				float time = (float)(now - last) ;
+				if(time < 1) {
+					time = 1;
+				}
+				if(time1 < 1) {
+					time1 = 1;
+				}
+				System.out.println("======" + count + ", total speed:" 
+				+ (((float)count / time1) *1000) + "item/sec, current speed: " 
+				+ (((float)current / time) *1000) + "item/sec, " 
+				+ ((float)count /(float) total) + "%, failed: "
+				+ failed +"======");
+				current = 0;
+				last = now;
 			}
 		}
+		if(!items.isEmpty()) {
+			failed += DynamoTable.batchInsert(items);
+		}
+		System.out.println("done, count: " + count + ", failed: " + failed);
 		sc.close();
 	}
 	
@@ -93,32 +131,12 @@ public class DocURLPopulator implements Populator {
 	}
 	
 	
-	private DocURL parseDocURL(String line) {
-		if(line == null) {
-			System.out.println("null line");
-			return null;
-		}
-		
-		String[] splited = line.split("\t");
-		if(splited == null || splited.length != 2) {
-			System.out.println("bad line: " + line);
-			return null;
-		}
-		String docID = splited[0];
-		String url = splited[1];
-		if(docID.equals("") || url.equals("")) {
-			System.out.println("bad line: " + line);
-			return null;
-		}
-		
-		DocURL item = new DocURL();
-		item.setId(docID);
-		item.setTitle(url);
-		return item;
-	}
-	
 	public static void main(String[] args) throws Exception {
-		DocURLPopulator instance = new DocURLPopulator("/Users/dichenli/Documents/course materials/eclipse/DynamoDB555/id-1.txt");
+		if(args.length != 1 || args[0].equals("")) {
+			System.out.println("Usage: <jar_name> <input_file>");
+		}
+		String input = args[0];
+		Populator instance = new DocURLPopulator(input);
 		instance.createTable();
 		instance.populate();
 	}

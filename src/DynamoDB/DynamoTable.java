@@ -3,6 +3,7 @@
  */
 package DynamoDB;
 
+import java.util.List;
 import java.util.Map;
 
 import Utils.nameUtils;
@@ -37,7 +38,7 @@ public class DynamoTable {
 
 
 	private static AmazonDynamoDBClient dynamoDB = null; //DB, collection of tables, one instance only, shared with tables
-	private static DynamoDBMapper mapper;
+	static DynamoDBMapper mapper;
 	/**
 	 * The only information needed to create a client are security credentials
 	 * consisting of the AWS Access Key ID and Secret Access Key. All other
@@ -49,7 +50,7 @@ public class DynamoTable {
 	 * @see com.amazonaws.auth.ProfilesConfigFile
 	 * @see com.amazonaws.ClientConfiguration
 	 */
-	private static void init() throws Exception {
+	static void init() throws Exception {
 		/*
 		 * The ProfileCredentialsProvider will return your [aws150415]
 		 * credential profile by reading from the credentials file located at
@@ -72,8 +73,15 @@ public class DynamoTable {
 	}
 	
 
-	private static void createTable(String tableName, CreateTableRequest createTableRequest) throws InterruptedException {
-
+	static void createTable(String tableName, CreateTableRequest createTableRequest) throws InterruptedException {
+		if(dynamoDB == null || mapper == null) {
+			try {
+				init();
+			} catch(Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
 		try {
 			// Create table if it does not exist yet
 			if (Tables.doesTableExist(dynamoDB, tableName)) {
@@ -149,6 +157,10 @@ public class DynamoTable {
 
 	public static void insert(Object item) {
 		mapper.save(item);
+	}
+	
+	public static int batchInsert(List items) {
+		return mapper.batchSave(items).size();
 	}
 	
 }

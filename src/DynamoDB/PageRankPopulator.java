@@ -1,6 +1,8 @@
 package DynamoDB;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import Utils.IOUtils;
@@ -14,14 +16,12 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
 public class PageRankPopulator implements Populator {
 
-	static String tableName = "PageRank"; //need to sync with @DynamoDBTable(tableName="xx")
-	static String keyName = "id";
-	static long readCapacity = 2L; // 10 at most. Or we will be charged
-	static long writeCapacity = 2L; // 10 at most. Or we will be charged
-	
+	static String tableName = PageRank.tableName; //need to sync with @DynamoDBTable(tableName="xx")
+	static String keyName = PageRank.keyName;
+	static long readCapacity = PageRank.readCapacity; // 10 at most. Or we will be charged
+	static long writeCapacity = PageRank.writeCapacity; // 10 at most. Or we will be charged
 	
 	File input;
-	DynamoTable table;
 	Scanner sc;
 	
 	public PageRankPopulator(String fileName) {
@@ -56,56 +56,69 @@ public class PageRankPopulator implements Populator {
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
-
+	
 	@Override
 	public void populate() {
-		sc = IOUtils.getScanner(input);
+		long total = IOUtils.countLines(input); 
+		Scanner sc = IOUtils.getScanner(input);
+		long count = 0;
+		long current = 0;
+		long begin = new Date().getTime();
+		long last = begin;
+		long failed = 0;
+		
+		ArrayList<PageRank> items = new ArrayList<PageRank>();
 		if(sc == null) {
 			throw new NullPointerException();
 		}
 		while(sc.hasNextLine()) {
-			PageRank item = parsePageRank(sc.nextLine());
-			if(item != null) {
-				DynamoTable.insert(item);	
+			try {
+				PageRank item = new PageRank(sc.nextLine());
+				items.add(item);
+				if(items.size() >= 25) {
+					failed += DynamoTable.batchInsert(items);
+					count += items.size();
+					current += items.size();
+					items = new ArrayList<PageRank>();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				continue;
+			}
+			
+			if(current >= 500) {
+				long now = new Date().getTime();
+				float time1 = (float)(now - begin) ;
+				float time = (float)(now - last) ;
+				if(time < 1) {
+					time = 1;
+				}
+				if(time1 < 1) {
+					time1 = 1;
+				}
+				System.out.println("======" + count + ", total speed:" 
+				+ (((float)count / time1) *1000) + "item/sec, current speed: " 
+				+ (((float)current / time) *1000) + "item/sec, " 
+				+ ((float)count /(float) total) + "%, failed: "
+				+ failed +"======");
+				current = 0;
+				last = now;
 			}
 		}
+		if(!items.isEmpty()) {
+			failed += DynamoTable.batchInsert(items);
+		}
+		System.out.println("done, count: " + count + ", failed: " + failed);
 		sc.close();
-		
 	}
 	
-	private PageRank parsePageRank(String line) {
-		if(line == null) {
-			System.out.println("null line");
-			return null;
-		}
-		
-		String[] splited = line.split("\t");
-		if(splited == null || splited.length != 2) {
-			System.out.println("bad line: " + line);
-			return null;
-		}
-		String docID = splited[1];
-		float rank;
-		try {
-			rank = Float.parseFloat(splited[0]);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		if(docID.equals("")) {
-			System.out.println("bad line: " + line);
-			return null;
-		}
-		
-		PageRank item = new PageRank();
-		item.setId(docID);
-		item.setRank(rank);
-		return item;
-	}
 	
 	public static void main(String[] args) throws Exception {
-		PageRankPopulator instance = new PageRankPopulator("/Users/dichenli/Documents/course materials/eclipse/DynamoDB555/pagerank_sample.txt");
+		if(args.length != 1 || args[0].equals("")) {
+			System.out.println("Usage: <jar_name> <input_file>");
+		}
+		String input = args[0];
+		Populator instance = new PageRankPopulator(input);
 		instance.createTable();
 		instance.populate();
 	}

@@ -9,31 +9,31 @@ package Utils;
  */
 public class nameUtils {
 
-	static boolean isLetter(char c) {
+	public static boolean isLetter(char c) {
 		return (c >= 'a' && c <='z') || (c >='A' && c <= 'Z');
 	}
 	
-	static boolean isLetterOrUnderScore(char c) {
+	public static boolean isLetterOrUnderScore(char c) {
 		return isLetter(c) || c == '_';
 	}
 	
-	static boolean isDigit(char c) {
+	public static boolean isDigit(char c) {
 		return c >= '0' && c <='9';
 	}
 	
-	static boolean isHyphen(char c) {
+	public static boolean isHyphen(char c) {
 		return c == '-';
 	}
 	
-	static boolean isPeriod(char c) {
+	public static boolean isPeriod(char c) {
 		return c == '.';
 	}
 	
-	static boolean isValidNameCharacter(char c) {
+	public static boolean isValidNameCharacter(char c) {
 		return isLetterOrUnderScore(c) || isHyphen(c) || isDigit(c) || isPeriod(c);
 	}
 	
-	static boolean isNullOrEmpty(String s) {
+	public static boolean isNullOrEmpty(String s) {
 		return s == null || s.equals("");
 	}
 	
