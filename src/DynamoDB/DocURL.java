@@ -73,7 +73,7 @@ public class DocURL {
     	if (DynamoTable.mapper == null) {
     		DynamoTable.init();
     	}
-    	return DynamoTable.mapper.load(DocURL.class, id);
+    	return DynamoTable.mapper.load(DocURL.class, ByteBuffer.wrap(id));
     }
 
 }

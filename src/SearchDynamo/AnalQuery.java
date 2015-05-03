@@ -3,30 +3,68 @@ package SearchDynamo;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+
 import snowballstemmer.PorterStemmer;
+import DynamoDB.DocURL;
 import DynamoDB.IDF;
+import DynamoDB.InvertedIndex;
 
 
 public class AnalQuery {
 
 	public static void main(String[] args) throws Exception {
-		String query = "University of Pennsylvania";
+		String query = "apple";
 		QueryInfo queryInfo = new QueryInfo(query);
 		
 		// remove words with low idf
 		List<String> wordlist = queryInfo.getWordlist();
 		List<Double> idflist = queryInfo.getIDFlist();
 		int size = wordlist.size();
-		for(int i=0;i<size;i++) {
-			System.out.println(wordlist.get(i));
-			System.out.println(idflist.get(i));
+		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
+		for (int i = 0; i < size; i++) {
+			String word = wordlist.get(i);
+			System.out.println(word);
+			List<InvertedIndex> collection = InvertedIndex.query(word);
+			for (InvertedIndex ii : collection) {
+				ByteBuffer docID = ii.getId();
+				if (!set.containsKey(docID))
+					set.put(docID, new DocResult(docID, size, queryInfo.getWindowlist(), idflist));
+				set.get(docID).setPositionList(i, ii.PositionsSorted());
+				set.get(docID).setTF(i, ii.getTF());
+			}
+		}
+		List<DocResult> intersection = new ArrayList<DocResult>();
+		for (ByteBuffer docID : set.keySet()) {
+			if (set.get(docID).containsAll()) {
+				intersection.add(set.get(docID));
+			}
 		}
 		
-		
+		// compute rank each doc
+		for (DocResult doc : intersection) {
+			doc.calculateScore();
+		}
+		Collections.sort(intersection, new Comparator<DocResult>() {
+	        @Override
+	        public int compare(DocResult o1, DocResult o2) {
+	            return o2.compareTo(o1);
+	        }
+	    });
+		for(int i=0;i<20;i++){
+			DocResult doc = intersection.get(i);
+			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getFinalScore());
+			for(List<Integer> w:doc.getPositions()){
+				System.out.println(w);
+			}
+		}
+
 	}
 
 }
@@ -168,13 +206,8 @@ class DocResult {
 		return size == count;
 	}
 
-	public void setPositionList(int index, Set<Integer> position) {
-		List<Integer> po = new ArrayList<Integer>();
-		for (int p : position) {
-			po.add(p);
-		}
-		Collections.sort(po);
-		positions[index] = po;
+	public void setPositionList(int index, List<Integer> position) {
+		positions[index] = position;
 		count++;
 	}
 	
@@ -262,7 +295,7 @@ class DocResult {
 		setPageRank();
 		setAnchorScore();
 		setTFScore();
-		finalScore = W_POSITION*positionScore + W_PAGERANK*pageRank + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
+		finalScore = W_POSITION*positionScore + W_PAGERANK*pageRank/280.0 + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
 	}
 	
 	public double getPageRank() {
