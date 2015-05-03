@@ -67,7 +67,8 @@ public class AnalQuery {
 	    });
 		
 		List<SearchResult> responses = new ArrayList<SearchResult>();
-		for(int i=0;i<20;i++){
+		int responsesize = Math.min(responses.size(), 20);
+		for(int i=0;i<responsesize;i++){
 			DocResult doc = intersection.get(i);
 			String url = DocURL.load(doc.getDocID().array()).getURL();
 			SearchResult sr = new SearchResult(url);
