@@ -87,6 +87,18 @@ public class InvertedIndex {
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
+	
+	public List<Integer> PositionsSorted() {
+		if(positions == null) {
+			return null;
+		}
+		Integer[] arr = positions.toArray(new Integer[0]);
+		Arrays.sort(arr);
+		return Arrays.asList(arr);
+	}
+	
+//	@DynamoDBAttribute(attributeName="PositionsSorted")
+	
 
 	@DynamoDBAttribute(attributeName="tf")
 	public double getTF() {
