@@ -6,8 +6,8 @@ public class SearchResult {
 	public SearchResult(String url){
 		this.url = url;
 	}
-	
-	public String getURL(){
+
+	public String getUrl(){
 		return url;
 	}
 }

@@ -19,7 +19,7 @@ public class AnalQuery {
 	public static void main(String[] args) throws Exception{
 		List<SearchResult> response = search("computer science");
 		for(SearchResult sr:response){
-			System.out.println(sr.getURL());
+			System.out.println(sr.getUrl());
 		}
 	}
 
