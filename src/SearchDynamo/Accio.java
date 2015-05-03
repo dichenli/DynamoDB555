@@ -176,8 +176,13 @@ public class Accio extends HttpServlet {
 		String fin = "";
 		String url = "http://en.wikipedia.org/w/api.php?action=query&prop=revisions&titles=";
 		for(int i = 0; i < words.length; i++){
-			if(i!=words.length-1){
-				fin += words[i]+"_";
+			if(words[i].length()!=0){
+				if(i!=words.length-1){
+					fin += words[i].trim()+"_";
+				}
+				else{
+					fin += words[i].trim();
+				}
 			}
 		}
 		System.out.println("wiki:"+fin);
