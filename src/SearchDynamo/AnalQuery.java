@@ -20,7 +20,7 @@ import DynamoDB.InvertedIndex;
 public class AnalQuery {
 
 	public static void main(String[] args) throws Exception {
-		String query = "apple";
+		String query = "england";
 		QueryInfo queryInfo = new QueryInfo(query);
 		
 		// remove words with low idf
@@ -37,7 +37,14 @@ public class AnalQuery {
 				if (!set.containsKey(docID))
 					set.put(docID, new DocResult(docID, size, queryInfo.getWindowlist(), idflist));
 				set.get(docID).setPositionList(i, ii.PositionsSorted());
-				set.get(docID).setTF(i, ii.getTF());
+				if(ii.getType() == 0 ) {
+					System.out.println("content");
+					set.get(docID).setTF(i, ii.getTF());
+				}
+				else {
+					System.out.println("type");
+					set.get(docID).setAnchor(i, ii.getType());
+				}
 			}
 		}
 		List<DocResult> intersection = new ArrayList<DocResult>();
@@ -166,6 +173,19 @@ class QueryInfo {
 
 }
 
+class AnchorResult {
+	String word;
+	int[] typecount;
+	
+	public AnchorResult(String word){
+		this.word = word;
+	}
+	
+	public void setType(int type){
+		typecount[type]++;
+	}
+}
+
 class DocResult {
 	
 	private static final int BASE = 30;
@@ -183,6 +203,7 @@ class DocResult {
 	int[] windowlist;
 	String url;
 	int size;
+	AnchorResult[] anchors;
 	
 	// different factors
 	double tfidf;
@@ -200,6 +221,7 @@ class DocResult {
 		this.wordtf = new double[size];
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 		this.idflist = idflist;
+		anchors = new AnchorResult[size];
 	}
 
 	public boolean containsAll() {
@@ -213,6 +235,10 @@ class DocResult {
 	
 	public void setTF(int index, double tf){
 		wordtf[index] = tf;
+	}
+	
+	public void setAnchor(int wordindex, int type){
+		anchors[wordindex].setType(type);
 	}
 
 	public void setFinalScore(double finalScore) {

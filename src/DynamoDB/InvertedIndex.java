@@ -412,18 +412,24 @@ public class InvertedIndex {
 //		createTable();
 //		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
 //		runDistributed(args);
-		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
-		String bucket = "mapreduce-result";
-		String numberStr = args[0];
-		int number = Integer.parseInt(numberStr);
-		createTable();
-		for(int i = 0; i < tasks.length; i++) {
-			if(i % 10 == number) {		
-				job += "|" + tasks[i];
-				String digit = "000" + tasks[i];
-				digit = digit.substring(digit.length() - 3, digit.length());
-				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
-			}
-		}
+//		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
+//		String bucket = "mapreduce-result";
+//		String numberStr = args[0];
+//		int number = Integer.parseInt(numberStr);
+//		createTable();
+//		for(int i = 0; i < tasks.length; i++) {
+//			if(i % 10 == number) {		
+//				job += "|" + tasks[i];
+//				String digit = "000" + tasks[i];
+//				digit = digit.substring(digit.length() - 3, digit.length());
+//				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
+//			}
+//		}
+		String line = "editor	37087316027811206319887670560891285046980393525	-1	,	3";
+		InvertedIndex result = InvertedIndex.parseInput(line);
+		System.out.println(result.getType());
+		System.out.println(result.getTF());
+		System.out.println(result.getWord());
+		System.out.println(result.getPositions());
 	}
 }
