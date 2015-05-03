@@ -68,7 +68,7 @@ public class Inserter<T> {
 				}
 			}
 		} else {
-			System.out.println("no error on batchsave");
+//			System.out.println("no error on batchsave");
 		}
 		items = null;
 	}

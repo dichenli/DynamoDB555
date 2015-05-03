@@ -465,9 +465,11 @@ public class InvertedIndex {
 		//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");
 		//		PageRank.init();
 		//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
+		
 		createTable();
 //		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
 		runDistributed(args);
+		
 //		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
 //		String bucket = "mapreduce-result";
 //		String numberStr = args[0];
@@ -481,6 +483,7 @@ public class InvertedIndex {
 //				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
 //			}
 //		}
+		
 //		createTable();
 //		InvertedIndex i = parseInput("mosdafafadsfw	291647802747036241376099890398414543841464994659	1.5	,	3");
 //		System.out.println(i);
@@ -498,5 +501,12 @@ public class InvertedIndex {
 //		for(InvertedIndex ii : results) {
 //			System.out.println(ii);
 //		}
+
+//		String line = "editor	37087316027811206319887670560891285046980393525	-1	,	3";
+//		InvertedIndex result = InvertedIndex.parseInput(line);
+//		System.out.println(result.getType());
+//		System.out.println(result.getTF());
+//		System.out.println(result.getWord());
+//		System.out.println(result.getPositions());
 	}
 }
