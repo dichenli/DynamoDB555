@@ -19,6 +19,8 @@ import S3.S3Iterator;
 import Utils.BinaryUtils;
 import Utils.TimeUtils;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
@@ -66,7 +68,7 @@ public class IDF extends Item{
 	public String toString() {
 		return word + idf;
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof IDF)) {
@@ -155,28 +157,45 @@ public class IDF extends Item{
 	}
 
 	public static List<IDF> batchload(Set<String> words) {
-//		System.out.println("batchload IDF words size: " + words.size());
+		//		System.out.println("batchload IDF words size: " + words.size());
 		ArrayList<Object> keys = new ArrayList<Object>();
 		for(String word : words) {
 			IDF key = new IDF();
 			key.word = word;
-//			System.out.println("batchload IDF: " + word);
+			//			System.out.println("batchload IDF: " + word);
 			keys.add(key);
 		}
-
-		Map<String, List<Object>> results = DynamoTable.mapper.batchLoad(keys);
-		List<Object> idfResults = results.get(tableName);
-		if(idfResults == null) {
-			System.out.println("batchload IDF: no results");
-			return new ArrayList<IDF>(); //empty
-		}
-		ArrayList<IDF> lastResult = new ArrayList<IDF>();
-		for (Object obj : idfResults) {
-			if ((obj instanceof IDF)) {
-				lastResult.add((IDF) obj);
+		
+		try {
+			Map<String, List<Object>> results = DynamoTable.mapper.batchLoad(keys);
+			List<Object> idfResults = results.get(tableName);
+			if(idfResults == null) {
+				System.out.println("batchload IDF: no results");
+				return new ArrayList<IDF>(); //empty
 			}
+			ArrayList<IDF> lastResult = new ArrayList<IDF>();
+			for (Object obj : idfResults) {
+				if ((obj instanceof IDF)) {
+					lastResult.add((IDF) obj);
+				}
+			}
+			return lastResult;
+		}  catch (AmazonServiceException ase) { //if batch load failed, try single loads instead
+			System.out.println("One or more parameter values were invalid: "
+					+ "Size of hashkey has exceeded the maximum size limit "
+					+ "of2048 bytes");
+			
+			ArrayList<IDF> lastResult = new ArrayList<IDF>();
+			for(Object word :  keys) {
+				try {
+					IDF result = load((String)word);
+					lastResult.add(result);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return lastResult;
 		}
-		return lastResult;
 	}
 
 	public static void createTable() throws InterruptedException {
@@ -261,7 +280,7 @@ public class IDF extends Item{
 		//		}
 
 		init();
-//		populateFromS3("mapreduce-result", "idfmr/part-r-00000");
+		//		populateFromS3("mapreduce-result", "idfmr/part-r-00000");
 		IDF item = new IDF();
 		HashSet<String> words = new HashSet<String>();
 		words.add("main");
