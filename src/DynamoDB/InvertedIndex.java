@@ -87,6 +87,15 @@ public class InvertedIndex {
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
+	
+	public List<Integer> getPositionsSorted() {
+		if(positions == null) {
+			return null;
+		}
+		Integer[] arr = positions.toArray(new Integer[0]);
+		Arrays.sort(arr);
+		return Arrays.asList(arr);
+	}
 
 	@DynamoDBAttribute(attributeName="tf")
 	public double getTF() {
@@ -407,7 +416,7 @@ public class InvertedIndex {
 		createTable();
 		for(int i = 0; i < tasks.length; i++) {
 			if(i % 10 == number) {		
-				job += "|" + i;
+				job += "|" + tasks[i];
 				String digit = "000" + tasks[i];
 				digit = digit.substring(digit.length() - 3, digit.length());
 				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
