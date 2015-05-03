@@ -50,7 +50,7 @@ public class InvertedIndex {
 	static String index = "tf";
 	static String indexName = "tfIndex";
 	static long readCapacity = 10L;
-	static long writeCapacity = 10L;
+	static long writeCapacity = 10000L;
 	
 	static Inserter<InvertedIndex> inserter = new Inserter<InvertedIndex>();
 
@@ -311,23 +311,23 @@ public class InvertedIndex {
 		}
 		readyItems.add(item);
 		if(readyItems.size() >= 100 || flush) {
-			System.out.println("batchInsert: ready to flush");
+//			System.out.println("batchInsert: ready to flush");
 			HashSet<ByteBuffer> set = new HashSet<ByteBuffer>();
 			for(InvertedIndex i : readyItems) {
 				set.add(ByteBuffer.wrap(i.id));
 			}
-			System.out.println("batchInsert: set for batch load pagerank size: " + set.size());
+//			System.out.println("batchInsert: set for batch load pagerank size: " + set.size());
 			List<PageRank> results = PageRank.batchload(set);
 			for(InvertedIndex i : readyItems) {
 				for(PageRank p : results) {
 					if(Arrays.equals(i.id, p.id)) {
 						i.pagerank = p.rank;
-						System.out.println("====Found PageRank " + i);
+//						System.out.println("====Found PageRank " + i);
 						break;
 					}
 				}
 			}
-			System.out.println("batchsave, readyItems size: " + readyItems.size());
+//			System.out.println("batchsave, readyItems size: " + readyItems.size());
 			for(InvertedIndex i : readyItems) {
 				inserter.insert(i, flush);
 			}
