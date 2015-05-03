@@ -407,7 +407,7 @@ public class InvertedIndex {
 		createTable();
 		for(int i = 0; i < tasks.length; i++) {
 			if(i % 10 == number) {		
-				job += "|" + i;
+				job += "|" + tasks[i];
 				String digit = "000" + tasks[i];
 				digit = digit.substring(digit.length() - 3, digit.length());
 				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
