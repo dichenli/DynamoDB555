@@ -59,6 +59,8 @@ public class InvertedIndex {
 		this.idf = (double)-1;
 		this.pagerank = (double)-1;
 	}
+	
+	public InvertedIndex() {}
 
 	@DynamoDBRangeKey(attributeName="id")
 	public ByteBuffer getId() { return ByteBuffer.wrap(id); }
@@ -303,6 +305,16 @@ public class InvertedIndex {
 				readCapacity, writeCapacity);
 
 		DynamoTable.createTable(tableName, request);
+	}
+	
+	public static PaginatedQueryList<InvertedIndex> query(String word) {
+		InvertedIndex item = new InvertedIndex();
+		item.setWord(word);
+		DynamoDBQueryExpression<InvertedIndex> queryExpression 
+		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item);
+
+		PaginatedQueryList<InvertedIndex> collection = DynamoTable.mapper.query(InvertedIndex.class, queryExpression);
+		return collection;
 	}
 
 	/**
