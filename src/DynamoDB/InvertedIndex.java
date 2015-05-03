@@ -399,6 +399,19 @@ public class InvertedIndex {
 		//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
 //		createTable();
 //		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
-		runDistributed(args);
+//		runDistributed(args);
+		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
+		String bucket = "mapreduce-result";
+		String numberStr = args[0];
+		int number = Integer.parseInt(numberStr);
+		createTable();
+		for(int i = 0; i < tasks.length; i++) {
+			if(i % 10 == number) {		
+				job += "|" + i;
+				String digit = "000" + tasks[i];
+				digit = digit.substring(digit.length() - 3, digit.length());
+				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
+			}
+		}
 	}
 }

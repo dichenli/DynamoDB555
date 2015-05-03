@@ -20,8 +20,9 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
 /**
  * @author dichenli
- *
+ * No longer used, used for old sample data
  */
+@Deprecated
 public class InvertedIndexPopulator implements Populator {
 	
 	static String tableName = InvertedIndex.tableName; //need to sync with @DynamoDBTable(tableName="xx")
