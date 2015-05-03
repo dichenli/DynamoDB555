@@ -15,6 +15,13 @@ import SearchUtils.SearchResult;
 
 
 public class AnalQuery {
+	
+	public static void main(String[] args) throws Exception{
+		List<SearchResult> response = search("computer science");
+		for(SearchResult sr:response){
+			System.out.println(sr.getURL());
+		}
+	}
 
 	public static List<SearchResult> search(String query) throws Exception {
 		QueryInfo queryInfo = new QueryInfo(query);
@@ -34,11 +41,9 @@ public class AnalQuery {
 					set.put(docID, new DocResult(docID, size, queryInfo.getWindowlist(), idflist));
 				set.get(docID).setPositionList(i, ii.PositionsSorted());
 				if(ii.getType() == 0 ) {
-					System.out.println("content");
 					set.get(docID).setTF(i, ii.getTF());
 				}
 				else {
-					System.out.println("type");
 					set.get(docID).setAnchor(i, ii.getType());
 				}
 			}
