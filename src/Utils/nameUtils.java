@@ -17,6 +17,18 @@ public class nameUtils {
 		return isLetter(c) || c == '_';
 	}
 	
+	public static boolean isLetterOrHyphen(char c) {
+		return isLetter(c) || c == '-';
+	}
+	
+	public static boolean isLetterOrDigit(char c) {
+		return isLetter(c) || isDigit(c);
+	}
+	
+	public static boolean isLetterDigitOrHyphen(char c) {
+		return isLetter(c) || isDigit(c) || c == '-';
+	}
+	
 	public static boolean isDigit(char c) {
 		return c >= '0' && c <='9';
 	}

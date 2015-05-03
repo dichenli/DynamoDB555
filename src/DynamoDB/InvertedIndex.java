@@ -87,15 +87,6 @@ public class InvertedIndex {
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
-	
-	public List<Integer> getPositionsSorted() {
-		if(positions == null) {
-			return null;
-		}
-		Integer[] arr = positions.toArray(new Integer[0]);
-		Arrays.sort(arr);
-		return Arrays.asList(arr);
-	}
 
 	@DynamoDBAttribute(attributeName="tf")
 	public double getTF() {
@@ -160,6 +151,15 @@ public class InvertedIndex {
 	@Override
 	public int hashCode() {
 		return word.hashCode() * 31 + Arrays.hashCode(id);
+	}
+	
+	public List<Integer> getPositionsSorted() {
+		if(positions == null) {
+			return null;
+		}
+		Integer[] arr = positions.toArray(new Integer[0]);
+		Arrays.sort(arr);
+		return Arrays.asList(arr);
 	}
 
 	public static InvertedIndex parseInput(String line) {

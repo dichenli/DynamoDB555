@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.amazonaws.metrics.internal.cloudwatch.spi.RequestMetricTransformer.Utils;
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
+
 public class BinaryUtilsTest {
 
 	@Before
@@ -13,12 +16,11 @@ public class BinaryUtilsTest {
 
 	@Test
 	public void testArrayEquals() {
-		byte[] arr1 = {0, 1, 2};
-		byte[] arr2 = {0, 1, 2};
-		byte[] arr3 = {0, 1};
-		byte[] arr4 = {0, 1, 3};
-		byte[] arr5 = null;
-		//TODO
+//		byte[] arr1 = {0, 1, 2};
+//		byte[] arr2 = {0, 1, 2};
+//		byte[] arr3 = {0, 1};
+//		byte[] arr4 = {0, 1, 3};
+//		byte[] arr5 = null;
 	}
 
 }

@@ -209,9 +209,24 @@ public class PageRank {
 		return lastResult;
 	}
 	
-	public static void main(String... args) throws InterruptedException {
+	/**
+	 * not tested!!
+	 * @param decimalID
+	 * @return
+	 * @throws Exception
+	 */
+	public static PageRank load(String decimalID) throws Exception {
+		if (DynamoTable.mapper == null) {
+			DynamoTable.init();
+		}
+		
+		byte[] id = BinaryUtils.fromDecimal(decimalID);
+		return DynamoTable.mapper.load(DynamoDB.PageRank.class, ByteBuffer.wrap(id));
+	}
+	
+	public static void main(String... args) throws Exception {
 		init();
-		populateFromS3("mapreduce-result", "pagerank-result/part-r-00000");
+//		populateFromS3("mapreduce-result", "pagerank-result/part-r-00000");
 	}
 	
 }

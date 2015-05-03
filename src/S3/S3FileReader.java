@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import javafx.scene.shape.Line;
 import Utils.IOUtils;
+import Utils.nameUtils;
 
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -51,9 +52,55 @@ public class S3FileReader {
 		return S3Account.s3.getObject(new GetObjectRequest(bucketName, key));
 	}
 	
-	public static BufferedReader getReader(String path) {
-		//TODO
-		return null;
+	/**
+	 * split a S3 path to a bucket name and a prefix, the path must be a valid
+	 * S3 path with "bucketname/following-paths" format
+	 * @param path
+	 * @return
+	 */
+	public static String[] splitPath(String path) {
+		if(path == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if(!nameUtils.isLetterDigitOrHyphen(path.charAt(0))) {
+			System.err.println("Ilegal first character, must be letter, number or hyphen");
+			throw new IllegalArgumentException();
+		}
+		
+		String[] splited = path.split("/", 2);
+		if(splited.length != 2) {
+			System.err.println("Path must contain / to separate bucket");
+			throw new IllegalArgumentException();
+		}
+		
+		return splited;
+	}
+	
+	/**
+	 * get a buffered reader of a file on S3 from given path.
+	 * returns null if no results were found
+	 * @throws IllegalArgumentException if more than one file found which
+	 * match result
+	 * @param path
+	 * @return
+	 */
+	public static BufferedReader getFileReader(String path) {
+		String[] splited = splitPath(path);
+		String bucketName = splited[0];
+		String prefix = splited[1];
+		
+		S3Iterator iter = new S3Iterator(bucketName, prefix); //find the file
+		if(!iter.hasNext()) {
+			System.err.println("S3FileReader.getFileReader: File not found");
+			return null;
+		}
+		S3ObjectSummary item = iter.next();
+		if(iter.hasNext()) {
+			System.err.println("Found more than one match from the given file name!");
+			throw new IllegalArgumentException();
+		}
+		return new S3FileReader(item).getStreamReader();
 	}
 
 	public static void main(String[] args) throws IOException {
