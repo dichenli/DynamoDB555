@@ -20,6 +20,8 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  */
 public class S3FileReader {
 	
+	static String contentDir = "crawler-content/content/";
+	
 	S3ObjectSummary s3Summary;
 	
 	public S3FileReader(S3ObjectSummary obj) {
@@ -99,6 +101,27 @@ public class S3FileReader {
 			throw new IllegalArgumentException();
 		}
 		return new S3FileReader(item).getStreamReader();
+	}
+
+	/**
+	 * get the full content of a file from given file ID
+	 * @param decimalID
+	 * @return
+	 */
+	public static String getFileContent(String decimalID) {
+		String path = contentDir + decimalID;
+		BufferedReader reader = S3FileReader.getFileReader(path);
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		try {
+			while((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return sb.toString();
 	}
 
 	public static void main(String[] args) throws IOException {
