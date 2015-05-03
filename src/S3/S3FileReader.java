@@ -5,9 +5,7 @@ package S3;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
 
-import javafx.scene.shape.Line;
 import Utils.IOUtils;
 import Utils.nameUtils;
 

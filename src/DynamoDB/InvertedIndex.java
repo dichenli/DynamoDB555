@@ -12,21 +12,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import S3.S3FileReader;
 import S3.S3Iterator;
 import Utils.BinaryUtils;
-import Utils.IOUtils;
 import Utils.TimeUtils;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm.WordListener;
 /**
  * @author dichenli
  *
@@ -47,8 +48,7 @@ public class InvertedIndex {
 	Double idf;
 	Double pagerank;
 	int type;
-
-
+	
 	public InvertedIndex(String word2, byte[] id2, double tf2,
 			HashSet<Integer> positions2, int type) {
 		this.word = word2;
