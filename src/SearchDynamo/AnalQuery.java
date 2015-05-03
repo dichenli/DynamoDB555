@@ -33,7 +33,7 @@ public class AnalQuery {
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
 		for (int i = 0; i < size; i++) {
 			String word = wordlist.get(i);
-			System.out.println(word);
+//			System.out.println(word);
 			List<InvertedIndex> collection = InvertedIndex.query(word);
 			for (InvertedIndex ii : collection) {
 				ByteBuffer docID = ii.getId();
@@ -72,10 +72,10 @@ public class AnalQuery {
 			String url = DocURL.load(doc.getDocID().array()).getURL();
 			SearchResult sr = new SearchResult(url);
 			responses.add(sr);
-			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getFinalScore());
-			for(List<Integer> w:doc.getPositions()){
-				System.out.println(w);
-			}
+//			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getFinalScore());
+//			for(List<Integer> w:doc.getPositions()){
+//				System.out.println(w);
+//			}
 		}
 		return responses;
 

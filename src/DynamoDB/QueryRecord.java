@@ -143,7 +143,7 @@ public class QueryRecord {
 	 * @param decimalID
 	 */
 	public static void insert(String query, String decimalID) {
-		insert(new QueryRecord(query, decimalID));
+		insert(new QueryRecord(query, decimalID, 1));
 	}
 	
 	/**
@@ -193,8 +193,11 @@ public class QueryRecord {
 	 */
 	public static void increment(String query, String decimalID) {
 		QueryRecord item = load(query, decimalID);
-		item.count++;
-		insert(item);
+		if(item == null) insert(query, decimalID);
+		else{
+			item.count++;
+			insert(item);
+		}
 	}
 	
 	/**

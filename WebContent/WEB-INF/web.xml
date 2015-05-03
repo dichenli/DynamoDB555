@@ -14,7 +14,8 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Accio</servlet-name>
-    <url-pattern>/Accio</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
+
   
 </web-app>
