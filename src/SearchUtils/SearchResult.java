@@ -5,4 +5,7 @@ public class SearchResult {
 	public SearchResult(String url){
 		this.url = url;
 	}
+	public String getUrl(){
+		return url;
+	}
 }
