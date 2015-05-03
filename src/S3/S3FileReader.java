@@ -50,6 +50,11 @@ public class S3FileReader {
 		String key = s3Summary.getKey();
 		return S3Account.s3.getObject(new GetObjectRequest(bucketName, key));
 	}
+	
+	public static BufferedReader getReader(String path) {
+		//TODO
+		return null;
+	}
 
 	public static void main(String[] args) throws IOException {
 //		S3Iterator s3Iterator = new S3Iterator("crawler-content", "content/11336");

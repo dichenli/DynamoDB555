@@ -333,7 +333,7 @@ public class InvertedIndex {
 					InvertedIndex item = InvertedIndex.parseInput(line);
 					if(item != null) {
 						InvertedIndex.insert(item);
-						System.out.println(lineCount);
+						System.out.println(job + "\t" + lineCount);
 					} else {
 						failedLine++;
 					}
@@ -363,13 +363,15 @@ public class InvertedIndex {
 		}
 	}
 
+	public static String job = "";
 	public static void runDistributed(String[] args) throws Exception {
 		String bucket = "mapreduce-result";
 		String numberStr = args[0];
 		int number = Integer.parseInt(numberStr);
 		createTable();
 		for(int i = 0; i <= 226; i++) {
-			if(i % 16 == number) {			
+			if(i % 16 == number) {		
+				job += "|" + i;
 				String digit = "000" + i;
 				digit = digit.substring(digit.length() - 3, digit.length());
 				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
