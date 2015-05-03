@@ -58,15 +58,34 @@ public class IDF extends Item{
 		this.idf = idf;
 	}
 
+	public IDF(String line) {
+		super(line);
+	}
+
 	@Override
 	public String toString() {
 		return word + idf;
 	}
-
-	public IDF(String line) {
-		super(line);
-	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if(other == null || !(other instanceof IDF)) {
+			return false;
+		}
+
+		IDF other2 = (IDF) other;
+		if(!other2.word.equals(this.word)) {
+			return false;
+		}
+		return this.word.equals(other2.word);
+	}
+
+	@Override
+	public int hashCode() {
+		return word.hashCode();
+	}
+
+
 	@Override
 	public void parse(String line) {
 		if(line == null) {
@@ -159,25 +178,6 @@ public class IDF extends Item{
 		}
 		return lastResult;
 	}
-
-	@Override
-	public boolean equals(Object other) {
-		if(other == null || !(other instanceof IDF)) {
-			return false;
-		}
-
-		IDF other2 = (IDF) other;
-		if(!other2.word.equals(this.word)) {
-			return false;
-		}
-		return this.word.equals(other2.word);
-	}
-
-	@Override
-	public int hashCode() {
-		return word.hashCode();
-	}
-
 
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashKey(

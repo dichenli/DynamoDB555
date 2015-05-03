@@ -312,8 +312,9 @@ public class InvertedIndex {
 		item.setWord(word);
 		DynamoDBQueryExpression<InvertedIndex> queryExpression 
 		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item);
-
-		PaginatedQueryList<InvertedIndex> collection = DynamoTable.mapper.query(InvertedIndex.class, queryExpression);
+		
+		PaginatedQueryList<InvertedIndex> collection 
+		= DynamoTable.mapper.query(InvertedIndex.class, queryExpression);
 		return collection;
 	}
 

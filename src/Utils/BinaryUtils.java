@@ -14,8 +14,8 @@ public class BinaryUtils {
 	 * @param hex
 	 * @return
 	 */
-	public static byte[] fromDecimal(String hex) {
-		return fromDecimalToBigInteger(hex).toByteArray();
+	public static byte[] fromDecimal(String decimalString) {
+		return fromDecimalToBigInteger(decimalString).toByteArray();
 	}
 
 	public static BigInteger fromHexToBigInteger(String hex) {
