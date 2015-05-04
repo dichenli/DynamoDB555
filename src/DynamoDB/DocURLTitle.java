@@ -76,7 +76,7 @@ public class DocURLTitle {
 			return null;
 		}
 		
-		String[] splited = line.split("\t");
+		String[] splited = line.split("\t", 3);
 		if(splited == null || splited.length != 3) {
 			System.out.println("bad line: " + line);
 			return null;
@@ -188,9 +188,26 @@ public class DocURLTitle {
 		}
 	}
     
+	static String job = "";
     public static void main(String... args) throws Exception {
     	DynamoTable.init();
     	
+    	int fileCount = 7;
+    	int nodeCount = 3;
+    	
+    	String bucket = "mapreduce-result";
+    	String prefix = "title/part-r-00";
+		String numberStr = args[0];
+		int number = Integer.parseInt(numberStr);
+		createTable();
+		for(int i = 0; i <= fileCount; i++) {
+			if(i % nodeCount == number) {		
+				job += "|" + i;
+				String digit = "000" + i;
+				digit = digit.substring(digit.length() - 3, digit.length());
+				populateFromS3(bucket, prefix + digit);
+			}
+		}
 //    	System.out.println(loadFromDecimalString("478265070481920712437327189905938532370961602507"));
     	
     }
