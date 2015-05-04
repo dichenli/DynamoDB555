@@ -476,7 +476,7 @@ public class InvertedIndex {
 		int[] front = {144, 161, 168, 179, 52, 53, 54, 55, 104, 105, 106, 107};
 		ArrayList<Integer> remaining = new ArrayList<Integer>();
 		for(int i = 0; i < front.length; i++) {
-			for(int j = front[i]; i <= 226; j += 16) {
+			for(int j = front[i]; j <= 226; j += 16) {
 				remaining.add(j);
 			}
 		}
@@ -531,10 +531,11 @@ public class InvertedIndex {
 //		System.out.println(i3);
 //		insert(i3, true);
 //		DynamoTable.mapper.save(i2);
-		List<InvertedIndex> results = query("newsroom");
-		for(InvertedIndex ii : results) {
-			System.out.println(ii);
-		}
+//		List<InvertedIndex> results = query("newsroom");
+//		for(InvertedIndex ii : results) {
+//			System.out.println(ii);
+//		}
+		runRemaining(args);
 
 //		String line = "editor	37087316027811206319887670560891285046980393525	-1	,	3";
 //		InvertedIndex result = InvertedIndex.parseInput(line);
