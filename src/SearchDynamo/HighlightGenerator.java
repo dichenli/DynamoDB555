@@ -40,6 +40,14 @@ public class HighlightGenerator {
 	public static String findPosition(String rawContent, String[] words) {
 		//remove all tags, keep only words
 		String content = html2text(rawContent);
+		if(content != null) {
+			String[] splited = content.split("\t", 2);
+			if(splited.length == 2) {
+				content = splited[1];
+			}
+		} else {
+			return "";
+		}
 		
 		int prefix = 50;
 		int suffix = 50;
