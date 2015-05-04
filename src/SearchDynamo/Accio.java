@@ -143,11 +143,12 @@ public class Accio extends HttpServlet {
 		int i = 0;
 		boolean correct = true;
 		System.out.println("the phrase is "+phrase);
+
 		StringTokenizer tokenizer = new StringTokenizer(phrase,PARSER);
 		while (tokenizer.hasMoreTokens()) {
 			word = tokenizer.nextToken();
 			if (word.equals("")) continue;
-//			System.out.println(word);
+			System.out.println(word);
 			words.add(word);
 			
 			
@@ -172,7 +173,7 @@ public class Accio extends HttpServlet {
 				System.out.println("the word is "+word);
 				if(sc.isWord(word)){
 					System.out.println("in the dictionary");
-					correct = true;
+					
 					continue;
 				}
 				else{
@@ -196,6 +197,18 @@ public class Accio extends HttpServlet {
 		}
 		else{
 			newPhrase.append(phrase);
+		}
+		
+		System.out.println(newPhrase.toString());
+		words = new ArrayList<String>();
+		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals("")) continue;
+			System.out.println(word);
+			words.add(word);
+			
+			
 		}
 		
 		/**
@@ -276,6 +289,11 @@ public class Accio extends HttpServlet {
 								+ phrase
 						+ "</a>"
 					+ "</div>");
+		}
+		else{
+			out.write("<div class=\"row\"></div>"
+					+ "<div class=\"row\"></div>");
+			
 		}
 		
 //							+ "<h2>"
