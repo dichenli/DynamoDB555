@@ -23,5 +23,9 @@
     <servlet-name>Accio</servlet-name>
     <url-pattern>/insertquery</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Accio</servlet-name>
+    <url-pattern>/match_highlight</url-pattern>
+  </servlet-mapping>
   
 </web-app>
