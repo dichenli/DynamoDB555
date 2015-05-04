@@ -153,6 +153,7 @@ public class Accio extends HttpServlet {
 			
 			
 		}
+		newPhrase.append(phrase);
 		
 //		for(int i = 0; i < words.length; i++){
 //			words[i].trim().toLowerCase();
@@ -161,59 +162,59 @@ public class Accio extends HttpServlet {
 //			}
 //			
 //		}
-		if(path.equals("/Accio")){
-			SpellChecker sc = new SpellChecker();
-			
-			/**
-			 * spell check part
-			 * */
-			
-			for(i = 0; i < words.size(); i++){
-				word = words.get(i);
-				System.out.println("the word is "+word);
-				if(sc.isWord(word)){
-					System.out.println("in the dictionary");
-					
-					continue;
-				}
-				else{
-					System.out.println("not in the dictionary");
-					
-					if(sc.isCommonMisspell(word)){
-						correct = false;
-						System.out.println("is common misspelling");
-						String right = sc.getRightMisspell(word);
-						words.set(i, right);
-					}
-					else{
-						String right = sc.getRightSwap(word);
-						if(!words.get(i).equals(right)){
-							correct = false;
-						}
-						words.set(i, right);
-					}
-				}
-			}
-			
-			for(i = 0 ; i < words.size(); i++){
-				newPhrase.append(words.get(i)+" ");
-			}
-		}
-		else{
-			newPhrase.append(phrase);
-		}
+//		if(path.equals("/Accio")){
+//			SpellChecker sc = new SpellChecker();
+//			
+//			/**
+//			 * spell check part
+//			 * */
+//			
+//			for(i = 0; i < words.size(); i++){
+//				word = words.get(i);
+//				System.out.println("the word is "+word);
+//				if(sc.isWord(word.toLowerCase())){
+//					System.out.println("in the dictionary");
+//					
+//					continue;
+//				}
+//				else{
+//					System.out.println("not in the dictionary");
+//					
+//					if(sc.isCommonMisspell(word.toLowerCase())){
+//						correct = false;
+//						System.out.println("is common misspelling");
+//						String right = sc.getRightMisspell(word.toLowerCase());
+//						words.set(i, right);
+//					}
+//					else{
+//						String right = sc.getRightSwap(word.toLowerCase());
+//						if(!words.get(i).equalsIgnoreCase(right)){
+//							correct = false;
+//						}
+//						words.set(i, right);
+//					}
+//				}
+//			}
+//			
+//			for(i = 0 ; i < words.size(); i++){
+//				newPhrase.append(words.get(i)+" ");
+//			}
+//		}
+//		else{
+//			newPhrase.append(phrase);
+//		}
 		
-		System.out.println(newPhrase.toString());
-		words = new ArrayList<String>();
-		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
-		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			if (word.equals("")) continue;
-			System.out.println(word);
-			words.add(word);
-			
-			
-		}
+//		System.out.println(newPhrase.toString());
+//		words = new ArrayList<String>();
+//		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+//		while (tokenizer.hasMoreTokens()) {
+//			word = tokenizer.nextToken();
+//			if (word.equals("")) continue;
+//			System.out.println(word);
+//			words.add(word);
+//			
+//			
+//		}
 		
 		/**
 		 * wiki part
