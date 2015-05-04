@@ -25,7 +25,7 @@ import snowballstemmer.PorterStemmer;
  * given a DocID, find the document content, then find the string that match the
  * given positions. Reverse Engineer of IndexerMapper code
  */
-public class PositionFinder {
+public class WordHeat {
 
 	public static String findPosition(String rawContent, String[] words) {
 		//remove all tags, keep only words
@@ -57,23 +57,24 @@ public class PositionFinder {
 		if(!matcher.find()) {
 			return null;
 		}
-		int min = Integer.MAX_VALUE;
-		try { //find the shortest match
-			for(int i = 0; i < 3; i++) {
-				matcher.find(i);
-				String matched = matcher.group(0);
-				System.out.println(matched + "\n" + matched.length());
-				if(matched.length() < min) {
-					min = i;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			min = 0;
-		}
+//		int min = Integer.MAX_VALUE;
+//		try { //find the shortest match
+//			for(int i = 0; i < 3; i++) {
+//				matcher.find(i);
+//				String matched = matcher.group(0);
+//				System.out.println(matched + "\t" + matched.length());
+//				if(matched.length() < min) {
+//					min = i;
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			min = 0;
+//		}
+		int min = 0; //no more things above, to save time
 		
 		//compose the string to be presented
-		matcher.find(min);
+//		matcher.find(min);
 		String result = matcher.group(1);
 		if(result.length() >= prefix) { //if the match is the beginning of the file
 			result = "..." + result;
