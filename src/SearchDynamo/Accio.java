@@ -1,7 +1,6 @@
 package SearchDynamo;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class Accio extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getRequestURI().substring(request.getContextPath().length());
-		String webapp = request.getContextPath();
+
 		if(path.equals("/Accio")){
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
@@ -57,9 +56,11 @@ public class Accio extends HttpServlet {
 					+ "</style>"
 					+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 					+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
+					
 					+ "<title>Accio Search Engine</title>"
 					+ "</head>"
-						+ "<body>"
+						+ "<body>"	
+						
 						+ "<div class = \"row\"></div>"
 						+ "<div class=\"container\">"
 							+ "<h1 class = \"text-center\">Accio</h1>"
@@ -79,6 +80,7 @@ public class Accio extends HttpServlet {
 							+ "</div>"
 		
 						+ "</div>"
+						
 						+ "</body> "
 					+ "</html>");
 			out.flush();
@@ -97,14 +99,14 @@ public class Accio extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String phrase = request.getParameter("phrase");
-		String html = "";
+		String wiki_html = "";
 		String webapp = request.getContextPath();
 		List<SearchResult> results = new ArrayList<SearchResult>();
 		/**
 		 * wiki part
 		 * */
 		try {
-			html = WikiSearch.wiki(phrase);
+			wiki_html = WikiSearch.wiki(phrase);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,8 +118,8 @@ public class Accio extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		PrintWriter out = response.getWriter();
 		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
 		out.write("<!DOCTYPE html>"
 				+ "<html lang=\"en\">"
 					+ "<head>"
@@ -127,6 +129,12 @@ public class Accio extends HttpServlet {
 						+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 						+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
+						
+						// Youtube
+						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
+						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/script.js\"></script>"
+//						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/Togglable_tab.js\"></script>"
+
 						+ "<style>"
 							+ "body {"
 								+ "padding-top: 15px;"
@@ -135,6 +143,11 @@ public class Accio extends HttpServlet {
 					+ ""
 					+ "</head>"
 					+ "<body>"
+					
+					
+					
+					
+					
 					+ "<h3 hidden id=\"query\">" + phrase +"</h3>"
 						+ "<div class=\"container\">"
 							+ "<div class=\"row\">"
@@ -161,35 +174,52 @@ public class Accio extends HttpServlet {
 							+ "</h2>"
 							+ "<div class=\"col-md-8\">"
 								+ "<ul class=\"list-group\">");
+		
+		
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
-			out.write("<p><span id=\"wordheat" + i + "\" onload=\"wordHeat(" + i + "," + results.get(i).getID() + ")\"></span></p>");
+			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
+			out.write("<p><div id=\"wordheat" + i + "\"></div></p>");
 			out.write("</li>");
 			
 		}
 									
-								out.write("</ul>"
-							+"</div>"
-							+ "<div class=\"well col-md-4\">"
-								+ html
+						out.write("</ul>"
+							+ "</div>"
+						    + "<div class=\"col-md-4\">"
+							
+							// Togglable Tab
+								+"<div role=\"tabpanel\">"
+
+							  
+									+" <ul class=\"nav nav-tabs\" role=\"tablist\">"
+									+"    <li role=\"presentation\" class=\"active\"><a href=\"#wiki\" aria-controls=\"wiki\" role=\"tab\" data-toggle=\"tab\">Wikipedia</a></li>"
+									+"    <li role=\"presentation\"><a href=\"#youtube\" aria-controls=\"youtube\" role=\"tab\" data-toggle=\"tab\">Youtube</a></li>"
+									+" </ul>"
+
+							 
+								+"<div class=\"tab-content\">"
+								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\">"+ wiki_html +"</div>"
+								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
+								
+										// Youtube
+										+ "<div id=\"container_youtube\">"
+										+"	<h1>Youtube Videos</h1>"
+										+"	<ul id=\"results_youtube\"></ul>"
+										+"</div>"
+								
+									+"</div>"
+								+"</div>"
+
+							  + "</div>"
+								
 							+ "</div>"
 						+ "</div>"
-					+ "<script>"
-					+ "function wordHeat(var i, var decimalID) { "
-					+ 	"var xmlhttp; "
-					+ 	"if (window.XMLHttpRequest){ "
-					+ 		"xmlhttp = new XMLHttpRequest(); "
-					+ 	"} else { "
-					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
-					+ 	"} "
-					+ 	"var path = \"/DynamoDB555/wordHeat?\" + \"decimalID=\" + decimalID; "//TODO send word list
-					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
-					+ 	"xmlhttp.send(); "
-					+ 	"wordHeatText = xmlhttp.responseText; "
-					+ 	"document.getElementById(\"wordHeat\" + i).innerHTML = wordHeatText; "
-					+ "}"
 					
+						
+						
+						
+					+ "<script>"
 					+ "function sendRequest() {"
 					+ "console.log(\"receive request\");"
 					+ "var target = event.target;"
@@ -207,7 +237,9 @@ public class Accio extends HttpServlet {
 					+ "xmlhttp.open(\"GET\", path, true);"
 					+ "xmlhttp.send();"
 					+ "}"
-					+ "</script>"			
+					+ "</script>"	
+
+					
 					+ "</body>"
 				+ "</html>");
 
