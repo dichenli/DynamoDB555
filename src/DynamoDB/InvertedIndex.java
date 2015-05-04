@@ -378,7 +378,7 @@ public class InvertedIndex {
 			readyItems = new ArrayList<InvertedIndex>();
 		}
 		readyItems.add(item);
-		if(readyItems.size() >= 100 || flush) {
+		if(readyItems.size() >= 25 || flush) {
 //			System.out.println("batchInsert: ready to flush");
 			HashSet<ByteBuffer> set = new HashSet<ByteBuffer>();
 			for(InvertedIndex i : readyItems) {
