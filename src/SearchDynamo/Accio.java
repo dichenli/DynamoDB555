@@ -292,7 +292,9 @@ public class Accio extends HttpServlet {
 					+ "</div>");
 		}
 		else{
-			out.write("<div class=\"row\"></div>"
+			out.write("<div class=\"row\">"
+					+ "<h3 hidden>Important things need to be said three times</h3>"
+					+ "</div>"
 					+ "<div class=\"row\"></div>");
 			
 		}
