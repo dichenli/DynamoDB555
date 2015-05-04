@@ -435,6 +435,7 @@ public class InvertedIndex {
 		request.withLocalSecondaryIndexes(localSecondaryIndex);
 
 		DynamoTable.createTable(tableName, request);
+		PageRank.createTable();
 	}
 
 	/**
@@ -483,7 +484,7 @@ public class InvertedIndex {
 		String bucket = "mapreduce-result";
 		//		String numberStr = args[0];
 		//		int number = Integer.parseInt(numberStr);
-		//		createTable();
+		createTable();
 		System.out.println("Crawler#" + number);
 		for (int i = 0; i < remaining.size(); i++) {
 			if (i % 12 == number) {	
@@ -505,7 +506,7 @@ public class InvertedIndex {
 		String bucket = "mapreduce-result";
 		//		String numberStr = args[0];
 		//		int number = Integer.parseInt(numberStr);
-		//		createTable();
+		createTable();
 		for (int j : jobs) {
 			//				System.out.println("\t" + remaining.get(i));
 			job += "|" + j;
@@ -560,8 +561,8 @@ public class InvertedIndex {
 		//		for(InvertedIndex ii : results) {
 		//			System.out.println(ii);
 		//		}
-//		for(int i = 0; i < 12; i++)
-//			runRemaining(i);
+		//		for(int i = 0; i < 12; i++)
+		//			runRemaining(i);
 		runList();
 		//		String line = "editor	37087316027811206319887670560891285046980393525	-1	,	3";
 		//		InvertedIndex result = InvertedIndex.parseInput(line);

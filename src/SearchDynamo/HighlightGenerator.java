@@ -114,14 +114,14 @@ public class HighlightGenerator {
 	 * @param query: word list that has the same order as they appear in the document  
 	 * @return a piece of text that highlight the matching content from the query
 	 */
-	public static String wordHeat(String decimalID, String[] query) {
+	public static String generate(String decimalID, String[] query) {
 		String result = S3FileReader.getFileContent(decimalID);
 		return findPosition(result, query);
 	}
 	
-	public static String wordHeat(String decimalID, String marshalledList) {
+	public static String generate(String decimalID, String marshalledList) {
 		String[] query = marshalledList.split(" ");
-		return wordHeat(decimalID, query);
+		return generate(decimalID, query);
 	}
 
 	public static void main(String[] args) {
