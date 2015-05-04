@@ -196,7 +196,7 @@ public class Accio extends HttpServlet {
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
 			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
-			out.write("<p id=\"match_highlight" + i + "\" >abc</p>");
+			out.write("<p id=\"match_highlight" + i + "\" >Loading...</p>");
 			out.write("</li>");
 		}
 									
@@ -237,7 +237,7 @@ public class Accio extends HttpServlet {
 						out.write("match_highlight("
 									+ i + ",'" 
 									+ results.get(i).getID() + "','" 
-									+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+									+ phrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}
 					out.write("};\n");
