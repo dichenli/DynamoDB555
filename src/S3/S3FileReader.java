@@ -3,7 +3,7 @@
  */
 package S3;
 
-import indexer.WordHeat;
+import SearchDynamo.WordHeat;
 
 import java.io.BufferedReader;
 import java.io.IOException;

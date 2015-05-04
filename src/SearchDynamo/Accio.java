@@ -163,7 +163,8 @@ public class Accio extends HttpServlet {
 								+ "<ul class=\"list-group\">");
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a>");
+			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
+			out.write("<p><div id=\"wordheat" + i + "\"></div></p>");
 			out.write("</li>");
 			
 		}
@@ -197,8 +198,6 @@ public class Accio extends HttpServlet {
 				+ "</html>");
 
 		out.flush();
-		
-		
 	}
 	
 	

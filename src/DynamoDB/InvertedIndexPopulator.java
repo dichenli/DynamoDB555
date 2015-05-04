@@ -120,6 +120,7 @@ public class InvertedIndexPopulator implements Populator {
 			throw new IllegalArgumentException();
 		}
 	}
+
 	
 	public static void main(String[] args) throws Exception {
 		if(args.length != 1 || args[0].equals("")) {

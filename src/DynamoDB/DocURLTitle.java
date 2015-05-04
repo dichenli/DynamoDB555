@@ -28,7 +28,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 @DynamoDBTable(tableName="DocURLTitle")
 public class DocURLTitle {
 	
-	static String tableName = "DocURL"; //need to sync with @DynamoDBTable(tableName="xx")
+	static String tableName = "DocURLTitle"; //need to sync with @DynamoDBTable(tableName="xx")
 	static String keyName = "id";
 	static long readCapacity = 1L;
 	static long writeCapacity = 5000L;
@@ -87,6 +87,9 @@ public class DocURLTitle {
 		if(docID.equals("") || url.equals("") || title.equals("")) {
 			System.out.println("empty content: " + line);
 			return null;
+		}
+		if(title.length() > 200) {
+			title = title.substring(0, 200);
 		}
 		
 		DocURLTitle item = new DocURLTitle();
@@ -190,13 +193,13 @@ public class DocURLTitle {
     
 	static String job = "";
     public static void main(String... args) throws Exception {
-    	DynamoTable.init();
+    	init();
     	
     	int fileCount = 7;
     	int nodeCount = 3;
     	
     	String bucket = "mapreduce-result";
-    	String prefix = "title/part-r-00";
+    	String prefix = "title-result/part-r-00";
 		String numberStr = args[0];
 		int number = Integer.parseInt(numberStr);
 		createTable();

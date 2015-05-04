@@ -471,6 +471,28 @@ public class InvertedIndex {
 			}
 		}
 	}
+	
+	public static void runRemaining(String[] args) throws Exception {
+		int[] front = {144, 161, 168, 179, 52, 53, 54, 55, 104, 105, 106, 107};
+		ArrayList<Integer> remaining = new ArrayList<Integer>();
+		for(int i = 0; i < front.length; i++) {
+			for(int j = front[i]; i <= 226; j += 16) {
+				remaining.add(j);
+			}
+		}
+		String bucket = "mapreduce-result";
+		String numberStr = args[0];
+		int number = Integer.parseInt(numberStr);
+		createTable();
+		for(int i = 0; i < remaining.size(); i++) {
+			if(i % 12 == number) {		
+				job += "|" + remaining.get(i);
+				String digit = "000" + remaining.get(i);
+				digit = digit.substring(digit.length() - 3, digit.length());
+				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
+			}
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
 		//		IDF.init();
