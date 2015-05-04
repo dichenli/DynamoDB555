@@ -110,6 +110,7 @@ public class Accio extends HttpServlet {
 			String highlight = HighlightGenerator.generate(decimalID, query);
 			response.setHeader("Content-Type", "text/plain");
 		    response.setHeader("success", "yes");
+		    response.setHeader("Content-Type", "" + highlight.length());
 		    PrintWriter writer = response.getWriter();
 		    writer.write(highlight); //send plain text that is the highlight text
 		    writer.close();
@@ -306,7 +307,7 @@ public class Accio extends HttpServlet {
 		for(int j = 0; j < results.size(); j++){
 			out.write("<li class=\"list-group-item\">");
 			out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-			out.write("<p id=\"match_hightlight" + j + "\" style=\"color:grey\"></p>");
+			out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 			out.write("</li>");
 		}
 									

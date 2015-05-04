@@ -22,6 +22,7 @@ public class QueryInfo {
 		List<String> parseQuery = stemContent(query.toLowerCase());
 		for(int i=0;i<parseQuery.size();i++){
 			String word = parseQuery.get(i);
+			System.out.println(word);
 			double idf = IDF.load(word).getidf();
 			System.out.println(idf);
 			if(idf > LIMIT){
