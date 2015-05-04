@@ -41,10 +41,10 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  * @author dichenli
  *
  */
-@DynamoDBTable(tableName="InvertedIndex3")
+@DynamoDBTable(tableName="InvertedIndex2")
 public class InvertedIndex {
 
-	static String tableName = "InvertedIndex3"; //need to sync with @DynamoDBTable(tableName="xx")
+	static String tableName = "InvertedIndex2"; //need to sync with @DynamoDBTable(tableName="xx")
 	static String hashKey = "word";
 	static String rangeKey = "id";
 	static String index = "tf";
@@ -74,6 +74,7 @@ public class InvertedIndex {
 	}
 	
 	public InvertedIndex() {}
+	
 	
 	@DynamoDBIndexRangeKey(attributeName="tf", localSecondaryIndexName="tfIndex")
 	public double getTF() {

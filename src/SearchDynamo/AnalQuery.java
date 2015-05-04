@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+
 import DynamoDB.DocURL;
 import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
@@ -24,8 +26,16 @@ public class AnalQuery {
 		}
 	}
 	
-	public static void SetClickScore(String query){
-		QueryRecord.load(query)
+	public static int setClickScore(String query, HashMap<ByteBuffer, DocResult> set){
+		int maxcount = 0;
+		PaginatedQueryList<QueryRecord> countlist = QueryRecord.find(query);
+		for(QueryRecord qr:countlist){
+			int count = qr.getCount();
+			if(count > maxcount) maxcount = count;
+			ByteBuffer id = qr.getId();
+			set.get(id).setClickScore(count);
+		}
+		return maxcount;
 	}
 
 	public static List<SearchResult> search(String query) throws Exception {
@@ -46,9 +56,11 @@ public class AnalQuery {
 					set.put(docID, new DocResult(query, docID, size, queryInfo.getWindowlist(), idflist));
 				set.get(docID).setPositionList(i, ii.PositionsSorted());
 				if(ii.getType() == 0 ) {
+					System.out.println("content");
 					set.get(docID).setTF(i, ii.getTF());
 				}
 				else {
+					System.out.println("anchor"+"\t"+ii.getType()+"\t"+wordlist.get(i));
 					set.get(docID).setAnchor(i, ii.getType());
 				}
 			}
@@ -60,10 +72,23 @@ public class AnalQuery {
 			}
 		}
 		
-		// compute rank each doc
+		// minimize the page source set
+		List<DocResult> minimizedSet = new ArrayList<DocResult>();
 		for (DocResult doc : intersection) {
-			doc.calculateScore();
+			int positionScore = doc.setPositionScore();
+			if(positionScore > 0) minimizedSet.add(doc);
 		}
+		
+		int maxClickCount = setClickScore(query, set);
+		if(minimizedSet.size()<10){
+			minimizedSet = intersection;
+		}
+		
+		// compute the score
+		for (DocResult doc : minimizedSet){
+			doc.calculateScore(maxClickCount);
+		}
+		
 		Collections.sort(intersection, new Comparator<DocResult>() {
 	        @Override
 	        public int compare(DocResult o1, DocResult o2) {
