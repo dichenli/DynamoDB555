@@ -32,6 +32,19 @@ public class BinaryUtils {
 		return fromHexToBigInteger(hex).toByteArray();
 	}
 	
+	public static byte[] fromBase64(String base64) {
+		return fromBase64ToBigInteger(base64).toByteArray();
+	}
+	
+	public static BigInteger fromBase64ToBigInteger(String base64) {
+		return new BigInteger(base64, 64);
+	}
+	
+	//failed, can't go as high as base 64
+//	public static String toBase64String(byte[] bytes) {
+//		return new BigInteger(bytes).toString(64);
+//	}
+	
 	public static String byteArrayToString(byte[] array) {
 		StringBuilder sb = new StringBuilder();
 		for(byte b : array) {

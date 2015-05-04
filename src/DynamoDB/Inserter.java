@@ -55,11 +55,18 @@ public class Inserter<T> {
 		ArrayList<T> list = new ArrayList<T>();
 		list.addAll(items);
 		
-		List<FailedBatch> failed = batchInsert(list); //if insert failed, print error message
+		List<FailedBatch> failedBatches = batchInsert(list); //if insert failed, print error message
 //		System.out.println("insert to DB # of items: " + list.size());
-		if(failed != null && !failed.isEmpty()) {
+		if(failedBatches != null && !failedBatches.isEmpty()) {
 //			System.out.println("insert error, number of failed: " + failed.size());
-			failed.get(0).getException().printStackTrace();
+//			failedBatches.get(0).getException().printStackTrace();
+			for(T item : list) {
+				try {
+					save(item);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		} else {
 //			System.out.println("no error on batchsave");
 		}

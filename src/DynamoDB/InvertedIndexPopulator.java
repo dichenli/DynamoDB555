@@ -85,7 +85,7 @@ public class InvertedIndexPopulator implements Populator {
 		}
 		while(sc.hasNextLine()) {
 			InvertedIndex item = InvertedIndex.parseInput(sc.nextLine());
-			InvertedIndex.insert(item);
+			InvertedIndex.insert(item, false);
 			current++;
 			
 			if(current >= 500) {

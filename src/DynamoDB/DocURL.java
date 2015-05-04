@@ -24,8 +24,8 @@ public class DocURL {
     	this.id = buf.array(); 
     }
     
-    public void setId(String hexString) {
-    	id = BinaryUtils.fromDecimal(hexString);
+    public void idSetByString(String decimalString) {
+    	id = BinaryUtils.fromDecimal(decimalString);
     }
     
     @DynamoDBAttribute(attributeName="url")
@@ -56,7 +56,7 @@ public class DocURL {
 		}
 		
 		DocURL item = new DocURL();
-		item.setId(docID);
+		item.idSetByString(docID);
 		item.setURL(url);
 		return item;
 	}
@@ -65,8 +65,8 @@ public class DocURL {
     	return load(bytes.array());
     }
     
-    public static DocURL loadFromHexString(String hexStr) throws Exception {
-    	return load(BinaryUtils.fromDecimal(hexStr));
+    public static DocURL loadFromDecimalString(String decimalStr) throws Exception {
+    	return load(BinaryUtils.fromDecimal(decimalStr));
     }
     
     public static DocURL load(byte[] id) throws Exception {
@@ -74,6 +74,13 @@ public class DocURL {
     		DynamoTable.init();
     	}
     	return DynamoTable.mapper.load(DocURL.class, ByteBuffer.wrap(id));
+    }
+    
+    public static void main(String... args) throws Exception {
+    	DynamoTable.init();
+    	
+    	System.out.println(loadFromDecimalString("478265070481920712437327189905938532370961602507"));
+    	
     }
 
 }
