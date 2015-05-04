@@ -287,17 +287,8 @@ public class Accio extends HttpServlet {
 		
 		for(int j = 0; j < results.size(); j++){
 			out.write("<li class=\"list-group-item\">");
-
-			out.write("<a href="+results.get(j).getTitle()+" onclick=\"sendRequest()\">"+results.get(j).getUrl()+"</a>");
-			out.write("<p id=\"match_hightlight" + j + "\" onload=\"match_hightlight("
-					+ j + "," 
-					+ results.get(j).getID() + "," 
-					+ results.get(j).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
-					+ ")\"></p>");
-
-			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
-			out.write("<p id=\"match_highlight" + i + "\" >abc</p>");
-
+			out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
+			out.write("<p id=\"match_hightlight" + j + "\" style=\"color:grey\"></p>");
 			out.write("</li>");
 		}
 									
@@ -334,11 +325,11 @@ public class Accio extends HttpServlet {
 						+ "</div>"
 					+ "\n<script type=\"text/javascript\">");
 					out.write("window.onload = function() {");
-					for(i = 0; i < results.size(); i++) {
+					for(int j = 0; j < results.size(); j++) {
 						out.write("match_highlight("
-									+ i + ",'" 
-									+ results.get(i).getID() + "','" 
-									+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+									+ j + ",'" 
+									+ results.get(j).getID() + "','" 
+									+ phrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}
 					out.write("};\n");

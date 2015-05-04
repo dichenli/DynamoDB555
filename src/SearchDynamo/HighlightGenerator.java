@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,7 @@ import org.jsoup.select.Elements;
 
 import S3.S3FileReader;
 import SearchUtils.QueryInfo;
+import Utils.ArrayUtils;
 import snowballstemmer.PorterStemmer;
 
 /**
@@ -58,7 +61,7 @@ public class HighlightGenerator {
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(content);
 		if(!matcher.find()) {
-			return null;
+			return ""; //not found
 		}
 //		int min = Integer.MAX_VALUE;
 //		try { //find the shortest match
@@ -84,7 +87,7 @@ public class HighlightGenerator {
 		}
 		int index = 2;
 		for(int i = 0; i < words.length - 1; i++) {
-			result += ("<b>" + matcher.group(index) + "</b>");
+			result += ("<b style=\"color:grey\">" + matcher.group(index) + "</b>");
 			index++;
 			String inner = matcher.group(index); 
 			index++;
@@ -119,9 +122,17 @@ public class HighlightGenerator {
 		return findPosition(result, query);
 	}
 	
-	public static String generate(String decimalID, String marshalledList) {
-		String[] query = marshalledList.split(" ");
-		return generate(decimalID, query);
+	public static String generate(String decimalID, String phrase) {
+		StringTokenizer tokenizer = new StringTokenizer(phrase, QueryInfo.PARSER);
+		String word = "";
+		List<String> query = new ArrayList<String>();
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals(""))
+				continue;
+			query.add(word);
+		}
+		return generate(decimalID, ArrayUtils.toArray(query));
 	}
 
 	public static void main(String[] args) {

@@ -9,7 +9,7 @@ import DynamoDB.IDF;
 
 public class QueryInfo {
 
-	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
+	public static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
 	private static final double LIMIT = 1;
 	private static final int WINDOW = 3;
 	
