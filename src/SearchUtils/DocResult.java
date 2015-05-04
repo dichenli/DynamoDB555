@@ -272,10 +272,9 @@ public class DocResult {
 	
 	public void analyzeURLTitle() throws Exception{
 		DocURLTitle urltitle = DocURLTitle.load(id.array());
-		String url = urltitle.getURL();
+		url = urltitle.getURL();
 		if(url == null) url = "";
 		else url = url.toLowerCase();
-		this.url = url;
 		String title = urltitle.getTitle();
 		if(title == null) title = "";
 		else title= title.toLowerCase();

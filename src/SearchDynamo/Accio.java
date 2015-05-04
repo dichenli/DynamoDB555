@@ -92,8 +92,10 @@ public class Accio extends HttpServlet {
 			out.flush();
 		}
 		else if(path.equals("/insertquery")){
+			System.out.println("get insert query");
 			String url = request.getParameter("url");
 			String query = request.getParameter("query");
+			System.out.println(url+" "+query);
 			String docID = ProcessUtils.toBigInteger(url);
 			QueryRecord.increment(query, docID);
 		} else if (path.equals("/match_highlight")) {
