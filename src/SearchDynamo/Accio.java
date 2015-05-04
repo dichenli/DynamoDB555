@@ -90,6 +90,18 @@ public class Accio extends HttpServlet {
 			String query = request.getParameter("query");
 			String docID = URLtoDocID.toBigInteger(url);
 			QueryRecord.increment(query, docID);
+		} else if (path.equals("/match_hightlight")) {
+			String decimalID = request.getParameter("decimalID");
+			String query = request.getParameter("query"); 
+			//the query here is actually the wordList in QueryInfo class, which means it is stemmed, selected, 
+			//then it is marshalled by SearchResult getWordListMarshall(), and send to client side
+			//then it is returned to server by the parameter "query" here
+			String highlight = HighlightGenerator.generate(decimalID, query);
+			response.setHeader("Content-Type", "text/plain");
+		    response.setHeader("success", "yes");
+		    PrintWriter writer = response.getWriter();
+		    writer.write(highlight); //send plain text that is the highlight text
+		    writer.close();
 		}
 		
 	}
@@ -178,8 +190,12 @@ public class Accio extends HttpServlet {
 		
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
-			out.write("<p><div id=\"wordheat" + i + "\"></div></p>");
+			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a>");
+			out.write("<p id=\"match_hightlight" + i + "\" onload=\"match_hightlight("
+					+ i + "," 
+					+ results.get(i).getID() + "," 
+					+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+					+ ")\"></p>");
 			out.write("</li>");
 			
 		}
@@ -215,10 +231,22 @@ public class Accio extends HttpServlet {
 								
 							+ "</div>"
 						+ "</div>"
-					
-						
-						
-						
+					+ "<script>"
+					//generate match highlight text
+					+ "function match_hightlight(var i, var decimalID, var query) { "
+					+ 	"var xmlhttp; "
+					+ 	"if (window.XMLHttpRequest){ "
+					+ 		"xmlhttp = new XMLHttpRequest(); "
+					+ 	"} else { "
+					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
+					+ 	"} "
+					+ 	"var path = \"/DynamoDB555/match_hightlight?\" + \"decimalID=\" + decimalID + \"query=\" + query;"
+					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
+					+ 	"xmlhttp.send(); "
+					+ 	"matchHightlightText = xmlhttp.responseText; "
+					+ 	"document.getElementById(\"match_hightlight\" + i).innerHTML = matchHightlightText; "
+					+ "}"
+					//click to send to QueryRecord
 					+ "<script>"
 					+ "function sendRequest() {"
 					+ "console.log(\"receive request\");"

@@ -3,7 +3,7 @@
  */
 package S3;
 
-import SearchDynamo.WordHeat;
+import SearchDynamo.HighlightGenerator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -159,7 +159,7 @@ public class S3FileReader {
 				public void run() {
 					String result = getFileContent(filename[i]);
 					System.out.println("loaded");
-					System.out.println(WordHeat.findPosition(result, query));
+					System.out.println(HighlightGenerator.findPosition(result, query));
 				}
 			};
 			t[i] = new Thread(r);
