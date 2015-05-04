@@ -131,8 +131,8 @@ public class Accio extends HttpServlet {
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
 						
 						// Youtube
-						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
-						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/script.js\"></script>"
+						+ "<script src=\"/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
+						+ "<script src=\"/DynamoDB555/youtube/js/script.js\"></script>"
 //						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/Togglable_tab.js\"></script>"
 
 						+ "<style>"
