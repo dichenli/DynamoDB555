@@ -3,12 +3,18 @@ package SearchDynamo;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spellchecker.Dictionary;
+import spellchecker.FileCorrector;
+import spellchecker.SpellChecker;
+import spellchecker.SwapCorrector;
+import BerkeleyDB.DBWrapper;
 import DynamoDB.QueryRecord;
 import SearchUtils.SearchResult;
 import Utils.ProcessUtils;
@@ -19,6 +25,8 @@ import Utils.ProcessUtils;
 
 public class Accio extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
+
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -31,7 +39,8 @@ public class Accio extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		
 		String path = request.getRequestURI().substring(request.getContextPath().length());
 
 		if(path.equals("/Accio")){
@@ -104,10 +113,18 @@ public class Accio extends HttpServlet {
 		    PrintWriter writer = response.getWriter();
 		    writer.write(highlight); //send plain text that is the highlight text
 		    writer.close();
-		} else {
+		} 
+		/**
+		 * insist on searching the original page
+		 * */
+		else if(path.equals("/insist")){
+			doPost(request, response);
+		}
+		else {
 			System.out.println("no match");
 			response.sendError(400);
 		}
+		
 		
 	}
 
@@ -115,15 +132,77 @@ public class Accio extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path = request.getRequestURI().substring(request.getContextPath().length());
 		String phrase = request.getParameter("phrase");
 		String wiki_html = "";
 		String webapp = request.getContextPath();
 		List<SearchResult> results = new ArrayList<SearchResult>();
+		String word;
+		ArrayList<String> words = new ArrayList<String>();
+		StringBuilder newPhrase = new StringBuilder("");
+		int i = 0;
+		boolean correct = true;
+		System.out.println("the phrase is "+phrase);
+		StringTokenizer tokenizer = new StringTokenizer(phrase,PARSER);
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals("")) continue;
+//			System.out.println(word);
+			words.add(word);
+			
+			
+		}
+		
+//		for(int i = 0; i < words.length; i++){
+//			words[i].trim().toLowerCase();
+//			if(words[i].length()!=0){
+//				
+//			}
+//			
+//		}
+		if(path.equals("/Accio")){
+			SpellChecker sc = new SpellChecker();
+			
+			/**
+			 * spell check part
+			 * */
+			
+			for(i = 0; i < words.size(); i++){
+				word = words.get(i);
+				System.out.println("the word is "+word);
+				if(sc.isWord(word)){
+					System.out.println("in the dictionary");
+					correct = true;
+					continue;
+				}
+				else{
+					System.out.println("not in the dictionary");
+					correct = false;
+					if(sc.isCommonMisspell(word)){
+						System.out.println("is common misspelling");
+						String right = sc.getRightMisspell(word);
+						words.set(i, right);
+					}
+					else{
+						String right = sc.getRightSwap(word);
+						words.set(i, right);
+					}
+				}
+			}
+			
+			for(i = 0 ; i < words.size(); i++){
+				newPhrase.append(words.get(i));
+			}
+		}
+		else{
+			newPhrase.append(phrase);
+		}
+		
 		/**
 		 * wiki part
 		 * */
 		try {
-			wiki_html = WikiSearch.wiki(phrase);
+			wiki_html = WikiSearch.wiki(words);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -131,7 +210,7 @@ public class Accio extends HttpServlet {
 		 * our own part
 		 * */
 		try {
-			results = AnalQuery.search(phrase);
+			results = AnalQuery.search(newPhrase.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -165,7 +244,7 @@ public class Accio extends HttpServlet {
 					
 					
 					
-					+ "<h3 hidden id=\"query\">" + phrase +"</h3>"
+					+ "<h3 hidden id=\"query\">" + newPhrase +"</h3>"
 						+ "<div class=\"container\">"
 							+ "<div class=\"row\">"
 								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
@@ -185,18 +264,40 @@ public class Accio extends HttpServlet {
 										+ "</button>"
 									+ "</div>"
 								+ "</form>"
-							+ "</div>"
-							+ "<h2>"
-							+ "important things need to be said three times!"
-							+ "</h2>"
-							+ "<div class=\"col-md-8\">"
-								+ "<ul class=\"list-group\">");
+							+ "</div>");
+		if(!correct){
+			out.write("<div class=\"row\">"
+						
+						+ "<h4><i> Showing results for "+newPhrase.toString()+"</i></h4>"
+					+ "</div>");
+			out.write("<div class=\"row\">"
+						+ "<h5>Insist on searching "
+						+ "<a href=\""+webapp+"/insist?phrase="+phrase+"\">"
+								+ phrase
+						+ "</a>"
+					+ "</div>");
+		}
+		
+//							+ "<h2>"
+//							+ "important things need to be said three times!"
+//							+ "</h2>"
+		out.write("<div class=\"col-md-8\">"
+					+ "<ul class=\"list-group\">");
 		
 		
-		for(int i = 0; i < results.size(); i++){
+		for(int j = 0; j < results.size(); j++){
 			out.write("<li class=\"list-group-item\">");
+
+			out.write("<a href="+results.get(j).getTitle()+" onclick=\"sendRequest()\">"+results.get(j).getUrl()+"</a>");
+			out.write("<p id=\"match_hightlight" + j + "\" onload=\"match_hightlight("
+					+ j + "," 
+					+ results.get(j).getID() + "," 
+					+ results.get(j).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+					+ ")\"></p>");
+
 			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
 			out.write("<p id=\"match_highlight" + i + "\" >abc</p>");
+
 			out.write("</li>");
 		}
 									
@@ -233,7 +334,7 @@ public class Accio extends HttpServlet {
 						+ "</div>"
 					+ "\n<script type=\"text/javascript\">");
 					out.write("window.onload = function() {");
-					for(int i = 0; i < results.size(); i++) {
+					for(i = 0; i < results.size(); i++) {
 						out.write("match_highlight("
 									+ i + ",'" 
 									+ results.get(i).getID() + "','" 
