@@ -4,25 +4,26 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONObject;
 
 public class WikiSearch {
 	
-	public static String wiki(String phrase) throws Exception{
+	public static String wiki(ArrayList<String> words) throws Exception{
 		String USER_AGENT = "cis455crawler";
 	
-		String[] words = phrase.split(" ");
+	
 		String fin = "";
 		String url = "http://en.wikipedia.org/w/api.php?action=query&prop=revisions&titles=";
-		for(int i = 0; i < words.length; i++){
-			if(words[i].length()!=0){
-				if(i!=words.length-1){
-					fin += words[i].trim()+"_";
+		for(int i = 0; i < words.size(); i++){
+			if(words.get(i).length()!=0){
+				if(i!=words.size()-1){
+					fin += words.get(i).trim()+"_";
 				}
 				else{
-					fin += words[i].trim();
+					fin += words.get(i).trim();
 				}
 			}
 		}

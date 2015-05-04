@@ -5,6 +5,11 @@
         This is a simple web application with a source code organization
         based on the recommendations of the Application Developer's Guide.
     </description>
+    
+<context-param>
+    <param-name>BDBstore</param-name>
+    <param-value>/Users/peach/git/DynamoDB555/dBDictionary</param-value>
+  </context-param>
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/*</url-pattern>
@@ -19,5 +24,12 @@
     <servlet-name>Accio</servlet-name>
     <url-pattern>/Accio</url-pattern>
   </servlet-mapping>
+  
+    <servlet-mapping>
+    <servlet-name>Accio</servlet-name>
+    <url-pattern>/insist</url-pattern>
+  </servlet-mapping>
+  
+  
   
 </web-app>
