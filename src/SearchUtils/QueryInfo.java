@@ -23,7 +23,11 @@ public class QueryInfo {
 		for(int i=0;i<parseQuery.size();i++){
 			String word = parseQuery.get(i);
 			System.out.println(word);
-			double idf = IDF.load(word).getidf();
+			IDF idfResult = IDF.load(word);
+			if(idfResult == null) {
+				
+			}
+			double idf = idfResult.getidf();
 			System.out.println(idf);
 			if(idf > LIMIT){
 				wordlist.add(word);
