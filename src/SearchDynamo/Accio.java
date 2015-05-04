@@ -176,7 +176,6 @@ public class Accio extends HttpServlet {
 				System.out.println("the word is "+word);
 				if(sc.isWord(word.toLowerCase())){
 					System.out.println("in the dictionary");
-					
 					continue;
 				}
 				else{
@@ -231,7 +230,8 @@ public class Accio extends HttpServlet {
 		try {
 			results = AnalQuery.search(newPhrase.toString());
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("Servlet doPost: no matching result");
+			results = new ArrayList<DocResult>(); //no match, return empty result
 		}
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
@@ -310,12 +310,17 @@ public class Accio extends HttpServlet {
 		out.write("<div class=\"col-md-8\">"
 					+ "<ul class=\"list-group\">");
 		
-		
-		for(int j = 0; j < results.size(); j++){
-			out.write("<li class=\"list-group-item\">");
-			out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-			out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
+		if(results == null || results.size() == 0) {
+			out.write("<li style=\"red\" class=\"list-group-item\">");
+			out.write("No matching result!");
 			out.write("</li>");
+		} else {
+			for(int j = 0; j < results.size(); j++){
+				out.write("<li class=\"list-group-item\">");
+				out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
+				out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
+				out.write("</li>");
+			}
 		}
 									
 						out.write("</ul>"

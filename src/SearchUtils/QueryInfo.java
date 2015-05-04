@@ -25,7 +25,7 @@ public class QueryInfo {
 			System.out.println(word);
 			IDF idfResult = IDF.load(word);
 			if(idfResult == null) {
-				
+				throw new Exception();
 			}
 			double idf = idfResult.getidf();
 			System.out.println(idf);
@@ -34,6 +34,10 @@ public class QueryInfo {
 				indexlist.add(i);
 				idflist.add(idf);
 			}
+		}
+		if(indexlist.size() == 0) {
+			windowlist = new int[0];
+			return;
 		}
 		windowlist = new int[indexlist.size()-1];
 		for(int i=0;i<indexlist.size()-1;i++){
