@@ -179,14 +179,18 @@ public class Accio extends HttpServlet {
 				}
 				else{
 					System.out.println("not in the dictionary");
-					correct = false;
+					
 					if(sc.isCommonMisspell(word)){
+						correct = false;
 						System.out.println("is common misspelling");
 						String right = sc.getRightMisspell(word);
 						words.set(i, right);
 					}
 					else{
 						String right = sc.getRightSwap(word);
+						if(!words.get(i).equals(right)){
+							correct = false;
+						}
 						words.set(i, right);
 					}
 				}
