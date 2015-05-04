@@ -166,6 +166,7 @@ public class DocURLTitle {
 					}
 					inserter.insert(item);
 					lineCount++;
+					System.out.println(job + "\t" + lineCount);
 				}
 			} catch (IOException e1) {
 				failedFile++;
