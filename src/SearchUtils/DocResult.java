@@ -29,7 +29,7 @@ public class DocResult {
 	// different factors
 	double tfidf;
 	int count = 0;
-	double positionScore = 0;
+	int positionScore = 0;
 	double anchorScore = 0;
 	double pageRank;
 	double finalScore;
@@ -44,15 +44,17 @@ public class DocResult {
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 		this.idflist = idflist;
 		anchors = new AnchorResult[size];
+		for(int i=0;i<size;i++){
+			anchors[i] = new AnchorResult();
+		}
 	}
 
 	public boolean containsAll() {
 		return size == count;
 	}
 	
-	public void setClickScore(){
-		QueryRecord qr = QueryRecord.load(query, id);
-		if(qr != null) clickcount = qr.getCount();
+	public void setClickScore(int count){
+		clickcount = count;
 	}
 
 	public void setPositionList(int index, List<Integer> position) {
@@ -89,7 +91,7 @@ public class DocResult {
 	}
 
 	// calculate position score
-	public void setPositionScore() {
+	public int setPositionScore() {
 		for (int i = 0; i < positions.length - 1; i++) {
 			int score = 0, j = 0, k = 0, dis;
 			boolean firstTime = true;
@@ -126,7 +128,7 @@ public class DocResult {
 			}
 			positionScore += score;
 		}
-		if(size != 1) positionScore = positionScore/((size-1)*BASE);
+		return positionScore;
 	}
 
 	// calculate tf score
@@ -147,13 +149,12 @@ public class DocResult {
 //		pageRank = PageRank.load(id).getRank();
 	}
 	
-	public void calculateScore(){
+	public void calculateScore(int maxClickCount){
 		setPositionScore();
 		setPageRank();
 		setAnchorScore();
 		setTFScore();
-		setClickScore();
-		finalScore = W_POSITION*positionScore + W_PAGERANK*pageRank/280.0 + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
+		finalScore = W_POSITION*positionScore + W_CLICK*clickcount/maxClickCount + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
 	}
 	
 	public double getPageRank() {
