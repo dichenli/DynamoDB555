@@ -39,7 +39,12 @@ public class HighlightGenerator {
 	 */
 	public static String findPosition(String rawContent, String[] words) {
 		//remove all tags, keep only words
+		String[] splited = rawContent.split("\t", 2);
+			if(splited.length == 2) {
+				rawContent = splited[1];
+			}
 		String content = html2text(rawContent);
+		
 		
 		int prefix = 50;
 		int suffix = 50;
@@ -105,8 +110,15 @@ public class HighlightGenerator {
 			endMatch += "...";
 		}
 		result += endMatch;
+		StringBuilder fin = new StringBuilder("");
+		for(int i = 0; i < result.length(); i++){
+			if(Character.UnicodeBlock.of(result.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN){
+				continue;
+			}
+			fin.append(result.charAt(i));
+		}
 //		System.out.println(result);
-		return result;
+		return fin.toString();
 	}
 
 

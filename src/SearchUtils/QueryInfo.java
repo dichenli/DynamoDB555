@@ -23,13 +23,21 @@ public class QueryInfo {
 		for(int i=0;i<parseQuery.size();i++){
 			String word = parseQuery.get(i);
 			System.out.println(word);
-			double idf = IDF.load(word).getidf();
+			IDF idfResult = IDF.load(word);
+			if(idfResult == null) {
+				throw new Exception();
+			}
+			double idf = idfResult.getidf();
 			System.out.println(idf);
 			if(idf > LIMIT){
 				wordlist.add(word);
 				indexlist.add(i);
 				idflist.add(idf);
 			}
+		}
+		if(indexlist.size() == 0) {
+			windowlist = new int[0];
+			return;
 		}
 		windowlist = new int[indexlist.size()-1];
 		for(int i=0;i<indexlist.size()-1;i++){

@@ -33,7 +33,13 @@ public class AnalQuery {
 	
 
 	public static List<DocResult> search(String query) throws Exception {
-		QueryInfo queryInfo = new QueryInfo(query);
+		QueryInfo queryInfo = null;
+		try {
+			queryInfo = new QueryInfo(query);
+		} catch (Exception e) {
+			System.err.println("Result not found!");
+			throw e;
+		}
 		
 		// remove words with low idf
 		List<String> wordlist = queryInfo.getWordlist();

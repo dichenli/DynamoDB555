@@ -28,7 +28,7 @@ public class S3Iterator {
 	private ObjectListing objectListing;
 	private Iterator<S3ObjectSummary> iter;
 
-	private void getNextList() {
+	private void getNextList() throws Exception {
 		try {
 			objectListing = S3Account.s3.listObjects(listObjectsRequest);
 			iter = objectListing.getObjectSummaries().iterator();
@@ -38,8 +38,10 @@ public class S3Iterator {
 		} catch (AmazonClientException ace) {
 			S3Account.printException(ace);
 			throw ace;
+		} catch (Exception e) {
+			throw e;
 		}
-	}
+ 	}
 
 	public S3Iterator(String bucketName, String prefix) {
 		if(!S3Account.initialized()) {
@@ -54,7 +56,13 @@ public class S3Iterator {
 		.withBucketName(bucketName)
 		.withPrefix(prefix)
 		.withDelimiter(delimiter);
-		getNextList();
+		try {
+			getNextList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			objectListing = null;
+			iter = null;
+		}
 	}
 
 	/**
@@ -74,7 +82,13 @@ public class S3Iterator {
 		//			ObjectListing objList = this.objectListing;
 		if(objectListing.isTruncated()) {
 			listObjectsRequest.setMarker(objectListing.getNextMarker());
-			getNextList();
+			try {
+				getNextList();
+			} catch (Exception e) {
+				e.printStackTrace();
+				objectListing = null;
+				iter = null;
+			}
 		} else {
 			objectListing = null;
 			iter = null;
@@ -101,7 +115,7 @@ public class S3Iterator {
 	 * @return
 	 */
 	public boolean hasNext() {
-		if (objectListing == null) {//first request
+		if (objectListing == null || iter == null) {//first request
 			return false;
 		}
 		if(!iter.hasNext() && !objectListing.isTruncated()) {
