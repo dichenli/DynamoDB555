@@ -187,6 +187,74 @@ public class InvertedIndex {
 		Arrays.sort(arr);
 		return Arrays.asList(arr);
 	}
+	
+	
+	
+	
+	
+	/**
+	 * populate DB from S3 input
+	 */
+	public static void populateFromS3(String bucketName, String prefix) {
+		long lineCount = 0;
+		long lastLineCount = 0;
+		long fileCount = 0;
+		Date begin = new Date();
+		Date last = begin;
+		long failedFile = 0;
+		long failedLine = 0;
+
+		System.out.println("begin to populate InvertedIndex, start date: " + begin.toString());
+		S3Iterator iterator = new S3Iterator(bucketName, prefix);
+		while(iterator.hasNext()) {
+			S3ObjectSummary obj = iterator.next();
+			BufferedReader reader = new S3FileReader(obj).getStreamReader();
+			if(reader == null) {
+				System.out.println("InvertedIndex.populateFromS3: One object can't return inputstream: " + obj.getBucketName() + obj.getKey());
+				failedFile++;
+				continue;
+			}
+			String line = null;
+			try {
+				line = reader.readLine();
+				while(true) {
+					InvertedIndex item = InvertedIndex.parseInput(line);
+					line = reader.readLine();
+					if(line == null) {
+						InvertedIndex.insert(item, true);
+						break;
+					}
+					if(item != null) {
+						InvertedIndex.insert(item, false);
+						System.out.println(job + "\t" + lineCount);
+					} else {
+						failedLine++;
+					}
+					lineCount++;
+				}
+			} catch (IOException e1) {
+				failedFile++;
+				e1.printStackTrace();
+				continue;
+			}
+			fileCount++;
+			Date curr = new Date();
+			System.err.println("Files done: " + fileCount
+					+ "\n\t lines done: " + lineCount
+					+ "\n\t failedFile: " + failedFile
+					+ "\n\t failedLine: " + failedLine
+					+ "\n\t time used for the file: " + TimeUtils.secondsPast(last, curr)
+					+ "\n\t average lines per second: " + ((double)(lineCount - lastLineCount)) / TimeUtils.secondsPast(begin, curr));
+			last = curr;
+			lastLineCount = lineCount;
+
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static InvertedIndex parseInput(String line) {
 		if (line == null) {
@@ -311,7 +379,7 @@ public class InvertedIndex {
 			readyItems = new ArrayList<InvertedIndex>();
 		}
 		readyItems.add(item);
-		if(readyItems.size() >= 100 || flush) {
+		if(readyItems.size() >= 25 || flush) {
 //			System.out.println("batchInsert: ready to flush");
 			HashSet<ByteBuffer> set = new HashSet<ByteBuffer>();
 			for(InvertedIndex i : readyItems) {
@@ -369,81 +437,24 @@ public class InvertedIndex {
 		DynamoTable.createTable(tableName, request);
 	}
 	
+	/**
+	 * query by the given word, order the results by tf from high to low
+	 * @param word
+	 * @return
+	 */
 	public static PaginatedQueryList<InvertedIndex> query(String word) {
 		InvertedIndex item = new InvertedIndex();
 		item.setWord(word);
 		DynamoDBQueryExpression<InvertedIndex> queryExpression 
 		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item)
-		.withIndexName(indexName).withScanIndexForward(false);
+		.withIndexName(indexName).withScanIndexForward(false); //query by index of TF, ordered from high to low
 		
 		PaginatedQueryList<InvertedIndex> collection 
 		= DynamoTable.mapper.query(InvertedIndex.class, queryExpression);
 		return collection;
 	}
 
-	/**
-	 * populate DB from S3 input
-	 */
-	public static void populateFromS3(String bucketName, String prefix) {
-		long lineCount = 0;
-		long lastLineCount = 0;
-		long fileCount = 0;
-		Date begin = new Date();
-		Date last = begin;
-		long failedFile = 0;
-		long failedLine = 0;
-
-		System.out.println("begin to populate InvertedIndex, start date: " + begin.toString());
-		S3Iterator iterator = new S3Iterator(bucketName, prefix);
-		while(iterator.hasNext()) {
-			S3ObjectSummary obj = iterator.next();
-			BufferedReader reader = new S3FileReader(obj).getStreamReader();
-			if(reader == null) {
-				System.out.println("InvertedIndex.populateFromS3: One object can't return inputstream: " + obj.getBucketName() + obj.getKey());
-				failedFile++;
-				continue;
-			}
-			String line = null;
-			try {
-				line = reader.readLine();
-				while(true) {
-					InvertedIndex item = InvertedIndex.parseInput(line);
-					line = reader.readLine();
-					if(line == null) {
-						InvertedIndex.insert(item, true);
-						break;
-					}
-					if(item != null) {
-						InvertedIndex.insert(item, false);
-						System.out.println(job + "\t" + lineCount);
-					} else {
-						failedLine++;
-					}
-					lineCount++;
-				}
-			} catch (IOException e1) {
-				failedFile++;
-				e1.printStackTrace();
-				continue;
-			}
-			fileCount++;
-			Date curr = new Date();
-			System.err.println("Files done: " + fileCount
-					+ "\n\t lines done: " + lineCount
-					+ "\n\t failedFile: " + failedFile
-					+ "\n\t failedLine: " + failedLine
-					+ "\n\t time used for the file: " + TimeUtils.secondsPast(last, curr)
-					+ "\n\t average lines per second: " + ((double)(lineCount - lastLineCount)) / TimeUtils.secondsPast(begin, curr));
-			last = curr;
-			lastLineCount = lineCount;
-
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	
 
 	public static String job = "";
 	public static void runDistributed(String[] args) throws Exception {
@@ -467,9 +478,9 @@ public class InvertedIndex {
 		//		PageRank.init();
 		//		PageRank.populateFromS3("mapreduce-result", "pagerank-result/part-r-");
 		
-		createTable();
+//		createTable();
 //		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
-		runDistributed(args);
+//		runDistributed(args);
 		
 //		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
 //		String bucket = "mapreduce-result";
@@ -485,7 +496,7 @@ public class InvertedIndex {
 //			}
 //		}
 		
-//		createTable();
+		createTable();
 //		InvertedIndex i = parseInput("mosdafafadsfw	291647802747036241376099890398414543841464994659	1.5	,	3");
 //		System.out.println(i);
 //		insert(i, false);
@@ -498,10 +509,10 @@ public class InvertedIndex {
 //		System.out.println(i3);
 //		insert(i3, true);
 //		DynamoTable.mapper.save(i2);
-//		List<InvertedIndex> results = query("featurddsdfsdf");
-//		for(InvertedIndex ii : results) {
-//			System.out.println(ii);
-//		}
+		List<InvertedIndex> results = query("newsroom");
+		for(InvertedIndex ii : results) {
+			System.out.println(ii);
+		}
 
 //		String line = "editor	37087316027811206319887670560891285046980393525	-1	,	3";
 //		InvertedIndex result = InvertedIndex.parseInput(line);

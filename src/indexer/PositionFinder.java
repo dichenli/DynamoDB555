@@ -27,123 +27,89 @@ import snowballstemmer.PorterStemmer;
  */
 public class PositionFinder {
 
-	private static final String DELIMATOR = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
-	private static final double a = 0.4;
-	
-	private static HashSet<String> stopWords = new HashSet<String>();
-
-	static {
-		String[] lists = { "edu", "com", "html", "htm", "xml", "php", "org",
-				"gov", "net", "int", "jpg", "png", "bmp", "jpeg", "pdf", "asp",
-				"aspx" };
-		for (String word : lists) {
-			stopWords.add(word);
-		}
-	}
-	
 	public static String findPosition(String rawContent, String[] words) {
+		//remove all tags, keep only words
 		String content = html2text(rawContent);
-		StringTokenizer tokenizer = new StringTokenizer(content, DELIMATOR);
-		//TODO
-		return null;
-	}
-	
-	
-	public static String html2text(String content) {
-	    return Jsoup.parse(content).text();
-	}
-	
-	public static String stemContent(String content) {
-		StringTokenizer tokenizer = new StringTokenizer(content, DELIMATOR);
-		String word = "";
+		
+		int prefix = 50;
+		int suffix = 50;
+		String begin = "(.{0," + prefix + "})";
+		String end = "(.{0," + suffix + "})";
+		String regex = begin;
 		PorterStemmer stemmer = new PorterStemmer();
-		StringBuilder sb = new StringBuilder();
-		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			if(word.equals("")) continue;
-			boolean flag = false;
-			for(int i=0;i<word.length();i++){
-				if (Character.UnicodeBlock.of(word.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN) {
-					flag = true;
-					break;
-				}
-			}	
-			if(flag) continue;
-			stemmer.setCurrent(word);
+		//compose regex, example: /.{0,50}\b(Regular.*?)\b.+?\b(express.*?)\b.{0,50}/
+		for (int i = 0; i < words.length; i++) {
+			if(words[i].equals("")) continue;
+			stemmer.setCurrent(words[i]);
 			if(stemmer.stem()){
-				sb.append(stemmer.getCurrent());
-				sb.append(" ");
-			}
-		}
-		return new String(sb);
-	}
-	
-	public static String toBigInteger(String key) {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-			messageDigest.update(key.getBytes());
-			byte[] bytes = messageDigest.digest();
-			Formatter formatter = new Formatter();
-			for (int i = 0; i < bytes.length; i++) {
-				formatter.format("%02x", bytes[i]);
-			}
-			String resString = formatter.toString();
-			formatter.close();
-			return String.valueOf(new BigInteger(resString, 16));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		return String.valueOf(new BigInteger("0", 16));
-	}
-	
-	public static boolean isNumber(String s) {
-		String pattern = "\\d+";
-		// Create a Pattern object
-		Pattern r = Pattern.compile(pattern);
-		// Now create matcher object.
-		Matcher m = r.matcher(s);
-		return m.find();
-	}
-	
-	public void analURL(String url, String docID) throws IOException, InterruptedException {
-		if(url.startsWith("http://")){
-			url = url.substring(7);
-		}
-		else if(url.startsWith("https://")){
-			url = url.substring(8);
-		}
-		if(url.startsWith("www.")){
-			url = url.substring(4);
-		}
-		url = stemContent(url);
-		StringTokenizer tokenizer = new StringTokenizer(url, DELIMATOR);
-		String word = "";
-		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			if(word.equals("") || word.length()>20) continue;
-			if(isNumber(word)) continue;
-			if(!stopWords.contains(word)){
-				String result = "1\t"+docID;
-//				context.write(new Text(word), new Text(result));
-			}
-		}
-	}
-	
-	public static void splitKey(String content, String docID, int type){
-		String store_text = stemContent(content);
-		StringTokenizer tokenizer = new StringTokenizer(store_text, DELIMATOR);
-		String word = "";
-		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			if(word.equals("")) continue;
-			boolean flag = false;
-			for(int i=0;i<word.length();i++){
-				if (Character.UnicodeBlock.of(word.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN) {
-					flag = true;
-					break;
+				String word = stemmer.getCurrent();				
+				regex += ("\\b(" + Pattern.quote(word) + ".*?)\\b");
+				if(i < words.length - 1) {
+					regex += "(.+?)";
 				}
-			}	
-			if(flag) continue;
+			}
 		}
+		regex += end;
+		System.out.println(regex);
+		//try to match
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(content);
+		if(!matcher.find()) {
+			return null;
+		}
+		int min = Integer.MAX_VALUE;
+		try { //find the shortest match
+			for(int i = 0; i < 3; i++) {
+				matcher.find(i);
+				String matched = matcher.group(0);
+				System.out.println(matched + "\n" + matched.length());
+				if(matched.length() < min) {
+					min = i;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			min = 0;
+		}
+		
+		//compose the string to be presented
+		matcher.find(min);
+		String result = matcher.group(1);
+		if(result.length() >= prefix) { //if the match is the beginning of the file
+			result = "..." + result;
+		}
+		int index = 2;
+		for(int i = 0; i < words.length - 1; i++) {
+			result += ("<b>" + matcher.group(index) + "</b>");
+			index++;
+			String inner = matcher.group(index); 
+			index++;
+			if(inner.length() > 100) { //if two words are too far away, ignore some intervening words 
+				inner = inner.substring(0, 15) + "..." + inner.substring(inner.length() - 15);
+			}
+			result += inner;
+		}
+		result += ("<b>" + matcher.group(index) + "</b>"); //add the last word
+		String endMatch = matcher.group(index + 1); //add the end
+		if(endMatch.length() >= suffix) { //if there is still text after this match
+			endMatch += "...";
+		}
+		result += endMatch;
+		return result;
 	}
+
+
+	public static String html2text(String content) {
+		return Jsoup.parse(content).text();
+	}
+
+	public static void main(String[] args) {
+		String[] words = {"regular", "expressions"};
+		System.out.println(findPosition("Regular expressions are an incredibly powerful tool, "
+				+ "but can be rather tricky to get exactly right. This is a "
+				+ "website that I wrote so I could quickly and easily test "
+				+ "regular shfwalfbalfbliraef  efbwael lwFBLAEWF AW WE;FsdfasdfsadfsdfasdfsdafsadfsadfsdfdsafB WLAKFSBF AWELIekr bgldfgv ag erg  expressions during development.", 
+				words));
+	}
+
 }
