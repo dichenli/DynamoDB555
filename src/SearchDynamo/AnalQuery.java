@@ -120,7 +120,7 @@ public class AnalQuery {
 	        }
 	    });
 		
-		return minimizedSet.subList(0, Math.min(minimizedSet.size(), 100));
+		return minimizedSet.subList(0, Math.min(minimizedSet.size(), 10));
 //		int responsesize = Math.min(minimizedSet.size(), 20);
 //		List<DocResult> responses = new ArrayList<DocResult>();
 //		for(int i=0;i<responsesize;i++){
