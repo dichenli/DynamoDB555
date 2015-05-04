@@ -9,6 +9,7 @@ import java.util.List;
 
 import DynamoDB.DocURL;
 import DynamoDB.InvertedIndex;
+import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
 import SearchUtils.QueryInfo;
 import SearchUtils.SearchResult;
@@ -21,6 +22,10 @@ public class AnalQuery {
 		for(SearchResult sr:response){
 			System.out.println(sr.getUrl());
 		}
+	}
+	
+	public static void SetClickScore(String query){
+		QueryRecord.load(query)
 	}
 
 	public static List<SearchResult> search(String query) throws Exception {
@@ -38,7 +43,7 @@ public class AnalQuery {
 			for (InvertedIndex ii : collection) {
 				ByteBuffer docID = ii.getId();
 				if (!set.containsKey(docID))
-					set.put(docID, new DocResult(docID, size, queryInfo.getWindowlist(), idflist));
+					set.put(docID, new DocResult(query, docID, size, queryInfo.getWindowlist(), idflist));
 				set.get(docID).setPositionList(i, ii.PositionsSorted());
 				if(ii.getType() == 0 ) {
 					set.get(docID).setTF(i, ii.getTF());
@@ -67,13 +72,13 @@ public class AnalQuery {
 	    });
 		
 		List<SearchResult> responses = new ArrayList<SearchResult>();
-		int responsesize = Math.min(responses.size(), 20);
+		int responsesize = Math.min(intersection.size(), 20);
 		for(int i=0;i<responsesize;i++){
 			DocResult doc = intersection.get(i);
 			String url = DocURL.load(doc.getDocID().array()).getURL();
 			SearchResult sr = new SearchResult(url);
 			responses.add(sr);
-//			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getFinalScore());
+			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
 //			for(List<Integer> w:doc.getPositions()){
 //				System.out.println(w);
 //			}

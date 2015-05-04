@@ -43,6 +43,11 @@ public class QueryRecord {
 		this.query = query;
 	}
 	
+	public QueryRecord(String query, ByteBuffer docID) {
+		this.query = query;
+		this.id = docID.array();
+	}
+ 	
 	public QueryRecord(String query, String decimalID) {
 		this.query = query;
 		this.id = BinaryUtils.fromDecimal(decimalID);
@@ -182,6 +187,11 @@ public class QueryRecord {
 	 */
 	public static QueryRecord load(String query, String decimalID) {
 		QueryRecord item = new QueryRecord(query, decimalID);
+		return DynamoTable.mapper.load(item);
+	}
+	
+	public static QueryRecord load(String query, ByteBuffer docID) {
+		QueryRecord item = new QueryRecord(query, docID);
 		return DynamoTable.mapper.load(item);
 	}
 	

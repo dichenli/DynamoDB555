@@ -3,6 +3,8 @@ package SearchUtils;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import DynamoDB.QueryRecord;
+
 public class DocResult {
 	private static final int BASE = 30;
 	private static final int WINDOW = 5;
@@ -11,7 +13,9 @@ public class DocResult {
 	private static final double W_PAGERANK = 0.3;
 	private static final double W_ANCHOR = 0;
 	private static final double W_TFIDF = 0.2;
+	private static final double W_CLICK = 0.2;
 	
+	String query;
 	ByteBuffer id;
 	double[] wordtf;
 	List<Integer>[] positions;
@@ -20,6 +24,7 @@ public class DocResult {
 	String url;
 	int size;
 	AnchorResult[] anchors;
+	int clickcount;
 	
 	// different factors
 	double tfidf;
@@ -29,7 +34,8 @@ public class DocResult {
 	double pageRank;
 	double finalScore;
 
-	public DocResult(ByteBuffer id, int size, int[] windowlist, List<Double> idflist) {
+	public DocResult(String query, ByteBuffer id, int size, int[] windowlist, List<Double> idflist) {
+		this.query = query;
 		this.id = id;
 		this.size = size;
 		positions = (List<Integer>[])new List[size];
@@ -42,6 +48,11 @@ public class DocResult {
 
 	public boolean containsAll() {
 		return size == count;
+	}
+	
+	public void setClickScore(){
+		QueryRecord qr = QueryRecord.load(query, id);
+		if(qr != null) clickcount = qr.getCount();
 	}
 
 	public void setPositionList(int index, List<Integer> position) {
@@ -59,6 +70,10 @@ public class DocResult {
 
 	public void setFinalScore(double finalScore) {
 		this.finalScore = finalScore;
+	}
+	
+	public int getClickCount(){
+		return clickcount;
 	}
 
 	public List<Integer>[] getPositions() {
@@ -137,6 +152,7 @@ public class DocResult {
 		setPageRank();
 		setAnchorScore();
 		setTFScore();
+		setClickScore();
 		finalScore = W_POSITION*positionScore + W_PAGERANK*pageRank/280.0 + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
 	}
 	
