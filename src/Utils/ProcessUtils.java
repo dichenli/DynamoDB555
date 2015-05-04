@@ -1,10 +1,13 @@
 package Utils;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,5 +81,59 @@ public class ProcessUtils {
 		}
 		return String.valueOf(new BigInteger("0", 16));
 	}
+	
+	public static List<String> analyzeURL(String url) throws IOException, InterruptedException {
+		List<String> urlWords = new ArrayList<String>();
+		if(url.startsWith("http://")){
+			url = url.substring(7);
+		}
+		else if(url.startsWith("https://")){
+			url = url.substring(8);
+		}
+		if(url.startsWith("www.")){
+			url = url.substring(4);
+		}
+		url = ProcessUtils.stemContent(url);
+		StringTokenizer tokenizer = new StringTokenizer(url, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("") || word.length()>20) continue;
+			if(ProcessUtils.isNumber(word)) continue;
+			if(!ProcessUtils.stopWords.contains(word)){
+				urlWords.add(word);
+				System.out.println(word);
+			}
+		}
+		return urlWords;
+	}
+	
+	public static List<String> analyzeTitle(String content){
+		List<String> titleWords = new ArrayList<String>();
+		String store_text = ProcessUtils.stemContent(content);
+		StringTokenizer tokenizer = new StringTokenizer(store_text, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("")) continue;
+			boolean flag = false;
+			for(int i=0;i<word.length();i++){
+				if (Character.UnicodeBlock.of(word.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN) {
+					flag = true;
+					break;
+				}
+			}	
+			if(flag) continue;
+			titleWords.add(word);
+		}
+		return titleWords;
+	}
+	
+	public static void main(String[] args) throws IOException, InterruptedException{
+		String url = "http://www.dmoz.org/Computers/Computer_Science/";
+		analyzeURL(url);
+	}
 
 }
+
+

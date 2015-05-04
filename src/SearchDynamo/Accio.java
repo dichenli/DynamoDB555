@@ -1,6 +1,7 @@
 package SearchDynamo;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -10,13 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import spellchecker.Dictionary;
-import spellchecker.FileCorrector;
 import spellchecker.SpellChecker;
-import spellchecker.SwapCorrector;
-import BerkeleyDB.DBWrapper;
 import DynamoDB.QueryRecord;
-import SearchUtils.SearchResult;
+import SearchUtils.DocResult;
 import Utils.ProcessUtils;
 
 /**
@@ -137,7 +134,7 @@ public class Accio extends HttpServlet {
 		String phrase = request.getParameter("phrase");
 		String wiki_html = "";
 		String webapp = request.getContextPath();
-		List<SearchResult> results = new ArrayList<SearchResult>();
+		List<DocResult> results = new ArrayList<DocResult>();
 		String word;
 		ArrayList<String> words = new ArrayList<String>();
 		StringBuilder newPhrase = new StringBuilder("");
@@ -354,7 +351,7 @@ public class Accio extends HttpServlet {
 					for(int j = 0; j < results.size(); j++) {
 						out.write("match_highlight("
 									+ j + ",'" 
-									+ results.get(j).getID() + "','" 
+									+ results.get(j).getDocID() + "','" 
 									+ phrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}
