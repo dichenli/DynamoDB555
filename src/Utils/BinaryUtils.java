@@ -45,12 +45,17 @@ public class BinaryUtils {
 //		return new BigInteger(bytes).toString(64);
 //	}
 	
-	public static String byteArrayToString(byte[] array) {
-		StringBuilder sb = new StringBuilder();
-		for(byte b : array) {
-    		sb.append(b);
-    	}
-       return sb.toString();
+//	public static String byteArrayToString(byte[] array) {
+//		StringBuilder sb = new StringBuilder();
+//		for(byte b : array) {
+//    		sb.append(b);
+//    	}
+//       return sb.toString();
+//	}
+	
+	public static String byteArrayToDecimalString(byte[] array) {
+		BigInteger i = new BigInteger(array);
+		return i.toString();
 	}
 	
 	public static boolean arrayEquals(byte[] a, byte[] b) {
@@ -111,5 +116,12 @@ public class BinaryUtils {
 		}
 		
 		return (b >>> (pos - 1)) & 1;
+	}
+	
+	public static void main(String[] args) {
+		String decimal = "1000016645993763646612612913273621633656175576825";
+		byte[] id = fromDecimal(decimal);
+		System.out.println(decimal);
+		System.out.println(byteArrayToDecimalString(id));
 	}
 }

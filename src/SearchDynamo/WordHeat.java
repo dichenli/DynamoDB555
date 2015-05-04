@@ -103,6 +103,18 @@ public class WordHeat {
 	public static String html2text(String content) {
 		return Jsoup.parse(content).text();
 	}
+	
+	/**
+	 * given a decimal docID string and a query list (the order of the words must be
+	 * the same as the order of matching of the search
+	 * @param decimalID: id of the document in decimal string
+	 * @param query: word list that has the same order as they appear in the document  
+	 * @return a piece of text that highlight the matching content from the query
+	 */
+	public static String wordHeat(String decimalID, String[] query) {
+		String result = S3FileReader.getFileContent(decimalID);
+		return findPosition(result, query);
+	}
 
 	public static void main(String[] args) {
 		String[] words = {"regular", "expressions"};

@@ -21,7 +21,7 @@ public class DocResult {
 	List<Integer>[] positions;
 	List<Double> idflist;
 	int[] windowlist;
-	String url;
+//	String url;
 	int size;
 	AnchorResult[] anchors;
 	int clickcount;

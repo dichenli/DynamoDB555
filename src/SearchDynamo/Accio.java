@@ -163,8 +163,8 @@ public class Accio extends HttpServlet {
 								+ "<ul class=\"list-group\">");
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
-			out.write("<p><div id=\"wordheat" + i + "\"></div></p>");
+			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
+			out.write("<p><span id=\"wordheat" + i + "\" onload=\"wordHeat(" + i + "," + results.get(i).getID() + ")\"></span></p>");
 			out.write("</li>");
 			
 		}
@@ -176,6 +176,20 @@ public class Accio extends HttpServlet {
 							+ "</div>"
 						+ "</div>"
 					+ "<script>"
+					+ "function wordHeat(var i, var decimalID) { "
+					+ 	"var xmlhttp; "
+					+ 	"if (window.XMLHttpRequest){ "
+					+ 		"xmlhttp = new XMLHttpRequest(); "
+					+ 	"} else { "
+					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
+					+ 	"} "
+					+ 	"var path = \"/DynamoDB555/wordHeat?\" + \"decimalID=\" + decimalID; "//TODO send word list
+					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
+					+ 	"xmlhttp.send(); "
+					+ 	"wordHeatText = xmlhttp.responseText; "
+					+ 	"document.getElementById(\"wordHeat\" + i).innerHTML = wordHeatText; "
+					+ "}"
+					
 					+ "function sendRequest() {"
 					+ "console.log(\"receive request\");"
 					+ "var target = event.target;"

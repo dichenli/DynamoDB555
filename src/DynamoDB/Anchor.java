@@ -74,7 +74,7 @@ public class Anchor {
 
 	@Override
 	public String toString() {
-		return word + BinaryUtils.byteArrayToString(id);
+		return word + BinaryUtils.byteArrayToDecimalString(id);
 	}
 
 	public static Anchor parseInput(String line) {
