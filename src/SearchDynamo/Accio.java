@@ -163,7 +163,7 @@ public class Accio extends HttpServlet {
 								+ "<ul class=\"list-group\">");
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
+			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
 			out.write("<p><span id=\"wordheat" + i + "\" onload=\"wordHeat(" + i + "," + results.get(i).getID() + ")\"></span></p>");
 			out.write("</li>");
 			

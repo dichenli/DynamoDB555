@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
-import DynamoDB.DocURL;
 import DynamoDB.DocURLTitle;
 import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
@@ -49,14 +48,21 @@ public class AnalQuery {
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
 		for (int i = 0; i < size; i++) {
 			String word = wordlist.get(i);
-//			System.out.println(word);
+			System.out.println(word);
 			List<InvertedIndex> collection = InvertedIndex.query(word);
+			int count = 0;
 			for (InvertedIndex ii : collection) {
+				count++;
+				System.out.println(count);
 				ByteBuffer docID = ii.getId();
+				double pageRank = ii.getPageRank();
+				if(pageRank == -1) pageRank = 0;
 				if(ii.getType() == 0){			
 					if (!set.containsKey(docID))
-						set.put(docID, new DocResult(query, docID, size, queryInfo.getWindowlist(), idflist));
-					set.get(docID).setPositionList(i, ii.PositionsSorted());
+						set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
+					DocResult doc = set.get(docID);
+					doc.setPositionList(i, ii.PositionsSorted());
+					doc.setTF(i, ii.getTF());
 				}
 				else {
 					if(set.containsKey(docID)){
@@ -65,6 +71,7 @@ public class AnalQuery {
 				}
 			}
 		}
+		System.out.println("finish get word");
 		List<DocResult> intersection = new ArrayList<DocResult>();
 		for (ByteBuffer docID : set.keySet()) {
 			if (set.get(docID).containsAll()) {
@@ -74,20 +81,22 @@ public class AnalQuery {
 		
 		// minimize the page source set
 		List<DocResult> minimizedSet = new ArrayList<DocResult>();
-		for (DocResult doc : intersection) {
-			int positionScore = doc.setPositionScore();
-			if(positionScore > 0) minimizedSet.add(doc);
+		if(size == 1) minimizedSet = intersection;
+		else{
+			for (DocResult doc : intersection) {
+				int positionScore = doc.setPositionScore();
+				if(positionScore > 0) minimizedSet.add(doc);
+			}
 		}
 		System.out.println("Minimized Set "+minimizedSet.size());
-		
-		int maxClickCount = setClickScore(query, set);
-		if(minimizedSet.size()<10){
+//		int maxClickCount = setClickScore(query, set);
+		if(minimizedSet.size()<10 && size != 1){
 			minimizedSet = intersection;
 		}
 		
 		// compute the score
 		for (DocResult doc : minimizedSet){
-			doc.calculateScore(maxClickCount);
+			doc.calculateScore(1);
 		}
 		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {
@@ -107,10 +116,10 @@ public class AnalQuery {
 			String title = docURLTitle.getTitle();
 			SearchResult sr = new SearchResult(url, docID, title);
 			responses.add(sr);
-			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getPositionScore()+"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
-//			for(List<Integer> w:doc.getPositions()){
-//				System.out.println(w);
-//			}
+			System.out.println(url +"\t"+doc.getDocID()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
+			for(List<Integer> w:doc.getPositions()){
+				System.out.println(w);
+			}
 		}
 		return responses;
 

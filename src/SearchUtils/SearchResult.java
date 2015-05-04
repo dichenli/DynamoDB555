@@ -10,6 +10,7 @@ public class SearchResult {
 	public SearchResult(String url, byte[] docID, String title){
 		this.url = url;
 		this.decimalID = BinaryUtils.byteArrayToDecimalString(docID);
+		this.title = title;
 	}
 
 	public String getUrl(){
