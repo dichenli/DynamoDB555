@@ -98,7 +98,7 @@ public class QueryRecord {
 
 	@Override
 	public String toString() {
-		return query +"\t" + BinaryUtils.byteArrayToString(id) + "\t" + count;
+		return query +"\t" + BinaryUtils.byteArrayToDecimalString(id) + "\t" + count;
 	}
 	
 	@Override

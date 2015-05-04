@@ -10,6 +10,7 @@ import java.util.List;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 import DynamoDB.DocURL;
+import DynamoDB.DocURLTitle;
 import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
@@ -100,8 +101,11 @@ public class AnalQuery {
 		int responsesize = Math.min(intersection.size(), 20);
 		for(int i=0;i<responsesize;i++){
 			DocResult doc = minimizedSet.get(i);
-			String url = DocURL.load(doc.getDocID().array()).getURL();
-			SearchResult sr = new SearchResult(url);
+			byte[] docID = doc.getDocID().array();
+			DocURLTitle docURLTitle = DocURLTitle.load(docID); //get url and title from the new function
+			String url = docURLTitle.getURL();
+			String title = docURLTitle.getTitle();
+			SearchResult sr = new SearchResult(url, docID, title);
 			responses.add(sr);
 			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getPositionScore()+"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
 //			for(List<Integer> w:doc.getPositions()){
