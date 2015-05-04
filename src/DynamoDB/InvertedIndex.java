@@ -83,6 +83,11 @@ public class InvertedIndex {
 		this.positions = new HashSet<Integer>();
 		this.positions.addAll(positions);
 	}
+	
+	public void setPositionsSorted(List<Integer> positions) {
+		
+	}
+	
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
