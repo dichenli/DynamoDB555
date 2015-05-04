@@ -13,6 +13,7 @@ public class SearchResult {
 	public SearchResult(String url, byte[] docID, String title, List<String> wordList){
 		this.url = url;
 		this.decimalID = BinaryUtils.byteArrayToDecimalString(docID);
+		this.title = title;
 		this.wordList = wordList;
 	}
 
