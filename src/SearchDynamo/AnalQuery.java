@@ -105,7 +105,7 @@ public class AnalQuery {
 			DocURLTitle docURLTitle = DocURLTitle.load(docID); //get url and title from the new function
 			String url = docURLTitle.getURL();
 			String title = docURLTitle.getTitle();
-			SearchResult sr = new SearchResult(url, docID, title);
+			SearchResult sr = new SearchResult(url, docID, title, wordlist);
 			responses.add(sr);
 			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getPositionScore()+"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
 //			for(List<Integer> w:doc.getPositions()){

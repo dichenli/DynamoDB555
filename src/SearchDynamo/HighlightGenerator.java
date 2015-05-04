@@ -18,6 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import S3.S3FileReader;
+import SearchUtils.QueryInfo;
 import snowballstemmer.PorterStemmer;
 
 /**
@@ -25,8 +26,14 @@ import snowballstemmer.PorterStemmer;
  * given a DocID, find the document content, then find the string that match the
  * given positions. Reverse Engineer of IndexerMapper code
  */
-public class WordHeat {
+public class HighlightGenerator {
 
+	/**
+	 * core function to generate match highlight
+	 * @param rawContent content before stem
+	 * @param words words that are already stemmed
+	 * @return
+	 */
 	public static String findPosition(String rawContent, String[] words) {
 		//remove all tags, keep only words
 		String content = html2text(rawContent);
@@ -36,17 +43,13 @@ public class WordHeat {
 		String begin = "(.{0," + prefix + "})";
 		String end = "(.{0," + suffix + "})";
 		String regex = begin;
-		PorterStemmer stemmer = new PorterStemmer();
+//		PorterStemmer stemmer = new PorterStemmer();
 		//compose regex, example: /.{0,50}\b(Regular.*?)\b.+?\b(express.*?)\b.{0,50}/
 		for (int i = 0; i < words.length; i++) {
 			if(words[i].equals("")) continue;
-			stemmer.setCurrent(words[i]);
-			if(stemmer.stem()){
-				String word = stemmer.getCurrent();				
-				regex += ("\\b(" + Pattern.quote(word) + ".*?)\\b");
-				if(i < words.length - 1) {
-					regex += "(.+?)";
-				}
+			regex += ("\\b(" + Pattern.quote(words[i]) + ".*?)\\b");
+			if(i < words.length - 1) {
+				regex += "(.+?)";
 			}
 		}
 		regex += end;
@@ -114,6 +117,11 @@ public class WordHeat {
 	public static String wordHeat(String decimalID, String[] query) {
 		String result = S3FileReader.getFileContent(decimalID);
 		return findPosition(result, query);
+	}
+	
+	public static String wordHeat(String decimalID, String marshalledList) {
+		String[] query = marshalledList.split(" ");
+		return wordHeat(decimalID, query);
 	}
 
 	public static void main(String[] args) {

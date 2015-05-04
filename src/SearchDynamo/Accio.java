@@ -88,6 +88,13 @@ public class Accio extends HttpServlet {
 			String query = request.getParameter("query");
 			String docID = URLtoDocID.toBigInteger(url);
 			QueryRecord.increment(query, docID);
+		} else if (path.equals("/wordHeat")) {
+			String decimalID = request.getParameter("decimalID");
+			String query = request.getParameter("query"); 
+			//the query here is actually the wordList in QueryInfo class, which means it is stemmed, selected, 
+			//then it is marshalled by SearchResult getWordListMarshall(), and send to client side
+			//then it is returned to server by the parameter "query" here
+			String highlight = HighlightGenerator.wordHeat(decimalID, query);
 		}
 		
 	}
@@ -163,8 +170,12 @@ public class Accio extends HttpServlet {
 								+ "<ul class=\"list-group\">");
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a><>");
-			out.write("<p><span id=\"wordheat" + i + "\" onload=\"wordHeat(" + i + "," + results.get(i).getID() + ")\"></span></p>");
+			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a>");
+			out.write("<p id=\"wordheat" + i + "\" onload=\"wordHeat("
+					+ i + "," 
+					+ results.get(i).getID() + "," 
+					+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+					+ ")\"></p>");
 			out.write("</li>");
 			
 		}
@@ -176,14 +187,14 @@ public class Accio extends HttpServlet {
 							+ "</div>"
 						+ "</div>"
 					+ "<script>"
-					+ "function wordHeat(var i, var decimalID) { "
+					+ "function wordHeat(var i, var decimalID, var query) { "
 					+ 	"var xmlhttp; "
 					+ 	"if (window.XMLHttpRequest){ "
 					+ 		"xmlhttp = new XMLHttpRequest(); "
 					+ 	"} else { "
 					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
 					+ 	"} "
-					+ 	"var path = \"/DynamoDB555/wordHeat?\" + \"decimalID=\" + decimalID; "//TODO send word list
+					+ 	"var path = \"/DynamoDB555/wordHeat?\" + \"decimalID=\" + decimalID + \"query=\" + query;"
 					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
 					+ 	"xmlhttp.send(); "
 					+ 	"wordHeatText = xmlhttp.responseText; "
