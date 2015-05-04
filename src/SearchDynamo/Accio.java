@@ -192,7 +192,7 @@ public class Accio extends HttpServlet {
 			}
 			
 			for(i = 0 ; i < words.size(); i++){
-				newPhrase.append(words.get(i));
+				newPhrase.append(words.get(i)+" ");
 			}
 		}
 		else{
