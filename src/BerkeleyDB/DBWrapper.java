@@ -107,7 +107,7 @@ public class DBWrapper {
 	
 	public boolean containsWord(String word){
 		DBDictionary dic = dBDictionary.get(dict);
-		System.out.println(dic == null);
+//		System.out.println(dic == null);
 		return dic.containsWord(word);
 	}
 	

@@ -1,6 +1,7 @@
 package SearchDynamo;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -10,13 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import spellchecker.Dictionary;
-import spellchecker.FileCorrector;
 import spellchecker.SpellChecker;
-import spellchecker.SwapCorrector;
-import BerkeleyDB.DBWrapper;
 import DynamoDB.QueryRecord;
-import SearchUtils.SearchResult;
+import SearchUtils.DocResult;
 import Utils.ProcessUtils;
 
 /**
@@ -95,8 +92,10 @@ public class Accio extends HttpServlet {
 			out.flush();
 		}
 		else if(path.equals("/insertquery")){
+			System.out.println("get insert query");
 			String url = request.getParameter("url");
 			String query = request.getParameter("query");
+			System.out.println(url+" "+query);
 			String docID = ProcessUtils.toBigInteger(url);
 			QueryRecord.increment(query, docID);
 		} else if (path.equals("/match_highlight")) {
@@ -137,22 +136,24 @@ public class Accio extends HttpServlet {
 		String phrase = request.getParameter("phrase");
 		String wiki_html = "";
 		String webapp = request.getContextPath();
-		List<SearchResult> results = new ArrayList<SearchResult>();
+		List<DocResult> results = new ArrayList<DocResult>();
 		String word;
 		ArrayList<String> words = new ArrayList<String>();
 		StringBuilder newPhrase = new StringBuilder("");
 		int i = 0;
 		boolean correct = true;
 		System.out.println("the phrase is "+phrase);
+
 		StringTokenizer tokenizer = new StringTokenizer(phrase,PARSER);
 		while (tokenizer.hasMoreTokens()) {
 			word = tokenizer.nextToken();
 			if (word.equals("")) continue;
-//			System.out.println(word);
+			System.out.println(word);
 			words.add(word);
 			
 			
 		}
+		newPhrase.append(phrase);
 		
 //		for(int i = 0; i < words.length; i++){
 //			words[i].trim().toLowerCase();
@@ -161,43 +162,59 @@ public class Accio extends HttpServlet {
 //			}
 //			
 //		}
-		if(path.equals("/Accio")){
-			SpellChecker sc = new SpellChecker();
-			
-			/**
-			 * spell check part
-			 * */
-			
-			for(i = 0; i < words.size(); i++){
-				word = words.get(i);
-				System.out.println("the word is "+word);
-				if(sc.isWord(word)){
-					System.out.println("in the dictionary");
-					correct = true;
-					continue;
-				}
-				else{
-					System.out.println("not in the dictionary");
-					correct = false;
-					if(sc.isCommonMisspell(word)){
-						System.out.println("is common misspelling");
-						String right = sc.getRightMisspell(word);
-						words.set(i, right);
-					}
-					else{
-						String right = sc.getRightSwap(word);
-						words.set(i, right);
-					}
-				}
-			}
-			
-			for(i = 0 ; i < words.size(); i++){
-				newPhrase.append(words.get(i)+" ");
-			}
-		}
-		else{
-			newPhrase.append(phrase);
-		}
+//		if(path.equals("/Accio")){
+//			SpellChecker sc = new SpellChecker();
+//			
+//			/**
+//			 * spell check part
+//			 * */
+//			
+//			for(i = 0; i < words.size(); i++){
+//				word = words.get(i);
+//				System.out.println("the word is "+word);
+//				if(sc.isWord(word.toLowerCase())){
+//					System.out.println("in the dictionary");
+//					
+//					continue;
+//				}
+//				else{
+//					System.out.println("not in the dictionary");
+//					
+//					if(sc.isCommonMisspell(word.toLowerCase())){
+//						correct = false;
+//						System.out.println("is common misspelling");
+//						String right = sc.getRightMisspell(word.toLowerCase());
+//						words.set(i, right);
+//					}
+//					else{
+//						String right = sc.getRightSwap(word.toLowerCase());
+//						if(!words.get(i).equalsIgnoreCase(right)){
+//							correct = false;
+//						}
+//						words.set(i, right);
+//					}
+//				}
+//			}
+//			
+//			for(i = 0 ; i < words.size(); i++){
+//				newPhrase.append(words.get(i)+" ");
+//			}
+//		}
+//		else{
+//			newPhrase.append(phrase);
+//		}
+		
+//		System.out.println(newPhrase.toString());
+//		words = new ArrayList<String>();
+//		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+//		while (tokenizer.hasMoreTokens()) {
+//			word = tokenizer.nextToken();
+//			if (word.equals("")) continue;
+//			System.out.println(word);
+//			words.add(word);
+//			
+//			
+//		}
 		
 		/**
 		 * wiki part
@@ -278,6 +295,13 @@ public class Accio extends HttpServlet {
 						+ "</a>"
 					+ "</div>");
 		}
+		else{
+			out.write("<div class=\"row\">"
+					+ "<h3 hidden>Important things need to be said three times</h3>"
+					+ "</div>"
+					+ "<div class=\"row\"></div>");
+			
+		}
 		
 //							+ "<h2>"
 //							+ "important things need to be said three times!"
@@ -329,7 +353,7 @@ public class Accio extends HttpServlet {
 					for(int j = 0; j < results.size(); j++) {
 						out.write("match_highlight("
 									+ j + ",'" 
-									+ results.get(j).getID() + "','" 
+									+ results.get(j).getDocID() + "','" 
 									+ phrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}

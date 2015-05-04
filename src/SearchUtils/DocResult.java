@@ -17,14 +17,15 @@ public class DocResult {
 	
 	private static final double W_POSITION_MULTIPLE = 0.5;
 	private static final double W_PAGERANK_MULTIPLE = 0.2;
-	private static final double W_ANCHOR_MULTIPLE = 0.5;
 	private static final double W_TFIDF = 0.2;
 	private static final double W_CLICK_MULTIPLE = 0.2;
 	
 	private static final double W_PAGERANK = 0.3;
-	private static final double W_ANCHOR = 0.8;
 	private static final double W_TF = 0.4;
 	private static final double W_CLICK = 0.3;
+	
+	private static final double BASE_URL = 5;
+	private static final double BASE_TITLE = 10;
 	
 	String query;
 	List<String> wordlist;
@@ -33,7 +34,8 @@ public class DocResult {
 	List<Integer>[] positions;
 	List<Double> idflist;
 	int[] windowlist;
-//	String url;
+	String url;
+	String title;
 	int size;
 	AnchorResult anchors;
 	int clickcount;
@@ -190,7 +192,7 @@ public class DocResult {
 	}
 	
 	public void secondScore(){
-		
+		finalScore += anchorScore;
 	}
 	
 	public double getPageRank() {
@@ -214,6 +216,13 @@ public class DocResult {
 			return -1;
 	}
 	
+	public String getUrl(){
+		return url;
+	}
+	
+	public String getTitle(){
+		return title;
+	}
 	
 	public List<String> analyzeURL(String url) throws IOException, InterruptedException {
 		List<String> urlWords = new ArrayList<String>();
@@ -263,8 +272,13 @@ public class DocResult {
 	
 	public void analyzeURLTitle() throws Exception{
 		DocURLTitle urltitle = DocURLTitle.load(id.array());
-		String url = urltitle.getURL();
+		url = urltitle.getURL();
+		if(url == null) url = "";
+		else url = url.toLowerCase();
 		String title = urltitle.getTitle();
+		if(title == null) title = "";
+		else title= title.toLowerCase();
+		this.title = title.equals("") ? url:title;
 		List<String> urlWords = analyzeURL(url);
 		List<String> titleWords = analyzeTitle(title);
 		List<String> urlcount = new ArrayList<String>();
@@ -274,7 +288,7 @@ public class DocResult {
 			if(urlWords.contains(word)) urlcount.add(word);
 			if(titleWords.contains(wordlist.get(i))) titlecount.add(word);
 		}
-		anchorScore = urlcount.size()+titlecount.size();
+		anchorScore = (urlcount.size()*BASE_URL+titlecount.size()*BASE_TITLE)/(BASE_TITLE*size);
 	}
 
 	
