@@ -1,23 +1,18 @@
 package SearchDynamo;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import DynamoDB.DocURLTitle;
 import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
+import SearchUtils.FindURLThread;
 import SearchUtils.QueryInfo;
-import SearchUtils.SearchResult;
-import Utils.ProcessUtils;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
@@ -104,14 +99,23 @@ public class AnalQuery {
 	        }
 	    });
 		
-		minimizedSet = minimizedSet.subList(0, Math.min(minimizedSet.size(), 100));
+		int setsize = minimizedSet.size();
+		minimizedSet = minimizedSet.subList(0, Math.min(setsize, 100));
 		
-		// second score (including url and title check)
-		for (int i=0;i<minimizedSet.size();i++){
-			DocResult doc = minimizedSet.get(i);
-			doc.analyzeURLTitle();
-			doc.secondScore();
+		Thread[] urlThreads = new FindURLThread[10];
+		for(int i=0;i<10;i++){
+			urlThreads[i] = new FindURLThread(i, minimizedSet, setsize);
+			urlThreads[i].start();
 		}
+		for(int i=0;i<10;i++){
+			urlThreads[i].join();
+		}
+		// second score (including url and title check)
+//		for (int i=0;i<minimizedSet.size();i++){
+//			DocResult doc = minimizedSet.get(i);
+//			doc.analyzeURLTitle();
+//			doc.secondScore();
+//		}
 		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {
 	        @Override
