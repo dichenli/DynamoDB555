@@ -7,13 +7,18 @@ import DynamoDB.QueryRecord;
 
 public class DocResult {
 	private static final int BASE = 30;
-	private static final int WINDOW = 5;
+	private static final int WINDOW = 3;
 	
-	private static final double W_POSITION = 0.5;
-	private static final double W_PAGERANK = 0.3;
-	private static final double W_ANCHOR = 0;
+	private static final double W_POSITION_MULTIPLE = 0.5;
+	private static final double W_PAGERANK_MULTIPLE = 0.2;
+	private static final double W_ANCHOR_MULTIPLE = 0.3;
 	private static final double W_TFIDF = 0.2;
-	private static final double W_CLICK = 0.2;
+	private static final double W_CLICK_MULTIPLE = 0.2;
+	
+	private static final double W_PAGERANK = 0.3;
+	private static final double W_ANCHOR = 0.3;
+	private static final double W_TF = 0.4;
+	private static final double W_CLICK = 0.3;
 	
 	String query;
 	ByteBuffer id;
@@ -32,12 +37,14 @@ public class DocResult {
 	int positionScore = 0;
 	double anchorScore = 0;
 	double pageRank;
+	double pageScore;
 	double finalScore;
 
-	public DocResult(String query, ByteBuffer id, int size, int[] windowlist, List<Double> idflist) {
+	public DocResult(String query, ByteBuffer id, double pageRank, int size, int[] windowlist, List<Double> idflist) {
 		this.query = query;
 		this.id = id;
 		this.size = size;
+		this.pageRank = pageRank;
 		positions = (List<Integer>[])new List[size];
 		this.windowlist = windowlist;
 		this.wordtf = new double[size];
@@ -145,17 +152,29 @@ public class DocResult {
 	}
 	
 	// calculate pageRank score
-	public void setPageRank(){
-//		pageRank = PageRank.load(id).getRank();
+	public void setPageScore(){
+		pageScore = Math.log(pageRank + 1);
+		pageScore = pageScore/5;
 	}
 	
 	public void calculateScore(int maxClickCount){
-		setPositionScore();
-		setPageRank();
+		setPageScore();
 		setAnchorScore();
 		setTFScore();
 		if(maxClickCount == 0) maxClickCount = 1;
-		finalScore = W_POSITION*positionScore + W_CLICK*clickcount/maxClickCount + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
+		if(size > 1) {
+			finalScore = W_POSITION_MULTIPLE*positionScore/((size-1)*BASE) 
+						+ W_CLICK_MULTIPLE*clickcount/maxClickCount 
+						+ W_PAGERANK_MULTIPLE*pageScore
+						+ W_ANCHOR_MULTIPLE*anchorScore 
+						+ W_TFIDF*tfidf;
+		}
+		else {
+			finalScore = W_CLICK*clickcount/maxClickCount
+					    + W_PAGERANK*pageScore
+					    + W_ANCHOR*anchorScore
+					    + W_TF*wordtf[0];   
+		}
 	}
 	
 	public double getPageRank() {
