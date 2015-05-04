@@ -1,6 +1,7 @@
 package BerkeleyDB;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -40,15 +41,22 @@ public class DBWrapper {
 	 *
 	 * @param envDirectory the env directory
 	 */
-	public DBWrapper(String envDirectory){
-		if(!envDirectory.endsWith("/")) envDirectory += "/";
+	public DBWrapper(String input_envDirectory){
+		if(!input_envDirectory.endsWith("/")) input_envDirectory += "/";
 		
 		EnvironmentConfig envConfig = new EnvironmentConfig();
 		envConfig.setAllowCreate(true);
 		StoreConfig stConfig = new StoreConfig();
 		stConfig.setAllowCreate(true); 
-		this.envDirectory = envDirectory;
+		envDirectory = input_envDirectory;
 		File f = new File(envDirectory);
+		
+		try {
+			System.out.println(f.getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		if(!f.exists()) f.mkdir();
 		if(!f.isDirectory()) throw new IllegalArgumentException();
 		myEnv = new Environment(f, envConfig);
@@ -99,6 +107,7 @@ public class DBWrapper {
 	
 	public boolean containsWord(String word){
 		DBDictionary dic = dBDictionary.get(dict);
+		System.out.println(dic == null);
 		return dic.containsWord(word);
 	}
 	

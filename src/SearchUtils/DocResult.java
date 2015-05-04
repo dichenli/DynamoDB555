@@ -1,8 +1,14 @@
 package SearchUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import Utils.ProcessUtils;
+import DynamoDB.DocURLTitle;
 import DynamoDB.QueryRecord;
 
 public class DocResult {
@@ -11,12 +17,12 @@ public class DocResult {
 	
 	private static final double W_POSITION_MULTIPLE = 0.5;
 	private static final double W_PAGERANK_MULTIPLE = 0.2;
-	private static final double W_ANCHOR_MULTIPLE = 0.3;
+	private static final double W_ANCHOR_MULTIPLE = 0.5;
 	private static final double W_TFIDF = 0.2;
 	private static final double W_CLICK_MULTIPLE = 0.2;
 	
 	private static final double W_PAGERANK = 0.3;
-	private static final double W_ANCHOR = 0.3;
+	private static final double W_ANCHOR = 0.8;
 	private static final double W_TF = 0.4;
 	private static final double W_CLICK = 0.3;
 	
@@ -28,7 +34,7 @@ public class DocResult {
 	int[] windowlist;
 //	String url;
 	int size;
-	AnchorResult[] anchors;
+	AnchorResult anchors;
 	int clickcount;
 	
 	// different factors
@@ -50,14 +56,16 @@ public class DocResult {
 		this.wordtf = new double[size];
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 		this.idflist = idflist;
-		anchors = new AnchorResult[size];
-		for(int i=0;i<size;i++){
-			anchors[i] = new AnchorResult();
-		}
+		anchors = new AnchorResult(size);
 	}
 
 	public boolean containsAll() {
 		return size == count;
+	}
+	
+	public boolean isUserfulAnchor() {
+		anchors.setAnchorScore();
+		return anchors.isUsefulAnchor();
 	}
 	
 	public void setClickScore(int count){
@@ -73,8 +81,12 @@ public class DocResult {
 		wordtf[index] = tf;
 	}
 	
-	public void setAnchor(int wordindex, int type){
-		anchors[wordindex].setType(type);
+	public void setAnchor(int index, int type){
+		anchors.setType(index, type);
+	}
+	
+	public void calculateAnchor(){
+		anchorScore = anchors.getAnchorScore();
 	}
 
 	public void setFinalScore(double finalScore) {
@@ -99,6 +111,7 @@ public class DocResult {
 
 	// calculate position score
 	public int setPositionScore() {
+		
 		for (int i = 0; i < positions.length - 1; i++) {
 			int score = 0, j = 0, k = 0, dis;
 			boolean firstTime = true;
@@ -146,9 +159,8 @@ public class DocResult {
 		}
 	}
 	
-	// calculate anchor score
-	public void setAnchorScore() {
-		
+	public double getAnchorScore() {
+		return anchorScore;
 	}
 	
 	// calculate pageRank score
@@ -157,24 +169,26 @@ public class DocResult {
 		pageScore = pageScore/5;
 	}
 	
-	public void calculateScore(int maxClickCount){
+	public void firstScore(int maxClickCount){
 		setPageScore();
-		setAnchorScore();
+		calculateAnchor();
 		setTFScore();
 		if(maxClickCount == 0) maxClickCount = 1;
 		if(size > 1) {
 			finalScore = W_POSITION_MULTIPLE*positionScore/((size-1)*BASE) 
 						+ W_CLICK_MULTIPLE*clickcount/maxClickCount 
 						+ W_PAGERANK_MULTIPLE*pageScore
-						+ W_ANCHOR_MULTIPLE*anchorScore 
 						+ W_TFIDF*tfidf;
 		}
 		else {
 			finalScore = W_CLICK*clickcount/maxClickCount
 					    + W_PAGERANK*pageScore
-					    + W_ANCHOR*anchorScore
 					    + W_TF*wordtf[0];   
 		}
+	}
+	
+	public void secondScore(){
+		
 	}
 	
 	public double getPageRank() {
@@ -197,4 +211,61 @@ public class DocResult {
 		else
 			return -1;
 	}
+	
+	
+	public List<String> analyzeURL(String url) throws IOException, InterruptedException {
+		List<String> urlWords = new ArrayList<String>();
+		if(url.startsWith("http://")){
+			url = url.substring(7);
+		}
+		else if(url.startsWith("https://")){
+			url = url.substring(8);
+		}
+		if(url.startsWith("www.")){
+			url = url.substring(4);
+		}
+		url = ProcessUtils.stemContent(url);
+		StringTokenizer tokenizer = new StringTokenizer(url, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("") || word.length()>20) continue;
+			if(ProcessUtils.isNumber(word)) continue;
+			if(!ProcessUtils.stopWords.contains(word)){
+				urlWords.add(word);
+			}
+		}
+		return urlWords;
+	}
+	
+	public List<String> analyzeTitle(String content){
+		List<String> titleWords = new ArrayList<String>();
+		String store_text = ProcessUtils.stemContent(content);
+		StringTokenizer tokenizer = new StringTokenizer(store_text, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("")) continue;
+			boolean flag = false;
+			for(int i=0;i<word.length();i++){
+				if (Character.UnicodeBlock.of(word.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN) {
+					flag = true;
+					break;
+				}
+			}	
+			if(flag) continue;
+			titleWords.add(word);
+		}
+		return titleWords;
+	}
+	
+	public void analyzeURLTitle() throws Exception{
+		DocURLTitle urltitle = DocURLTitle.load(id.array());
+		String url = urltitle.getURL();
+		String title = urltitle.getTitle();
+		List<String> urlWords = analyzeURL(url);
+		List<String> titleWords = analyzeTitle(title);
+	}
+
+	
 }

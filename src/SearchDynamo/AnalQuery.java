@@ -1,13 +1,15 @@
 package SearchDynamo;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import java.util.StringTokenizer;
 
 import DynamoDB.DocURLTitle;
 import DynamoDB.InvertedIndex;
@@ -15,16 +17,12 @@ import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
 import SearchUtils.QueryInfo;
 import SearchUtils.SearchResult;
+import Utils.ProcessUtils;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 
 public class AnalQuery {
-	
-	public static void main(String[] args) throws Exception{
-		List<SearchResult> response = search("computer science");
-		for(SearchResult sr:response){
-			System.out.println(sr.getUrl());
-		}
-	}
 	
 	public static int setClickScore(String query, HashMap<ByteBuffer, DocResult> set){
 		int maxcount = 0;
@@ -37,6 +35,7 @@ public class AnalQuery {
 		}
 		return maxcount;
 	}
+	
 
 	public static List<SearchResult> search(String query) throws Exception {
 		QueryInfo queryInfo = new QueryInfo(query);
@@ -51,24 +50,23 @@ public class AnalQuery {
 			System.out.println(word);
 			List<InvertedIndex> collection = InvertedIndex.query(word);
 			int count = 0;
-			for (InvertedIndex ii : collection) {
+			Iterator it = collection.iterator();
+			while(it.hasNext()){
+				InvertedIndex ii = (InvertedIndex)it.next();
 				count++;
 				System.out.println(count);
 				ByteBuffer docID = ii.getId();
 				double pageRank = ii.getPageRank();
-				if(pageRank == -1) pageRank = 0;
-				if(ii.getType() == 0){			
-					if (!set.containsKey(docID))
-						set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
-					DocResult doc = set.get(docID);
-					doc.setPositionList(i, ii.PositionsSorted());
-					doc.setTF(i, ii.getTF());
-				}
-				else {
-					if(set.containsKey(docID)){
-						set.get(docID).setAnchor(i, ii.getType());
-					}
-				}
+				if(pageRank == -1) pageRank = 0;		
+				if (!set.containsKey(docID))
+					set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
+				DocResult doc = set.get(docID);
+				doc.setPositionList(i, ii.PositionsSorted());
+				doc.setTF(i, ii.getTF());
+//				else {
+//					System.out.println("get type");
+//					doc.setAnchor(i, ii.getType());
+//				}
 			}
 		}
 		System.out.println("finish get word");
@@ -90,13 +88,13 @@ public class AnalQuery {
 		}
 		System.out.println("Minimized Set "+minimizedSet.size());
 //		int maxClickCount = setClickScore(query, set);
-		if(minimizedSet.size()<10 && size != 1){
+		if(minimizedSet.size()<100 && size != 1){
 			minimizedSet = intersection;
 		}
 		
 		// compute the score
 		for (DocResult doc : minimizedSet){
-			doc.calculateScore(1);
+			doc.firstScore(1);
 		}
 		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {
@@ -106,9 +104,15 @@ public class AnalQuery {
 	        }
 	    });
 		
+		int afterPositionSize = Math.min(minimizedSet.size(), 500);
+		for (int i=0;i<afterPositionSize;i++){
+			DocResult doc = minimizedSet.get(i);
+			doc.analyzeURLTitle();
+		}
+		
 		List<SearchResult> responses = new ArrayList<SearchResult>();
-		int responsesize = Math.min(intersection.size(), 20);
-		for(int i=0;i<responsesize;i++){
+		
+		for(int i=0;i<responses.size();i++){
 			DocResult doc = minimizedSet.get(i);
 			byte[] docID = doc.getDocID().array();
 			DocURLTitle docURLTitle = DocURLTitle.load(docID); //get url and title from the new function
@@ -116,13 +120,21 @@ public class AnalQuery {
 			String title = docURLTitle.getTitle();
 			SearchResult sr = new SearchResult(url, docID, title, wordlist);
 			responses.add(sr);
-			System.out.println(url +"\t"+doc.getDocID()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
+			System.out.println(url +"\t"+doc.getAnchorScore()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
 			for(List<Integer> w:doc.getPositions()){
 				System.out.println(w);
 			}
 		}
 		return responses;
 
+	}
+	
+
+	public static void main(String[] args) throws Exception{
+		List<SearchResult> response = search("computer science");
+		for(SearchResult sr:response){
+			System.out.println(sr.getUrl());
+		}
 	}
 
 }
