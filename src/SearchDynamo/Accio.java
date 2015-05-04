@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import spellchecker.SpellChecker;
 import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
+import Utils.BinaryUtils;
 import Utils.ProcessUtils;
 
 /**
@@ -353,7 +354,7 @@ public class Accio extends HttpServlet {
 					for(int j = 0; j < results.size(); j++) {
 						out.write("match_highlight("
 									+ j + ",'" 
-									+ results.get(j).getDocID() + "','" 
+									+ BinaryUtils.byteArrayToDecimalString(results.get(j).getDocID().array()) + "','" 
 									+ phrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}
