@@ -56,7 +56,7 @@ public class HighlightGenerator {
 			}
 		}
 		regex += end;
-		System.out.println(regex);
+//		System.out.println(regex);
 		//try to match
 		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(content);
@@ -64,7 +64,7 @@ public class HighlightGenerator {
 			System.out.println("not match");
 			return ""; //not found
 		}
-		System.out.println("match!");
+//		System.out.println("match!");
 //		int min = Integer.MAX_VALUE;
 //		try { //find the shortest match
 //			for(int i = 0; i < 3; i++) {
@@ -84,7 +84,7 @@ public class HighlightGenerator {
 		//compose the string to be presented
 //		matcher.find(min);
 		String result = matcher.group(1);
-		System.out.println("group 1");
+//		System.out.println("group 1");
 		if(result.length() >= prefix) { //if the match is the beginning of the file
 			result = "..." + result;
 		}
@@ -105,7 +105,7 @@ public class HighlightGenerator {
 			endMatch += "...";
 		}
 		result += endMatch;
-		System.out.println(result);
+//		System.out.println(result);
 		return result;
 	}
 
@@ -122,9 +122,9 @@ public class HighlightGenerator {
 	 * @return a piece of text that highlight the matching content from the query
 	 */
 	public static String generate(String decimalID, String[] query) {
-		System.out.println("load file from S3...");
+//		System.out.println("load file from S3...");
 		String result = S3FileReader.getFileContent(decimalID);
-		System.out.println("load file from S3 done");
+//		System.out.println("load file from S3 done");
 		return findPosition(result, query);
 	}
 	
