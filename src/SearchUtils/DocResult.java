@@ -154,6 +154,7 @@ public class DocResult {
 		setPageRank();
 		setAnchorScore();
 		setTFScore();
+		if(maxClickCount == 0) maxClickCount = 1;
 		finalScore = W_POSITION*positionScore + W_CLICK*clickcount/maxClickCount + W_ANCHOR*anchorScore + W_TFIDF*tfidf;
 	}
 	

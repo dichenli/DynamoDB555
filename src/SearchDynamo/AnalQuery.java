@@ -52,16 +52,15 @@ public class AnalQuery {
 			List<InvertedIndex> collection = InvertedIndex.query(word);
 			for (InvertedIndex ii : collection) {
 				ByteBuffer docID = ii.getId();
-				if (!set.containsKey(docID))
-					set.put(docID, new DocResult(query, docID, size, queryInfo.getWindowlist(), idflist));
-				set.get(docID).setPositionList(i, ii.PositionsSorted());
-				if(ii.getType() == 0 ) {
-					System.out.println("content");
-					set.get(docID).setTF(i, ii.getTF());
+				if(ii.getType() == 0){			
+					if (!set.containsKey(docID))
+						set.put(docID, new DocResult(query, docID, size, queryInfo.getWindowlist(), idflist));
+					set.get(docID).setPositionList(i, ii.PositionsSorted());
 				}
 				else {
-					System.out.println("anchor"+"\t"+ii.getType()+"\t"+wordlist.get(i));
-					set.get(docID).setAnchor(i, ii.getType());
+					if(set.containsKey(docID)){
+						set.get(docID).setAnchor(i, ii.getType());
+					}
 				}
 			}
 		}
@@ -78,6 +77,7 @@ public class AnalQuery {
 			int positionScore = doc.setPositionScore();
 			if(positionScore > 0) minimizedSet.add(doc);
 		}
+		System.out.println("Minimized Set "+minimizedSet.size());
 		
 		int maxClickCount = setClickScore(query, set);
 		if(minimizedSet.size()<10){
@@ -89,7 +89,7 @@ public class AnalQuery {
 			doc.calculateScore(maxClickCount);
 		}
 		
-		Collections.sort(intersection, new Comparator<DocResult>() {
+		Collections.sort(minimizedSet, new Comparator<DocResult>() {
 	        @Override
 	        public int compare(DocResult o1, DocResult o2) {
 	            return o2.compareTo(o1);
@@ -99,11 +99,11 @@ public class AnalQuery {
 		List<SearchResult> responses = new ArrayList<SearchResult>();
 		int responsesize = Math.min(intersection.size(), 20);
 		for(int i=0;i<responsesize;i++){
-			DocResult doc = intersection.get(i);
+			DocResult doc = minimizedSet.get(i);
 			String url = DocURL.load(doc.getDocID().array()).getURL();
 			SearchResult sr = new SearchResult(url);
 			responses.add(sr);
-			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
+			System.out.println(DocURL.load(doc.getDocID().array()).getURL() +"\t"+doc.getPositionScore()+"\t"+doc.getClickCount()+"\t"+doc.getFinalScore());
 //			for(List<Integer> w:doc.getPositions()){
 //				System.out.println(w);
 //			}
