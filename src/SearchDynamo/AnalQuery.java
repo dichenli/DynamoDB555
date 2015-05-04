@@ -112,7 +112,7 @@ public class AnalQuery {
 		
 		List<SearchResult> responses = new ArrayList<SearchResult>();
 		
-		for(int i=0;i<responsesize;i++){
+		for(int i=0;i<responses.size();i++){
 			DocResult doc = minimizedSet.get(i);
 			byte[] docID = doc.getDocID().array();
 			DocURLTitle docURLTitle = DocURLTitle.load(docID); //get url and title from the new function
