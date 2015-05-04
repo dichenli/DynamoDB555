@@ -11,12 +11,12 @@ public class DocResult {
 	
 	private static final double W_POSITION_MULTIPLE = 0.5;
 	private static final double W_PAGERANK_MULTIPLE = 0.2;
-	private static final double W_ANCHOR_MULTIPLE = 0.3;
+	private static final double W_ANCHOR_MULTIPLE = 0.5;
 	private static final double W_TFIDF = 0.2;
 	private static final double W_CLICK_MULTIPLE = 0.2;
 	
 	private static final double W_PAGERANK = 0.3;
-	private static final double W_ANCHOR = 0.3;
+	private static final double W_ANCHOR = 0.8;
 	private static final double W_TF = 0.4;
 	private static final double W_CLICK = 0.3;
 	
@@ -28,7 +28,7 @@ public class DocResult {
 	int[] windowlist;
 //	String url;
 	int size;
-	AnchorResult[] anchors;
+	AnchorResult anchors;
 	int clickcount;
 	
 	// different factors
@@ -50,14 +50,16 @@ public class DocResult {
 		this.wordtf = new double[size];
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 		this.idflist = idflist;
-		anchors = new AnchorResult[size];
-		for(int i=0;i<size;i++){
-			anchors[i] = new AnchorResult();
-		}
+		anchors = new AnchorResult(size);
 	}
 
 	public boolean containsAll() {
 		return size == count;
+	}
+	
+	public boolean isUserfulAnchor() {
+		anchors.setAnchorScore();
+		return anchors.isUsefulAnchor();
 	}
 	
 	public void setClickScore(int count){
@@ -73,8 +75,12 @@ public class DocResult {
 		wordtf[index] = tf;
 	}
 	
-	public void setAnchor(int wordindex, int type){
-		anchors[wordindex].setType(type);
+	public void setAnchor(int index, int type){
+		anchors.setType(index, type);
+	}
+	
+	public void calculateAnchor(){
+		anchorScore = anchors.getAnchorScore();
 	}
 
 	public void setFinalScore(double finalScore) {
@@ -99,6 +105,7 @@ public class DocResult {
 
 	// calculate position score
 	public int setPositionScore() {
+		
 		for (int i = 0; i < positions.length - 1; i++) {
 			int score = 0, j = 0, k = 0, dis;
 			boolean firstTime = true;
@@ -146,9 +153,8 @@ public class DocResult {
 		}
 	}
 	
-	// calculate anchor score
-	public void setAnchorScore() {
-		
+	public double getAnchorScore() {
+		return anchorScore;
 	}
 	
 	// calculate pageRank score
@@ -159,7 +165,7 @@ public class DocResult {
 	
 	public void calculateScore(int maxClickCount){
 		setPageScore();
-		setAnchorScore();
+		calculateAnchor();
 		setTFScore();
 		if(maxClickCount == 0) maxClickCount = 1;
 		if(size > 1) {

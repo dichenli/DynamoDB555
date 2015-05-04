@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 import DynamoDB.DocURLTitle;
 import DynamoDB.InvertedIndex;
@@ -15,6 +14,8 @@ import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
 import SearchUtils.QueryInfo;
 import SearchUtils.SearchResult;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 
 public class AnalQuery {
@@ -51,24 +52,25 @@ public class AnalQuery {
 			System.out.println(word);
 			List<InvertedIndex> collection = InvertedIndex.query(word);
 			int count = 0;
-			for (InvertedIndex ii : collection) {
+			Iterator it = collection.iterator();
+			while(it.hasNext()){
+				InvertedIndex ii = (InvertedIndex)it.next();
 				count++;
 				System.out.println(count);
 				ByteBuffer docID = ii.getId();
 				double pageRank = ii.getPageRank();
-				if(pageRank == -1) pageRank = 0;
-				if(ii.getType() == 0){			
-					if (!set.containsKey(docID))
-						set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
-					DocResult doc = set.get(docID);
+				if(pageRank == -1) pageRank = 0;		
+				if (!set.containsKey(docID))
+					set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
+				DocResult doc = set.get(docID);
+				if(ii.getType() == 0){
 					doc.setPositionList(i, ii.PositionsSorted());
 					doc.setTF(i, ii.getTF());
-				}
-				else {
-					if(set.containsKey(docID)){
-						set.get(docID).setAnchor(i, ii.getType());
-					}
-				}
+				}	
+//				else {
+//					System.out.println("get type");
+//					doc.setAnchor(i, ii.getType());
+//				}
 			}
 		}
 		System.out.println("finish get word");
@@ -107,7 +109,7 @@ public class AnalQuery {
 	    });
 		
 		List<SearchResult> responses = new ArrayList<SearchResult>();
-		int responsesize = Math.min(intersection.size(), 20);
+		int responsesize = Math.min(minimizedSet.size(), 20);
 		for(int i=0;i<responsesize;i++){
 			DocResult doc = minimizedSet.get(i);
 			byte[] docID = doc.getDocID().array();
@@ -116,7 +118,7 @@ public class AnalQuery {
 			String title = docURLTitle.getTitle();
 			SearchResult sr = new SearchResult(url, docID, title, wordlist);
 			responses.add(sr);
-			System.out.println(url +"\t"+doc.getDocID()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
+			System.out.println(url +"\t"+doc.getAnchorScore()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
 			for(List<Integer> w:doc.getPositions()){
 				System.out.println(w);
 			}
