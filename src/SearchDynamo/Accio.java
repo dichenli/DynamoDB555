@@ -44,7 +44,7 @@ public class Accio extends HttpServlet {
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
-						+ "background: url('http://localhost:8081/JspTest/hp.png');"
+						+ "background: url('/DynamoDB555/hp.png');"
 						+ "background-size: 1280px 800px;"
 						+ "background-repeat:no-repeat;"
 						+ "padding-top: 150px;"

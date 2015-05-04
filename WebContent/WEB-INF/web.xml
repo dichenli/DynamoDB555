@@ -6,6 +6,11 @@
         based on the recommendations of the Application Developer's Guide.
     </description>
     
+ <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/*</url-pattern>
+ </servlet-mapping>
+    
       <servlet>
     <description></description>
     <display-name>Accio</display-name>
@@ -14,7 +19,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Accio</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/Accio</url-pattern>
   </servlet-mapping>
 
   
