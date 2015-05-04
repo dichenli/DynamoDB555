@@ -99,6 +99,7 @@ public class Accio extends HttpServlet {
 			System.out.println(url+" "+query);
 			String docID = ProcessUtils.toBigInteger(url);
 			QueryRecord.increment(query, docID);
+			response.sendError(400);
 		} else if (path.equals("/match_highlight")) {
 			System.out.println("match_highlight");
 			String decimalID = request.getParameter("decimalID");
@@ -154,8 +155,8 @@ public class Accio extends HttpServlet {
 			
 			
 		}
-		newPhrase.append(phrase);
-		
+//		newPhrase.append(phrase);
+//		
 //		for(int i = 0; i < words.length; i++){
 //			words[i].trim().toLowerCase();
 //			if(words[i].length()!=0){
@@ -163,59 +164,58 @@ public class Accio extends HttpServlet {
 //			}
 //			
 //		}
-//		if(path.equals("/Accio")){
-//			SpellChecker sc = new SpellChecker();
-//			
-//			/**
-//			 * spell check part
-//			 * */
-//			
-//			for(i = 0; i < words.size(); i++){
-//				word = words.get(i);
-//				System.out.println("the word is "+word);
-//				if(sc.isWord(word.toLowerCase())){
-//					System.out.println("in the dictionary");
-//					
-//					continue;
-//				}
-//				else{
-//					System.out.println("not in the dictionary");
-//					
-//					if(sc.isCommonMisspell(word.toLowerCase())){
-//						correct = false;
-//						System.out.println("is common misspelling");
-//						String right = sc.getRightMisspell(word.toLowerCase());
-//						words.set(i, right);
-//					}
-//					else{
-//						String right = sc.getRightSwap(word.toLowerCase());
-//						if(!words.get(i).equalsIgnoreCase(right)){
-//							correct = false;
-//						}
-//						words.set(i, right);
-//					}
-//				}
-//			}
-//			
-//			for(i = 0 ; i < words.size(); i++){
-//				newPhrase.append(words.get(i)+" ");
-//			}
-//		}
-//		else{
-//			newPhrase.append(phrase);
-//		}
-		
-//		System.out.println(newPhrase.toString());
-//		words = new ArrayList<String>();
-//		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
-//		while (tokenizer.hasMoreTokens()) {
-//			word = tokenizer.nextToken();
-//			if (word.equals("")) continue;
-//			System.out.println(word);
-//			words.add(word);
-//			
-//			
-//		}
+		if(path.equals("/Accio")){
+			SpellChecker sc = new SpellChecker();
+			
+			/**
+			 * spell check part
+			 * */
+			
+			for(i = 0; i < words.size(); i++){
+				word = words.get(i);
+				System.out.println("the word is "+word);
+				if(sc.isWord(word.toLowerCase())){
+					System.out.println("in the dictionary");
+					
+					continue;
+				}
+				else{
+					System.out.println("not in the dictionary");
+					
+					if(sc.isCommonMisspell(word.toLowerCase())){
+						correct = false;
+						System.out.println("is common misspelling");
+						String right = sc.getRightMisspell(word.toLowerCase());
+						words.set(i, right);
+					}
+					else{
+						String right = sc.getRightSwap(word.toLowerCase());
+						if(!words.get(i).equalsIgnoreCase(right)){
+							correct = false;
+						}
+						words.set(i, right);
+					}
+				}
+			}
+			
+			for(i = 0 ; i < words.size(); i++){
+				newPhrase.append(words.get(i)+" ");
+			}
+		}
+		else{
+			newPhrase.append(phrase);
+		}
+		System.out.println(newPhrase.toString());
+		words = new ArrayList<String>();
+		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals("")) continue;
+			System.out.println(word);
+			words.add(word);
+			
+			
+		}
 		
 		/**
 		 * wiki part
@@ -355,7 +355,7 @@ public class Accio extends HttpServlet {
 						out.write("match_highlight("
 									+ j + ",'" 
 									+ BinaryUtils.byteArrayToDecimalString(results.get(j).getDocID().array()) + "','" 
-									+ phrase //send the stemmed and processed word list to highlight generator
+									+ newPhrase //send the stemmed and processed word list to highlight generator
 								+ "');\n");
 					}
 					out.write("};\n");
@@ -373,7 +373,7 @@ public class Accio extends HttpServlet {
 					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
 					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
 					+ 			"= xmlhttp.responseText; "
-					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"Error\"}"
+					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"Fetching response...\"}"
 					+ 	"};"
 					+ 	"xmlhttp.open(\"GET\", path, true); "//false: synchronous
 					+ 	"xmlhttp.send(); "
