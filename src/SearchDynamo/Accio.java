@@ -344,10 +344,14 @@ public class Accio extends HttpServlet {
 					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
 					+ 	"} "
 					+ 	"var path = \"/DynamoDB555/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
-					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
+					+	"xmlhttp.onreadystatechange=function() { "
+					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
+					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
+					+ 			"= xmlhttp.responseText; "
+					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"Error\"}"
+					+ 	"};"
+					+ 	"xmlhttp.open(\"GET\", path, true); "//false: synchronous
 					+ 	"xmlhttp.send(); "
-					+ 	"matchhighlightText = xmlhttp.responseText; "
-					+ 	"document.getElementById(\"match_highlight\" + i).innerHTML = matchhighlightText; "
 					+ "};\n"
 					//click to send to QueryRecord
 					+ "function sendRequest() {"
