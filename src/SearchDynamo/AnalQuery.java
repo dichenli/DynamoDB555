@@ -54,7 +54,7 @@ public class AnalQuery {
 			while(it.hasNext()){
 				InvertedIndex ii = (InvertedIndex)it.next();
 				count++;
-				System.out.println(count);
+//				System.out.println(count);
 				ByteBuffer docID = ii.getId();
 				double pageRank = ii.getPageRank();
 				if(pageRank == -1) pageRank = 0;		
