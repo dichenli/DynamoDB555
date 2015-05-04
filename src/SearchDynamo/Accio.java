@@ -107,6 +107,7 @@ public class Accio extends HttpServlet {
 			String highlight = HighlightGenerator.generate(decimalID, query);
 			response.setHeader("Content-Type", "text/plain");
 		    response.setHeader("success", "yes");
+		    response.setHeader("Content-Type", "" + highlight.length());
 		    PrintWriter writer = response.getWriter();
 		    writer.write(highlight); //send plain text that is the highlight text
 		    writer.close();
@@ -140,11 +141,12 @@ public class Accio extends HttpServlet {
 		int i = 0;
 		boolean correct = true;
 		System.out.println("the phrase is "+phrase);
+
 		StringTokenizer tokenizer = new StringTokenizer(phrase,PARSER);
 		while (tokenizer.hasMoreTokens()) {
 			word = tokenizer.nextToken();
 			if (word.equals("")) continue;
-//			System.out.println(word);
+			System.out.println(word);
 			words.add(word);
 			
 			
@@ -169,19 +171,23 @@ public class Accio extends HttpServlet {
 				System.out.println("the word is "+word);
 				if(sc.isWord(word)){
 					System.out.println("in the dictionary");
-					correct = true;
+					
 					continue;
 				}
 				else{
 					System.out.println("not in the dictionary");
-					correct = false;
+					
 					if(sc.isCommonMisspell(word)){
+						correct = false;
 						System.out.println("is common misspelling");
 						String right = sc.getRightMisspell(word);
 						words.set(i, right);
 					}
 					else{
 						String right = sc.getRightSwap(word);
+						if(!words.get(i).equals(right)){
+							correct = false;
+						}
 						words.set(i, right);
 					}
 				}
@@ -193,6 +199,18 @@ public class Accio extends HttpServlet {
 		}
 		else{
 			newPhrase.append(phrase);
+		}
+		
+		System.out.println(newPhrase.toString());
+		words = new ArrayList<String>();
+		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals("")) continue;
+			System.out.println(word);
+			words.add(word);
+			
+			
 		}
 		
 		/**
@@ -274,6 +292,13 @@ public class Accio extends HttpServlet {
 						+ "</a>"
 					+ "</div>");
 		}
+		else{
+			out.write("<div class=\"row\">"
+					+ "<h3 hidden>Important things need to be said three times</h3>"
+					+ "</div>"
+					+ "<div class=\"row\"></div>");
+			
+		}
 		
 //							+ "<h2>"
 //							+ "important things need to be said three times!"
@@ -285,7 +310,7 @@ public class Accio extends HttpServlet {
 		for(int j = 0; j < results.size(); j++){
 			out.write("<li class=\"list-group-item\">");
 			out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-			out.write("<p id=\"match_hightlight" + j + "\" style=\"color:grey\"></p>");
+			out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 			out.write("</li>");
 		}
 									
