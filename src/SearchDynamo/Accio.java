@@ -90,9 +90,11 @@ public class Accio extends HttpServlet {
 			String query = request.getParameter("query");
 			String docID = URLtoDocID.toBigInteger(url);
 			QueryRecord.increment(query, docID);
-		} else if (path.equals("/match_hightlight")) {
+		} else if (path.equals("/match_highlight")) {
+			System.out.println("match_highlight");
 			String decimalID = request.getParameter("decimalID");
-			String query = request.getParameter("query"); 
+			String query = request.getParameter("query");
+			System.out.println(decimalID + query);
 			//the query here is actually the wordList in QueryInfo class, which means it is stemmed, selected, 
 			//then it is marshalled by SearchResult getWordListMarshall(), and send to client side
 			//then it is returned to server by the parameter "query" here
@@ -102,6 +104,9 @@ public class Accio extends HttpServlet {
 		    PrintWriter writer = response.getWriter();
 		    writer.write(highlight); //send plain text that is the highlight text
 		    writer.close();
+		} else {
+			System.out.println("no match");
+			response.sendError(400);
 		}
 		
 	}
@@ -191,13 +196,8 @@ public class Accio extends HttpServlet {
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
 			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
-			out.write("<p id=\"match_hightlight" + i + "\" onload=\"match_hightlight("
-					+ i + "," 
-					+ results.get(i).getID() + "," 
-					+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
-					+ ")\"></p>");
+			out.write("<p id=\"match_highlight" + i + "\" >abc</p>");
 			out.write("</li>");
-			
 		}
 									
 						out.write("</ul>"
@@ -231,23 +231,32 @@ public class Accio extends HttpServlet {
 								
 							+ "</div>"
 						+ "</div>"
-					+ "<script>"
+					+ "\n<script type=\"text/javascript\">");
+					out.write("window.onload = function() {");
+					for(int i = 0; i < results.size(); i++) {
+						out.write("match_highlight("
+									+ i + ",'" 
+									+ results.get(i).getID() + "','" 
+									+ results.get(i).getWordlistMarshall() //send the stemmed and processed word list to highlight generator
+								+ "');\n");
+					}
+					out.write("};\n");
 					//generate match highlight text
-					+ "function match_hightlight(var i, var decimalID, var query) { "
+					out.write("function match_highlight(i, decimalID, query) { "
+					+	"console.log(decimalID);"
 					+ 	"var xmlhttp; "
 					+ 	"if (window.XMLHttpRequest){ "
 					+ 		"xmlhttp = new XMLHttpRequest(); "
 					+ 	"} else { "
 					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
 					+ 	"} "
-					+ 	"var path = \"/DynamoDB555/match_hightlight?\" + \"decimalID=\" + decimalID + \"query=\" + query;"
+					+ 	"var path = \"/DynamoDB555/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
 					+ 	"xmlhttp.open(\"GET\", path, false); "//false: synchronous
 					+ 	"xmlhttp.send(); "
-					+ 	"matchHightlightText = xmlhttp.responseText; "
-					+ 	"document.getElementById(\"match_hightlight\" + i).innerHTML = matchHightlightText; "
-					+ "}"
+					+ 	"matchhighlightText = xmlhttp.responseText; "
+					+ 	"document.getElementById(\"match_highlight\" + i).innerHTML = matchhighlightText; "
+					+ "};\n"
 					//click to send to QueryRecord
-					+ "<script>"
 					+ "function sendRequest() {"
 					+ "console.log(\"receive request\");"
 					+ "var target = event.target;"
