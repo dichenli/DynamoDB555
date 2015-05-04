@@ -37,7 +37,7 @@ public class AnalQuery {
 	}
 	
 
-	public static List<SearchResult> search(String query) throws Exception {
+	public static List<DocResult> search(String query) throws Exception {
 		QueryInfo queryInfo = new QueryInfo(query);
 		
 		// remove words with low idf
@@ -92,7 +92,7 @@ public class AnalQuery {
 			minimizedSet = intersection;
 		}
 		
-		// first score
+		// first score (including position check, page rank, tfidf)
 		for (DocResult doc : minimizedSet){
 			doc.firstScore(1);
 		}
@@ -104,39 +104,44 @@ public class AnalQuery {
 	        }
 	    });
 		
-//		// second score
-//		int afterPositionSize = Math.min(minimizedSet.size(), 500);
-//		for (int i=0;i<afterPositionSize;i++){
-//			DocResult doc = minimizedSet.get(i);
-//			doc.analyzeURLTitle();
-//		}
-//		
+		minimizedSet = minimizedSet.subList(0, Math.min(minimizedSet.size(), 100));
 		
-		int responsesize = Math.min(minimizedSet.size(), 20);
-		List<SearchResult> responses = new ArrayList<SearchResult>();
-		for(int i=0;i<responsesize;i++){
+		// second score (including url and title check)
+		for (int i=0;i<minimizedSet.size();i++){
 			DocResult doc = minimizedSet.get(i);
-			byte[] docID = doc.getDocID().array();
-			DocURLTitle docURLTitle = DocURLTitle.load(docID); //get url and title from the new function
-			String url = docURLTitle.getURL();
-			String title = docURLTitle.getTitle();
-			SearchResult sr = new SearchResult(url, docID, title, wordlist);
-			responses.add(sr);
-			System.out.println(url +"\t"+doc.getAnchorScore()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
-			for(List<Integer> w:doc.getPositions()){
-				System.out.println(w);
-			}
+			doc.analyzeURLTitle();
+			doc.secondScore();
 		}
-		return responses;
+		
+		Collections.sort(minimizedSet, new Comparator<DocResult>() {
+	        @Override
+	        public int compare(DocResult o1, DocResult o2) {
+	            return o2.compareTo(o1);
+	        }
+	    });
+		
+		return minimizedSet.subList(0, Math.min(minimizedSet.size(), 100));
+//		int responsesize = Math.min(minimizedSet.size(), 20);
+//		List<DocResult> responses = new ArrayList<DocResult>();
+//		for(int i=0;i<responsesize;i++){
+//			DocResult doc = minimizedSet.get(i);
+//			byte[] docID = doc.getDocID().array();
+//			responses.add(doc);
+//			System.out.println(url +"\t"+doc.getAnchorScore()+"\t"+doc.getPositionScore()+"\t"+doc.getPageRank()+"\t"+doc.getFinalScore());
+//			for(List<Integer> w:doc.getPositions()){
+//				System.out.println(w);
+//			}
+//		}
+//		return responses;
 
 	}
 	
 
 	public static void main(String[] args) throws Exception{
-		List<SearchResult> response = search("computer science");
-		for(SearchResult sr:response){
-			System.out.println(sr.getUrl());
-		}
+//		List<SearchResult> response = search("computer science");
+//		for(SearchResult sr:response){
+//			System.out.println(sr.getUrl());
+//		}
 	}
 
 }
