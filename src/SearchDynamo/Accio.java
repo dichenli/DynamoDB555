@@ -190,7 +190,7 @@ public class Accio extends HttpServlet {
 		
 		for(int i = 0; i < results.size(); i++){
 			out.write("<li class=\"list-group-item\">");
-			out.write("<a href="+results.get(i).getTitle()+" onclick=\"sendRequest()\">"+results.get(i).getUrl()+"</a>");
+			out.write("<a href="+results.get(i).getUrl()+" onclick=\"sendRequest()\">"+results.get(i).getTitle()+"</a>");
 			out.write("<p id=\"match_hightlight" + i + "\" onload=\"match_hightlight("
 					+ i + "," 
 					+ results.get(i).getID() + "," 
