@@ -27,6 +27,7 @@ public class DocResult {
 	private static final double W_CLICK = 0.3;
 	
 	String query;
+	List<String> wordlist;
 	ByteBuffer id;
 	double[] wordtf;
 	List<Integer>[] positions;
@@ -46,7 +47,8 @@ public class DocResult {
 	double pageScore;
 	double finalScore;
 
-	public DocResult(String query, ByteBuffer id, double pageRank, int size, int[] windowlist, List<Double> idflist) {
+	public DocResult(List<String> wordlist, String query, ByteBuffer id, double pageRank, int size, int[] windowlist, List<Double> idflist) {
+		this.wordlist = wordlist;
 		this.query = query;
 		this.id = id;
 		this.size = size;
@@ -56,17 +58,17 @@ public class DocResult {
 		this.wordtf = new double[size];
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 		this.idflist = idflist;
-		anchors = new AnchorResult(size);
+//		anchors = new AnchorResult(size);
 	}
 
 	public boolean containsAll() {
 		return size == count;
 	}
 	
-	public boolean isUserfulAnchor() {
-		anchors.setAnchorScore();
-		return anchors.isUsefulAnchor();
-	}
+//	public boolean isUserfulAnchor() {
+//		anchors.setAnchorScore();
+//		return anchors.isUsefulAnchor();
+//	}
 	
 	public void setClickScore(int count){
 		clickcount = count;
@@ -81,13 +83,13 @@ public class DocResult {
 		wordtf[index] = tf;
 	}
 	
-	public void setAnchor(int index, int type){
-		anchors.setType(index, type);
-	}
-	
-	public void calculateAnchor(){
-		anchorScore = anchors.getAnchorScore();
-	}
+//	public void setAnchor(int index, int type){
+//		anchors.setType(index, type);
+//	}
+//	
+//	public void calculateAnchor(){
+//		anchorScore = anchors.getAnchorScore();
+//	}
 
 	public void setFinalScore(double finalScore) {
 		this.finalScore = finalScore;
@@ -171,7 +173,7 @@ public class DocResult {
 	
 	public void firstScore(int maxClickCount){
 		setPageScore();
-		calculateAnchor();
+//		calculateAnchor();
 		setTFScore();
 		if(maxClickCount == 0) maxClickCount = 1;
 		if(size > 1) {
@@ -265,6 +267,14 @@ public class DocResult {
 		String title = urltitle.getTitle();
 		List<String> urlWords = analyzeURL(url);
 		List<String> titleWords = analyzeTitle(title);
+		List<String> urlcount = new ArrayList<String>();
+		List<String> titlecount = new ArrayList<String>();
+		for(int i=0;i<size;i++){
+			String word = wordlist.get(i);
+			if(urlWords.contains(word)) urlcount.add(word);
+			if(titleWords.contains(wordlist.get(i))) titlecount.add(word);
+		}
+		anchorScore = urlcount.size()+titlecount.size();
 	}
 
 	

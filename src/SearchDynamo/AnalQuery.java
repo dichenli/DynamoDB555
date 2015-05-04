@@ -59,7 +59,7 @@ public class AnalQuery {
 				double pageRank = ii.getPageRank();
 				if(pageRank == -1) pageRank = 0;		
 				if (!set.containsKey(docID))
-					set.put(docID, new DocResult(query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
+					set.put(docID, new DocResult(wordlist, query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
 				DocResult doc = set.get(docID);
 				doc.setPositionList(i, ii.PositionsSorted());
 				doc.setTF(i, ii.getTF());
@@ -92,7 +92,7 @@ public class AnalQuery {
 			minimizedSet = intersection;
 		}
 		
-		// compute the score
+		// first score
 		for (DocResult doc : minimizedSet){
 			doc.firstScore(1);
 		}
@@ -104,14 +104,16 @@ public class AnalQuery {
 	        }
 	    });
 		
-		int afterPositionSize = Math.min(minimizedSet.size(), 500);
-		for (int i=0;i<afterPositionSize;i++){
-			DocResult doc = minimizedSet.get(i);
-			doc.analyzeURLTitle();
-		}
+//		// second score
+//		int afterPositionSize = Math.min(minimizedSet.size(), 500);
+//		for (int i=0;i<afterPositionSize;i++){
+//			DocResult doc = minimizedSet.get(i);
+//			doc.analyzeURLTitle();
+//		}
+//		
 		
+		int responsesize = Math.min(minimizedSet.size(), 20);
 		List<SearchResult> responses = new ArrayList<SearchResult>();
-		
 		for(int i=0;i<responsesize;i++){
 			DocResult doc = minimizedSet.get(i);
 			byte[] docID = doc.getDocID().array();
