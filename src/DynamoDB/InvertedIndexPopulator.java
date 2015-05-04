@@ -25,13 +25,13 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 @Deprecated
 public class InvertedIndexPopulator implements Populator {
 	
-	static String tableName = InvertedIndex.tableName; //need to sync with @DynamoDBTable(tableName="xx")
+	static String tableName = NewInvertedIndex.tableName; //need to sync with @DynamoDBTable(tableName="xx")
 //	static String word = "word";
 //	static String id = "id";
-	static String hashKey = InvertedIndex.hashKey;
-	static String rangeKey = InvertedIndex.rangeKey;
-	static long readCapacity = InvertedIndex.readCapacity;
-	static long writeCapacity = InvertedIndex.writeCapacity;
+	static String hashKey = NewInvertedIndex.hashKey;
+	static String rangeKey = NewInvertedIndex.rangeKey;
+	static long readCapacity = NewInvertedIndex.readCapacity;
+	static long writeCapacity = NewInvertedIndex.writeCapacity;
 	
 	File input;
 
@@ -84,8 +84,8 @@ public class InvertedIndexPopulator implements Populator {
 			throw new NullPointerException();
 		}
 		while(sc.hasNextLine()) {
-			InvertedIndex item = InvertedIndex.parseInput(sc.nextLine());
-			InvertedIndex.insert(item, false);
+			NewInvertedIndex item = NewInvertedIndex.parseInput(sc.nextLine());
+			NewInvertedIndex.insert(item, false);
 			current++;
 			
 			if(current >= 500) {

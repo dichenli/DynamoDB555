@@ -1,8 +1,14 @@
 package SearchUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import Utils.ProcessUtils;
+import DynamoDB.DocURLTitle;
 import DynamoDB.QueryRecord;
 
 public class DocResult {
@@ -163,7 +169,7 @@ public class DocResult {
 		pageScore = pageScore/5;
 	}
 	
-	public void calculateScore(int maxClickCount){
+	public void firstScore(int maxClickCount){
 		setPageScore();
 		calculateAnchor();
 		setTFScore();
@@ -172,15 +178,17 @@ public class DocResult {
 			finalScore = W_POSITION_MULTIPLE*positionScore/((size-1)*BASE) 
 						+ W_CLICK_MULTIPLE*clickcount/maxClickCount 
 						+ W_PAGERANK_MULTIPLE*pageScore
-						+ W_ANCHOR_MULTIPLE*anchorScore 
 						+ W_TFIDF*tfidf;
 		}
 		else {
 			finalScore = W_CLICK*clickcount/maxClickCount
 					    + W_PAGERANK*pageScore
-					    + W_ANCHOR*anchorScore
 					    + W_TF*wordtf[0];   
 		}
+	}
+	
+	public void secondScore(){
+		
 	}
 	
 	public double getPageRank() {
@@ -203,4 +211,61 @@ public class DocResult {
 		else
 			return -1;
 	}
+	
+	
+	public List<String> analyzeURL(String url) throws IOException, InterruptedException {
+		List<String> urlWords = new ArrayList<String>();
+		if(url.startsWith("http://")){
+			url = url.substring(7);
+		}
+		else if(url.startsWith("https://")){
+			url = url.substring(8);
+		}
+		if(url.startsWith("www.")){
+			url = url.substring(4);
+		}
+		url = ProcessUtils.stemContent(url);
+		StringTokenizer tokenizer = new StringTokenizer(url, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("") || word.length()>20) continue;
+			if(ProcessUtils.isNumber(word)) continue;
+			if(!ProcessUtils.stopWords.contains(word)){
+				urlWords.add(word);
+			}
+		}
+		return urlWords;
+	}
+	
+	public List<String> analyzeTitle(String content){
+		List<String> titleWords = new ArrayList<String>();
+		String store_text = ProcessUtils.stemContent(content);
+		StringTokenizer tokenizer = new StringTokenizer(store_text, ProcessUtils.DELIMATOR);
+		String word = "";
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if(word.equals("")) continue;
+			boolean flag = false;
+			for(int i=0;i<word.length();i++){
+				if (Character.UnicodeBlock.of(word.charAt(i)) != Character.UnicodeBlock.BASIC_LATIN) {
+					flag = true;
+					break;
+				}
+			}	
+			if(flag) continue;
+			titleWords.add(word);
+		}
+		return titleWords;
+	}
+	
+	public void analyzeURLTitle() throws Exception{
+		DocURLTitle urltitle = DocURLTitle.load(id.array());
+		String url = urltitle.getURL();
+		String title = urltitle.getTitle();
+		List<String> urlWords = analyzeURL(url);
+		List<String> titleWords = analyzeTitle(title);
+	}
+
+	
 }

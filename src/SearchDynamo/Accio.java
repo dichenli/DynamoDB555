@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import DynamoDB.QueryRecord;
 import SearchUtils.SearchResult;
-import Utils.URLtoDocID;
+import Utils.ProcessUtils;
 
 /**
  * Servlet implementation class Accio
@@ -88,7 +88,7 @@ public class Accio extends HttpServlet {
 		else if(path.equals("/insertquery")){
 			String url = request.getParameter("url");
 			String query = request.getParameter("query");
-			String docID = URLtoDocID.toBigInteger(url);
+			String docID = ProcessUtils.toBigInteger(url);
 			QueryRecord.increment(query, docID);
 		} else if (path.equals("/match_highlight")) {
 			System.out.println("match_highlight");
