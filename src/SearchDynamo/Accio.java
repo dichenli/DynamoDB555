@@ -78,14 +78,15 @@ public class Accio extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			out.write("<!DOCTYPE html><html>"
 					+ "<head>"
-					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
+
 						+ "background: url('"
 						+ webapp
 						+ "/hp.png');"
-						+ "background-size: 1280px 800px;"
+						+ "background-size: cover;"
 						+ "background-repeat:no-repeat;"
 						+ "padding-top: 150px;"
 					+ "}"
@@ -288,50 +289,91 @@ public class Accio extends HttpServlet {
 					+ "<head>"
 						+ "<title>Accio</title>"
 						+ "<meta charset=\"utf-8\">"
-						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+
+						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1,  maximum-scale=1, user-scalable=no\">"
+						+ "<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">"
+						+ "<link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">"
+						+ "<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>"
+						+ "<link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>"
+						+ "<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>"
+
 						+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
+						+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://localhost:8080/DynamoDB555/youtube/mystyle.css\">"
 						+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
 						
 						// Youtube
 						+ "<script src=\"/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
 						+ "<script src=\"/DynamoDB555/youtube/js/script.js\"></script>"
-//						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/Togglable_tab.js\"></script>"
 
 						+ "<style>"
 							+ "body {"
 								+ "padding-top: 15px;"
+							+ "}"
+//							+ "div.align{"
+//								+ "display:flex;"		
+//								+ "align-items:center;"
+//							+ "}"
+							+ "div.pad{"
+								+ "padding-top: 40px;"
 							+ "}"
 						+ "</style>"
 					+ ""
 					+ "</head>"
 					+ "<body>"
 					
-					
-					
-					
-					
 					+ "<h3 hidden id=\"query\">" + newPhrase +"</h3>"
 						+ "<div class=\"container\">"
+							
 							+ "<div class=\"row\">"
-								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
-									+ "<div class=\"col-md-1\">"
-										+ "<a href=\"/DynamoDB555/Accio\">"
-										+ "<h4>Accio</h4>"
-										+ "</a>"
-									+ "</div>"
-									+ "<div class=\"col-md-6\">"
-										+ "<input type=\"text\" id=\"inputdefault\" class=\"form-control\" name=\"phrase\" placeholder=\""
-										+ phrase
-										+ "\">"
-									+ "</div>"
-									+ "<div class=\"col-md-3\">"
-										+ "<button type=\"submit\" class=\"btn btn-info\">"
-											+ "<span class=\"glyphicon glyphicon-flash\"></span> search"
-										+ "</button>"
-									+ "</div>"
-								+ "</form>"
+
+								+ "<div class=\"col-md-1 align\">"
+									+ "<a class=\"navbar-brand page-scroll\" href=\"/DynamoDB555/Accio\">"
+									+ "Accio"
+									+ "</a>"
+								+ "</div>"
+								+"<div class=\"col-md-9 align\">"
+									+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
+	
+										+ "<div class=\"col-md-10\">"
+											+ "<input type=\"text\" id=\"inputdefault\" class=\"form-control\" name=\"phrase\" placeholder=\""
+											+ phrase
+											+ "\">"
+										+ "</div>"
+										+ "<div class=\"col-md-2\">"
+											+ "<button type=\"submit\" class=\"btn btn-info\">"
+												+ "<span class=\"glyphicon glyphicon-flash\"></span> search"
+											+ "</button>"
+										+ "</div>"
+
+									+ "</form>"
+								+ "</div>"
+								+ "<div class=\"col-md-2 align\">"
+									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
+								+ "</div>"
+
+//								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
+//									+ "<div class=\"col-md-1\">"
+//										+ "<a href=\""+webapp+"/Accio\">"
+//										+ "<h4>Accio</h4>"
+//										+ "</a>"
+//									+ "</div>"
+//									+ "<div class=\"col-md-6\">"
+//										+ "<input type=\"text\" id=\"inputdefault\" class=\"form-control\" name=\"phrase\" placeholder=\""
+//										+ phrase
+//										+ "\">"
+//									+ "</div>"
+//									+ "<div class=\"col-md-3\">"
+//										+ "<button type=\"submit\" class=\"btn btn-info\">"
+//											+ "<span class=\"glyphicon glyphicon-flash\"></span> search"
+//										+ "</button>"
+//									+ "</div>"
+//								+ "</form>"
+
 							+ "</div>");
+		
+
+		
 		if(!correct){
 			out.write("<div class=\"row\">"
 						
@@ -355,7 +397,7 @@ public class Accio extends HttpServlet {
 //							+ "<h2>"
 //							+ "important things need to be said three times!"
 //							+ "</h2>"
-		out.write("<div class=\"col-md-8\">"
+		out.write("<div class=\"col-md-8 pad\">"
 					+ "<ul class=\"list-group\">");
 		
 		if(results == null || results.size() == 0) {
@@ -364,16 +406,17 @@ public class Accio extends HttpServlet {
 			out.write("</li>");
 		} else {
 			for(int j = 0; j < results.size(); j++){
-				out.write("<li class=\"list-group-item\">");
-				out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-				out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
+				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
+					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
+					out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 				out.write("</li>");
 			}
+			out.write("<a onclick=\"nextpage\">Next</a>");
 		}
 									
 						out.write("</ul>"
 							+ "</div>"
-						    + "<div class=\"col-md-4\">"
+						    + "<div class=\"col-md-4 pad\">"
 							
 							// Togglable Tab
 								+"<div role=\"tabpanel\">"
@@ -386,13 +429,13 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\">"+ wiki_html +"</div>"
+								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
 								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
-										+"	<h1>Youtube Videos</h1>"
-										+"	<ul id=\"results_youtube\"></ul>"
+										+"	<h2>Youtube Videos</h2>"
+										+"	<ul style=\"list-style-type:none; margin-left:0px;padding-left:0px;\" id=\"results_youtube\"></ul>"
 										+"</div>"
 								
 									+"</div>"
