@@ -44,8 +44,7 @@ public class ProcessUtils {
 		PorterStemmer stemmer = new PorterStemmer();
 		StringBuilder sb = new StringBuilder();
 		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			System.out.println(word); 
+			word = tokenizer.nextToken(); 
 			if(word.equals("")) continue;
 			boolean flag = false;
 			for(int i=0;i<word.length();i++){

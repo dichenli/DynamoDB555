@@ -12,6 +12,7 @@ import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
 import SearchUtils.FindURLThread;
+import SearchUtils.FindWordThread;
 import SearchUtils.QueryInfo;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
@@ -46,30 +47,33 @@ public class AnalQuery {
 		List<Double> idflist = queryInfo.getIDFlist();
 		int size = wordlist.size();
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
-		for (int i = 0; i < size; i++) {
-			String word = wordlist.get(i);
-			System.out.println(word);
-			List<InvertedIndex> collection = InvertedIndex.query(word);
-			int count = 0;
-			Iterator it = collection.iterator();
-			while(it.hasNext()){
-				InvertedIndex ii = (InvertedIndex)it.next();
-				count++;
-//				System.out.println(count);
-				ByteBuffer docID = ii.getId();
-				double pageRank = ii.getPageRank();
-				if(pageRank == -1) pageRank = 0;		
-				if (!set.containsKey(docID))
-					set.put(docID, new DocResult(wordlist, query, docID, pageRank, size, queryInfo.getWindowlist(), idflist));
-				DocResult doc = set.get(docID);
-				doc.setPositionList(i, ii.PositionsSorted());
-				doc.setTF(i, ii.getTF());
-//				else {
-//					System.out.println("get type");
-//					doc.setAnchor(i, ii.getType());
-//				}
-			}
+		Thread[] findWordThreads = new FindWordThread[size];
+		for(int i=0;i<size;i++){
+			findWordThreads[i] = new FindWordThread(i, wordlist.get(i), set, queryInfo);
+			findWordThreads[i].start();
 		}
+		for(int i=0;i<size;i++){
+			findWordThreads[i].join();
+		}
+		
+//		for (int i = 0; i < size; i++) {
+//			String word = wordlist.get(i);
+//			System.out.println(word);
+//			List<InvertedIndex> collection = InvertedIndex.query(word);
+//			Iterator it = collection.iterator();
+//			while(it.hasNext()){
+//				InvertedIndex ii = (InvertedIndex)it.next();
+////				System.out.println(count);
+//				ByteBuffer docID = ii.getId();
+//				double pageRank = ii.getPageRank();
+//				if(pageRank == -1) pageRank = 0;		
+//				if (!set.containsKey(docID))
+//					set.put(docID, new DocResult(queryInfo, docID, pageRank));
+//				DocResult doc = set.get(docID);
+//				doc.setPositionList(i, ii.PositionsSorted());
+//				doc.setTF(i, ii.getTF());
+//			}
+//		}
 		System.out.println("finish get word");
 		List<DocResult> intersection = new ArrayList<DocResult>();
 		for (ByteBuffer docID : set.keySet()) {
@@ -108,9 +112,11 @@ public class AnalQuery {
 		int setsize = minimizedSet.size();
 		minimizedSet = minimizedSet.subList(0, Math.min(setsize, 100));
 		
+		System.out.println("before Thread start: "+minimizedSet.size());
 		Thread[] urlThreads = new FindURLThread[10];
+		int finalsize = minimizedSet.size();
 		for(int i=0;i<10;i++){
-			urlThreads[i] = new FindURLThread(i, minimizedSet, setsize);
+			urlThreads[i] = new FindURLThread(i, minimizedSet, finalsize);
 			urlThreads[i].start();
 		}
 		for(int i=0;i<10;i++){
