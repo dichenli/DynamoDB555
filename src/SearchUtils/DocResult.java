@@ -117,7 +117,6 @@ public class DocResult {
 		this.size = wordlist.size();
 		this.windowlist = queryInfo.getWindowlist();
 		this.idflist = queryInfo.getIDFlist();
-		
 		this.id = id;
 		this.pageRank = pageRank;
 		positions = (List<Integer>[])new List[size];
@@ -148,13 +147,16 @@ public void setClickScore(int count){
 		clickcount = count;
 	}
 
+
 	/**
 	 * Sets the position list.
 	 *
 	 * @param index the index
 	 * @param position the position
 	 */
-	public void setPositionList(int index, List<Integer> position) {
+
+	public synchronized void setPositionList(int index, List<Integer> position) {
+
 		positions[index] = position;
 		count++;
 	}
@@ -238,6 +240,7 @@ public void setFinalScore(double finalScore) {
 
 			// iterate through the two position lists, and both start from index
 			// 0
+			if(word1 == null || word2 == null) return 0;
 			while (j < word1.size() && k < word2.size()) {
 				dis = word2.get(k) - word1.get(j);
 				/*
