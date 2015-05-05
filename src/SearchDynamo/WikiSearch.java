@@ -78,6 +78,7 @@ public class WikiSearch {
 			String pageid = content.substring(2, i);
 			JSONArray revisions = jsonObj.getJSONObject("query").getJSONObject("pages").getJSONObject(pageid).getJSONArray("revisions");
 			html = revisions.getJSONObject(0).getString("*");
+			html = html.replaceAll("<a href=\"/w/index", "<a href=\"http://en.wikipedia.org/w/index");
 			html = html.replaceAll("<a href=\"/wiki/", "<a href=\"http://en.wikipedia.org/wiki/");
 			html = html.replaceAll("src=\"//upload", "src=\"http://upload");
 			

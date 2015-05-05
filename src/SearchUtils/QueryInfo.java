@@ -18,16 +18,26 @@ public class QueryInfo {
 	List<Double> idflist = new ArrayList<Double>();
 	int[] windowlist;
 	
-	public QueryInfo(String query) throws Exception{
+	public QueryInfo(String query){
 		List<String> parseQuery = stemContent(query.toLowerCase());
+		List<String> finalWords = new ArrayList<String>();
+		List<Integer> finalIndexs = new ArrayList<Integer>();
+		List<Double> finalidfs = new ArrayList<Double>();
 		for(int i=0;i<parseQuery.size();i++){
 			String word = parseQuery.get(i);
 			System.out.println(word);
-			IDF idfResult = IDF.load(word);
-			if(idfResult == null) {
-				throw new Exception();
+			finalWords.add(word);
+			finalIndexs.add(i);
+			IDF idfResult;
+			double idf = 1;
+			try {
+				idfResult = IDF.load(word);
+				idf = idfResult.getidf();
+			} catch (Exception e) {
+				e.printStackTrace();
+				idf = 1;
 			}
-			double idf = idfResult.getidf();
+			finalidfs.add(idf);
 			System.out.println(idf);
 			if(idf > LIMIT){
 				wordlist.add(word);
@@ -35,9 +45,10 @@ public class QueryInfo {
 				idflist.add(idf);
 			}
 		}
-		if(indexlist.size() == 0) {
-			windowlist = new int[0];
-			return;
+		if(wordlist.size() == 0){
+			wordlist = finalWords;
+			indexlist = finalIndexs;
+			idflist = finalidfs;
 		}
 		windowlist = new int[indexlist.size()-1];
 		for(int i=0;i<indexlist.size()-1;i++){

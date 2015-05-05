@@ -46,6 +46,8 @@ public class AnalQuery {
 		List<String> wordlist = queryInfo.getWordlist();
 		List<Double> idflist = queryInfo.getIDFlist();
 		int size = wordlist.size();
+		if(size == 0) return new ArrayList<DocResult>();
+		
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
 		Thread[] findWordThreads = new FindWordThread[size];
 		for(int i=0;i<size;i++){
@@ -92,14 +94,14 @@ public class AnalQuery {
 			}
 		}
 		System.out.println("Minimized Set "+minimizedSet.size());
-//		int maxClickCount = setClickScore(query, set);
+		int maxClickCount = setClickScore(query, set);
 		if(minimizedSet.size()<100 && size != 1){
 			minimizedSet = intersection;
 		}
 		
 		// first score (including position check, page rank, tfidf)
 		for (DocResult doc : minimizedSet){
-			doc.firstScore(1);
+			doc.firstScore(maxClickCount);
 		}
 		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {

@@ -6,14 +6,7 @@ package DynamoDB;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import S3.S3FileReader;
@@ -23,6 +16,9 @@ import Utils.IOUtils;
 import Utils.TimeUtils;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
@@ -46,7 +42,6 @@ public class InvertedIndex {
 	Double idf;
 	Double pagerank;
 	int type;
-
 
 	public InvertedIndex(String word2, byte[] id2, double tf2,
 			HashSet<Integer> positions2, int type) {
@@ -331,15 +326,95 @@ public class InvertedIndex {
 	}
 	
 	public static PaginatedQueryList<InvertedIndex> query(String word) {
-		InvertedIndex item = new InvertedIndex();
-		item.setWord(word);
-		DynamoDBQueryExpression<InvertedIndex> queryExpression 
-		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item);
+		return query(word, null, null);
+	}
+	
+	public static PaginatedQueryList<InvertedIndex> query(
+			String word, DynamoDBQueryExpression<InvertedIndex> queryExpression, 
+			DynamoDBMapperConfig config) {
+		
+		if(config == null) {
+			config = DynamoDBMapperConfig.DEFAULT;
+		}
+		
+		if(queryExpression == null) { //default query expression, no range key
+			InvertedIndex item = new InvertedIndex();
+			item.setWord(word);
+			queryExpression = new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item);
+		}
+		
 		
 		PaginatedQueryList<InvertedIndex> collection 
-		= DynamoTable.mapper.query(InvertedIndex.class, queryExpression);
+		= DynamoTable.mapper.query(InvertedIndex.class, queryExpression, config);
 		return collection;
 	}
+	
+	/**
+	 * load eagerly, slower but get all results readily available
+	 * @param word
+	 * @return
+	 */
+	public static PaginatedQueryList<InvertedIndex> queryEagerly(String word) {
+		PaginatedQueryList<InvertedIndex> collection = query(word);
+		collection.loadAllResults();
+		return collection;
+	}
+	
+	/**
+	 * query but returns a list that can only use its iterator, it saves memory load
+	 * and maybe faster
+	 * @param word
+	 * @return
+	 */
+	public static PaginatedQueryList<InvertedIndex> queryIterationOnly(String word) {
+		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
+				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
+		
+		return query(word, null, config);
+	}
+	
+	static final byte[][] spliter = new byte[17][];
+	static {
+		String fff = "fffffffffffffffffffffffffffffffffffffff"; //all F except for the left most character
+		spliter[0] = new byte[40];
+		for(int i = 0; i < 40; i++) {
+			spliter[0][i] = 0;
+		}
+		for(int i = 0; i < 16; i++) {
+			String h = Integer.toHexString(i);
+//			System.out.println(h + fff);
+			spliter[i + 1] = BinaryUtils.fromHex(h + fff);
+		}
+	}
+	
+	public static PaginatedQueryList<InvertedIndex> queryRange(String word, int index) {
+		if(index < 0 || index > 15) {
+			System.err.println("index number must be 0 ~ 15");
+			throw new IllegalArgumentException();
+		}
+		InvertedIndex item = new InvertedIndex();
+		item.setWord(word);
+		
+		byte[] start = spliter[index];
+		byte[] end = spliter[index + 1];
+		
+		Condition rangeKeyCondition = new Condition()
+        .withComparisonOperator(ComparisonOperator.BETWEEN.toString())
+        .withAttributeValueList(new AttributeValue().withB(ByteBuffer.wrap(start)), 
+                                new AttributeValue().withB(ByteBuffer.wrap(end)));
+		
+		DynamoDBQueryExpression<InvertedIndex> queryExpression 
+		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item)
+		.withRangeKeyCondition("id", rangeKeyCondition);
+		
+		
+		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
+				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
+		
+		return query(word, queryExpression, config);
+	}
+	
+	
 
 	/**
 	 * populate DB from S3 input
@@ -398,6 +473,10 @@ public class InvertedIndex {
 			}
 		}
 	}
+	
+	public static void init () throws InterruptedException {
+		createTable();
+	}
 
 	public static String job = "";
 	public static void runDistributed(String[] args) throws Exception {
@@ -423,18 +502,26 @@ public class InvertedIndex {
 //		createTable();
 //		populateFromS3("mapreduce-result", "IndexerResult/part-m-00");
 //		runDistributed(args);
-		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
-		String bucket = "mapreduce-result";
-		String numberStr = args[0];
-		int number = Integer.parseInt(numberStr);
+//		int[] tasks = {171, 187, 203, 219, 218, 214, 175, 191, 207, 223};
+//		String bucket = "mapreduce-result";
+//		String numberStr = args[0];
+//		int number = Integer.parseInt(numberStr);
+//		createTable();
+//		for(int i = 0; i < tasks.length; i++) {
+//			if(i % 10 == number) {		
+//				job += "|" + tasks[i];
+//				String digit = "000" + tasks[i];
+//				digit = digit.substring(digit.length() - 3, digit.length());
+//				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
+//			}
+//		}
 		createTable();
-		for(int i = 0; i < tasks.length; i++) {
-			if(i % 10 == number) {		
-				job += "|" + tasks[i];
-				String digit = "000" + tasks[i];
-				digit = digit.substring(digit.length() - 3, digit.length());
-				populateFromS3("mapreduce-result", "IndexerResult/part-m-00" + digit);
-			}
+//		System.out.println("EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".length());
+		
+		List<InvertedIndex> results = queryRange("walken", 2);
+		Iterator<InvertedIndex> iterator = results.iterator();
+		while(iterator.hasNext()) {
+			System.out.println(BinaryUtils.byteArrayToHexString(iterator.next().id));
 		}
 	}
 }

@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spellchecker.SpellChecker;
-import DynamoDB.QueryRecord;
+import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
@@ -32,6 +33,20 @@ public class Accio extends HttpServlet {
     public Accio() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+    	super.init(config);
+    	System.out.println("===================init");
+    	try {
+			DocURLTitle.init();
+			IDF.init();
+			InvertedIndex.init();
+			QueryRecord.init();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 
 	/**
@@ -396,7 +411,7 @@ public class Accio extends HttpServlet {
 					+ "}"
 					+ "else{ xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\");}"
 					+ "var getquery = \"url=\" + url + \"&query=\" + query;"
-					+ "var path = \"/DynamoDB555/insertquery?\" + getquery;"
+					+ "var path = \""+webapp+"/insertquery?\" + getquery;"
 					+ "console.log(path);"
 					+ "xmlhttp.open(\"GET\", path, true);"
 					+ "xmlhttp.send();"

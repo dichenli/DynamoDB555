@@ -58,6 +58,11 @@ public class BinaryUtils {
 		return i.toString();
 	}
 	
+	public static String byteArrayToHexString(byte[] array) {
+		BigInteger i = new BigInteger(array);
+		return i.toString(16);
+	}
+	
 	public static boolean arrayEquals(byte[] a, byte[] b) {
 		if(a == b) {
 			return true;
