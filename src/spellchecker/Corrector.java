@@ -2,6 +2,7 @@ package spellchecker;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
 /**
  * Skeleton implementation for classes capable of providing spelling corrections.
  * <p>

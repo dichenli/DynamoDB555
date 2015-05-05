@@ -25,41 +25,89 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class PageRank.
+ *
  * @author dichenli
  * data of page rank
  */
 @DynamoDBTable(tableName="PageRank2")
 public class PageRank {
+	
+	/** The inserter. */
 	private static Inserter<PageRank> inserter; 
+	
+	/** The table name. */
 	static String tableName = "PageRank2"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = "id";
+	
+	/** The read capacity. */
 	static long readCapacity = 500L; // 10 at most. Or we will be charged
+	
+	/** The write capacity. */
 	static long writeCapacity = 1000L; // 10 at most. Or we will be charged
 	
+	/** The id. */
 	byte[] id; //binary data
+	
+	/** The rank. */
 	double rank; //page rank
 
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	@DynamoDBHashKey(attributeName="id")
 	public ByteBuffer getId() { return ByteBuffer.wrap(id); }
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param buf the new id
+	 */
 	public void setId(ByteBuffer buf) { 
 		this.id = buf.array(); 
 	}
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param hexString the new id
+	 */
 	public void setId(String hexString) {
 		id = BinaryUtils.fromDecimal(hexString);
 	}
 
+	/**
+	 * Gets the rank.
+	 *
+	 * @return the rank
+	 */
 	@DynamoDBAttribute(attributeName="rank")
 	public double getRank() { return rank; }    
+	
+	/**
+	 * Sets the rank.
+	 *
+	 * @param rank the new rank
+	 */
 	public void setRank(double rank) { this.rank = rank; }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return Arrays.toString(id);  
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof PageRank)) {
@@ -73,17 +121,33 @@ public class PageRank {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return Arrays.hashCode(id);
 	}
 	
+	/**
+	 * Instantiates a new page rank.
+	 */
 	public PageRank() {}
 	
+	/**
+	 * Instantiates a new page rank.
+	 *
+	 * @param line the line
+	 */
 	public PageRank(String line) {
 		parseInput(line);
 	}
 
+	/**
+	 * Parses the input.
+	 *
+	 * @param line the line
+	 */
 	public void parseInput(String line) {
 		if(line == null) {
 			System.out.println("null line");
@@ -113,6 +177,11 @@ public class PageRank {
 		this.setRank(rank);
 	}
 	
+	/**
+	 * Creates the table.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashKey(
 				tableName, keyName, ScalarAttributeType.B, 
@@ -120,13 +189,21 @@ public class PageRank {
 		DynamoTable.createTable(tableName, request);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void init() throws InterruptedException {
 		createTable();
 		inserter = new Inserter<PageRank>();
 	}
 	
 	/**
-	 * populate DB from S3 input
+	 * populate DB from S3 input.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
 	 */
 	public static void populateFromS3(String bucketName, String prefix) {
 		long lineCount = 0;
@@ -186,6 +263,12 @@ public class PageRank {
 		}
 	}
 
+	/**
+	 * Batchload.
+	 *
+	 * @param ids the ids
+	 * @return the list
+	 */
 	public static List<PageRank> batchload(Set<ByteBuffer> ids) {
 
 		ArrayList<Object> keys = new ArrayList<Object>();
@@ -210,10 +293,11 @@ public class PageRank {
 	}
 	
 	/**
-	 * not tested!!
-	 * @param decimalID
-	 * @return
-	 * @throws Exception
+	 * not tested!!.
+	 *
+	 * @param decimalID the decimal id
+	 * @return the page rank
+	 * @throws Exception the exception
 	 */
 	public static PageRank load(String decimalID) throws Exception {
 		if (DynamoTable.mapper == null) {
@@ -224,6 +308,12 @@ public class PageRank {
 		return DynamoTable.mapper.load(DynamoDB.PageRank.class, ByteBuffer.wrap(id));
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String... args) throws Exception {
 		init();
 //		populateFromS3("mapreduce-result", "pagerank-result/part-r-00000");

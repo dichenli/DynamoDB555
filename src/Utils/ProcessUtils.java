@@ -14,10 +14,16 @@ import java.util.regex.Pattern;
 
 import snowballstemmer.PorterStemmer;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ProcessUtils.
+ */
 public class ProcessUtils {
 	
+	/** The Constant DELIMATOR. */
 	public static final String DELIMATOR = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
 	
+	/** The stop words. */
 	public static HashSet<String> stopWords = new HashSet<String>();
 
 	static {
@@ -29,6 +35,12 @@ public class ProcessUtils {
 		}
 	}
 	
+	/**
+	 * Checks if is number.
+	 *
+	 * @param s the s
+	 * @return true, if is number
+	 */
 	public static boolean isNumber(String s) {
 		String pattern = "\\d+";
 		// Create a Pattern object
@@ -38,6 +50,12 @@ public class ProcessUtils {
 		return m.find();
 	}
 	
+	/**
+	 * Stem content.
+	 *
+	 * @param content the content
+	 * @return the string
+	 */
 	public static String stemContent(String content) {
 		StringTokenizer tokenizer = new StringTokenizer(content, DELIMATOR);
 		String word = "";
@@ -63,6 +81,12 @@ public class ProcessUtils {
 		return new String(sb);
 	}
 	
+	/**
+	 * To big integer.
+	 *
+	 * @param key the key
+	 * @return the string
+	 */
 	public static String toBigInteger(String key) {
 		try {
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
@@ -81,6 +105,14 @@ public class ProcessUtils {
 		return String.valueOf(new BigInteger("0", 16));
 	}
 	
+	/**
+	 * Analyze url.
+	 *
+	 * @param url the url
+	 * @return the list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static List<String> analyzeURL(String url) throws IOException, InterruptedException {
 		List<String> urlWords = new ArrayList<String>();
 		if(url.startsWith("http://")){
@@ -107,6 +139,12 @@ public class ProcessUtils {
 		return urlWords;
 	}
 	
+	/**
+	 * Analyze title.
+	 *
+	 * @param content the content
+	 * @return the list
+	 */
 	public static List<String> analyzeTitle(String content){
 		List<String> titleWords = new ArrayList<String>();
 		String store_text = ProcessUtils.stemContent(content);
@@ -128,6 +166,13 @@ public class ProcessUtils {
 		return titleWords;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void main(String[] args) throws IOException, InterruptedException{
 		String url = "http://www.dmoz.org/Computers/Computer_Science/";
 		analyzeURL(url);

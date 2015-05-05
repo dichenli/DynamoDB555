@@ -22,27 +22,61 @@ import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+// TODO: Auto-generated Javadoc
+
 /**
- * @author dichenli
+ * The Class InvertedIndex.
  *
+ * @author dichenli
  */
 @DynamoDBTable(tableName="InvertedIndex2")
 public class InvertedIndex {
 
+	/** The table name. */
 	static String tableName = "InvertedIndex2"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The hash key. */
 	static String hashKey = "word";
+	
+	/** The range key. */
 	static String rangeKey = "id";
+	
+	/** The read capacity. */
 	static long readCapacity = 1L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 1000L;
 
+	/** The id. */
 	byte[] id; //binary data, docID
+	
+	/** The word. */
 	String word; 
+	
+	/** The positions. */
 	HashSet<Integer> positions; //position of the word in document
+	
+	/** The tf. */
 	double tf; //TF value
+	
+	/** The idf. */
 	Double idf;
+	
+	/** The pagerank. */
 	Double pagerank;
+	
+	/** The type. */
 	int type;
 
+	/**
+	 * Instantiates a new inverted index.
+	 *
+	 * @param word2 the word2
+	 * @param id2 the id2
+	 * @param tf2 the tf2
+	 * @param positions2 the positions2
+	 * @param type the type
+	 */
 	public InvertedIndex(String word2, byte[] id2, double tf2,
 			HashSet<Integer> positions2, int type) {
 		this.word = word2;
@@ -54,47 +88,114 @@ public class InvertedIndex {
 		this.pagerank = (double)-1;
 	}
 
+	/**
+	 * Instantiates a new inverted index.
+	 */
 	public InvertedIndex() {}
 
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	@DynamoDBRangeKey(attributeName="id")
 	public ByteBuffer getId() { return ByteBuffer.wrap(id); }
+	
+	/**
+	 * Sets the id.
+	 *
+	 * @param buf the new id
+	 */
 	public void setId(ByteBuffer buf) { 
 		this.id = buf.array(); 
 	}
 
+	/**
+	 * Sets the id by hex string.
+	 *
+	 * @param hexString the new id by hex string
+	 */
 	public void setIdByHexString(String hexString) {
 		id = BinaryUtils.fromDecimal(hexString);
 	}
 
+	/**
+	 * Gets the word.
+	 *
+	 * @return the word
+	 */
 	@DynamoDBHashKey(attributeName="word")
 	public String getWord() { return word; }  
+	
+	/**
+	 * Sets the word.
+	 *
+	 * @param word the new word
+	 */
 	public void setWord(String word) { this.word = word; }
 
+	/**
+	 * Gets the positions.
+	 *
+	 * @return the positions
+	 */
 	@DynamoDBAttribute(attributeName="positions")
 	public Set<Integer> getPositions() {
 		return  positions;
 	}
+	
+	/**
+	 * Sets the positions.
+	 *
+	 * @param positions the new positions
+	 */
 	public void setPositions(Set<Integer> positions) {
 		this.positions = new HashSet<Integer>();
 		this.positions.addAll(positions);
 	}
 
+	/**
+	 * Sets the positions sorted.
+	 *
+	 * @param positions the new positions sorted
+	 */
 	public void setPositionsSorted(List<Integer> positions) {
 
 	}
 
+	/**
+	 * Adds the position.
+	 *
+	 * @param pos the pos
+	 */
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
 
+	/**
+	 * Gets the tf.
+	 *
+	 * @return the tf
+	 */
 	@DynamoDBAttribute(attributeName="tf")
 	public double getTF() {
 		return tf;
 	}
+	
+	/**
+	 * Sets the tf.
+	 *
+	 * @param tf the new tf
+	 */
 	public void setTF(double tf) {
 		this.tf = tf;
 	}
 
+	/**
+	 * Gets the idf.
+	 *
+	 * @return the idf
+	 */
 	@DynamoDBAttribute(attributeName="idf")
 	public double getIDF() {
 		if(idf == null) {
@@ -102,10 +203,21 @@ public class InvertedIndex {
 		}
 		return idf;
 	}
+	
+	/**
+	 * Sets the idf.
+	 *
+	 * @param idf the new idf
+	 */
 	public void setIDF(double idf) {
 		this.idf = idf;
 	}
 
+	/**
+	 * Gets the page rank.
+	 *
+	 * @return the page rank
+	 */
 	@DynamoDBAttribute(attributeName="pagerank")
 	public double getPageRank() {
 		if(pagerank == null) {
@@ -113,15 +225,31 @@ public class InvertedIndex {
 		}
 		return pagerank;
 	}
+	
+	/**
+	 * Sets the page rank.
+	 *
+	 * @param pagerank the new page rank
+	 */
 	public void setPageRank(double pagerank) {
 		this.pagerank = pagerank;
 	}
 
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
 	@DynamoDBAttribute(attributeName="type")
 	public int getType() {
 		return type;
 	}
 
+	/**
+	 * Positions sorted.
+	 *
+	 * @return the list
+	 */
 	public List<Integer> PositionsSorted() {
 		if(positions == null) {
 			return new ArrayList<Integer>();
@@ -131,16 +259,27 @@ public class InvertedIndex {
 		return Arrays.asList(arr);
 	}
 
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
 	public void setType(int type) {
 		this.type = type;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return word +"\n" + BinaryUtils.byteArrayToDecimalString(id)
 				+"\n" + idf + "\t" + pagerank + "\t" + type;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof InvertedIndex)) {
@@ -157,11 +296,19 @@ public class InvertedIndex {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return word.hashCode() * 31 + Arrays.hashCode(id);
 	}
 
+	/**
+	 * Gets the positions sorted.
+	 *
+	 * @return the positions sorted
+	 */
 	public List<Integer> getPositionsSorted() {
 		if(positions == null) {
 			return null;
@@ -171,6 +318,12 @@ public class InvertedIndex {
 		return Arrays.asList(arr);
 	}
 
+	/**
+	 * Parses the input.
+	 *
+	 * @param line the line
+	 * @return the inverted index
+	 */
 	public static InvertedIndex parseInput(String line) {
 		if (line == null) {
 			System.err.println("parseInput: null line!");
@@ -235,12 +388,17 @@ public class InvertedIndex {
 	/*
 	 * hash from word to items that has the word
 	 */
+	/** The items. */
 	private static HashMap<String, HashSet<InvertedIndex>> items = null;
+	
+	/** The count buffer. */
 	private static int countBuffer = 0;
+	
 	/**
 	 * insert an item of inverted index from parsed input. The item has fields
 	 * word, docID, positions, tf, and type, but not idf or pagerank
-	 * @param item
+	 *
+	 * @param item the item
 	 */
 	public static void insert(InvertedIndex item) {
 		//		System.out.println("======insert: \n" + item);
@@ -281,7 +439,14 @@ public class InvertedIndex {
 		}
 	}
 
+	/** The ready items. */
 	private static ArrayList<InvertedIndex> readyItems; //all items ready to be sent for batchsave
+	
+	/**
+	 * Batch insert.
+	 *
+	 * @param item the item
+	 */
 	private static void batchInsert(InvertedIndex item) {
 		//		System.out.println("======BatchInsert: \n" + item);
 		if(readyItems == null) {
@@ -316,6 +481,11 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Creates the table.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashRange(
 				tableName, hashKey, ScalarAttributeType.S, 
@@ -325,10 +495,24 @@ public class InvertedIndex {
 		DynamoTable.createTable(tableName, request);
 	}
 
+	/**
+	 * Query.
+	 *
+	 * @param word the word
+	 * @return the paginated query list
+	 */
 	public static PaginatedQueryList<InvertedIndex> query(String word) {
 		return query(word, null, null);
 	}
 
+	/**
+	 * Query.
+	 *
+	 * @param word the word
+	 * @param queryExpression the query expression
+	 * @param config the config
+	 * @return the paginated query list
+	 */
 	public static PaginatedQueryList<InvertedIndex> query(
 			String word, DynamoDBQueryExpression<InvertedIndex> queryExpression, 
 			DynamoDBMapperConfig config) {
@@ -350,9 +534,10 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * load eagerly, slower but get all results readily available
-	 * @param word
-	 * @return
+	 * load eagerly, slower but get all results readily available.
+	 *
+	 * @param word the word
+	 * @return the paginated query list
 	 */
 	public static PaginatedQueryList<InvertedIndex> queryEagerly(String word) {
 		PaginatedQueryList<InvertedIndex> collection = query(word);
@@ -362,9 +547,10 @@ public class InvertedIndex {
 
 	/**
 	 * query but returns a list that can only use its iterator, it saves memory load
-	 * and maybe faster
-	 * @param word
-	 * @return
+	 * and maybe faster.
+	 *
+	 * @param word the word
+	 * @return the paginated query list
 	 */
 	public static PaginatedQueryList<InvertedIndex> queryIterationOnly(String word) {
 		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
@@ -373,6 +559,7 @@ public class InvertedIndex {
 		return query(word, null, config);
 	}
 
+	/** The Constant spliter. */
 	static final byte[][] spliter = new byte[17][];
 	static {
 		String zeros = "000000000000000000000000000000000000000"; //all F except for the left most character
@@ -389,6 +576,13 @@ public class InvertedIndex {
 		spliter[16] = BinaryUtils.fromHex(sevfff);
 	}
 
+	/**
+	 * Query range.
+	 *
+	 * @param word the word
+	 * @param index the index
+	 * @return the paginated query list
+	 */
 	public static PaginatedQueryList<InvertedIndex> queryRange(String word, int index) {
 		if(index < 0 || index > 15) {
 			System.err.println("index number must be 0 ~ 15");
@@ -429,7 +623,10 @@ public class InvertedIndex {
 
 
 	/**
-	 * populate DB from S3 input
+	 * populate DB from S3 input.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
 	 */
 	public static void populateFromS3(String bucketName, String prefix) {
 		long lineCount = 0;
@@ -486,11 +683,24 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void init () throws InterruptedException {
 		createTable();
 	}
 
+	/** The job. */
 	public static String job = "";
+	
+	/**
+	 * Run distributed.
+	 *
+	 * @param args the args
+	 * @throws Exception the exception
+	 */
 	public static void runDistributed(String[] args) throws Exception {
 		String bucket = "mapreduce-result";
 		String numberStr = args[0];
@@ -506,6 +716,12 @@ public class InvertedIndex {
 		}
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		//		IDF.init();
 		//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");

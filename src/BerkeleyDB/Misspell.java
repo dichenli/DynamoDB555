@@ -24,7 +24,7 @@ public class Misspell {
 	/**
 	 * Instantiates a new URL frontier.
 	 *
-	 * @param name the name
+	 * @param wrong the wrong
 	 */
 	public Misspell(String wrong){
 		this.wrong = wrong;
@@ -40,13 +40,18 @@ public class Misspell {
 	/**
 	 * Adds the url to last.
 	 *
-	 * @param url the url
+	 * @param right the right
 	 */
 	public void addRight(String right){
 		this.right = right;
 	}
 	
 
+	/**
+	 * Gets the right.
+	 *
+	 * @return the right
+	 */
 	public String getRight(){
 		return right;
 	}

@@ -2,11 +2,24 @@ package spellchecker;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SpellChecker.
+ */
 public class SpellChecker {
+	
+	/** The dict. */
 	Dictionary dict;
+	
+	/** The misspell. */
 	FileCorrector misspell;
+	
+	/** The swap. */
 	SwapCorrector swap;
 
+	/**
+	 * Instantiates a new spell checker.
+	 */
 	public SpellChecker(){
 		dict = new Dictionary();
 //		System.out.println("new dictionary");
@@ -16,6 +29,11 @@ public class SpellChecker {
 //		System.out.println("new swap corrector");
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 //		Dictionary dict = new Dictionary();
 //		FileCorrector misspell = new FileCorrector();
@@ -35,6 +53,9 @@ public class SpellChecker {
 
 	}
 	
+	/**
+	 * Test.
+	 */
 	public void test(){
 		Dictionary dict = new Dictionary();
 		FileCorrector misspell = new FileCorrector();
@@ -48,26 +69,44 @@ public class SpellChecker {
 		System.out.println(misspell.getCorrection(wrong));
 	}
 	
+	/**
+	 * Checks if is word.
+	 *
+	 * @param word the word
+	 * @return true, if is word
+	 */
 	public boolean isWord(String word){
 		return dict.isWord(word);
 	}
 	
+	/**
+	 * Checks if is common misspell.
+	 *
+	 * @param word the word
+	 * @return true, if is common misspell
+	 */
 	public boolean isCommonMisspell(String word){
 		return misspell.containsMisspell(word);
 	}
 	
 	/**
 	 * get suggestion right word from 
-	 * common misspelling file
-	 * */
+	 * common misspelling file.
+	 *
+	 * @param wrong the wrong
+	 * @return the right misspell
+	 */
 	public String getRightMisspell(String wrong){
 		return misspell.getCorrection(wrong);
 	}
 	
 	/**
 	 * get suggestion right word from
-	 * swapping neighbor characters
-	 * */
+	 * swapping neighbor characters.
+	 *
+	 * @param wrong the wrong
+	 * @return the right swap
+	 */
 	public String getRightSwap(String wrong){
 		return swap.getCorrection(wrong);
 	}

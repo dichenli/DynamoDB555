@@ -37,31 +37,67 @@ import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+// TODO: Auto-generated Javadoc
+
 /**
- * @author dichenli
+ * The Class NewInvertedIndex.
  *
+ * @author dichenli
  */
 @DynamoDBTable(tableName="InvertedIndex3")
 public class NewInvertedIndex {
 
+	/** The table name. */
 	static String tableName = "InvertedIndex3"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The hash key. */
 	static String hashKey = "word";
+	
+	/** The range key. */
 	static String rangeKey = "id";
+	
+	/** The index. */
 	static String index = "tf";
+	
+	/** The index name. */
 	static String indexName = "tfIndex";
+	
+	/** The read capacity. */
 	static long readCapacity = 10L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 10000L;
 
+	/** The inserter. */
 	static Inserter<NewInvertedIndex> inserter = new Inserter<NewInvertedIndex>();
 
+	/** The id. */
 	byte[] id; //binary data, docID
+	
+	/** The word. */
 	String word; 
+	
+	/** The positions. */
 	HashSet<Integer> positions; //position of the word in document
+	
+	/** The tf. */
 	double tf; //TF value
 	//	double idf;
+	/** The pagerank. */
 	double pagerank;
+	
+	/** The type. */
 	int type;
 
+	/**
+	 * Instantiates a new new inverted index.
+	 *
+	 * @param word2 the word2
+	 * @param id2 the id2
+	 * @param tf2 the tf2
+	 * @param positions2 the positions2
+	 * @param type the type
+	 */
 	public NewInvertedIndex(String word2, byte[] id2, double tf2,
 			HashSet<Integer> positions2, int type) {
 		this.word = word2;
@@ -73,43 +109,106 @@ public class NewInvertedIndex {
 		this.pagerank = (double)-1;
 	}
 
+	/**
+	 * Instantiates a new new inverted index.
+	 */
 	public NewInvertedIndex() {}
 
 
+	/**
+	 * Gets the tf.
+	 *
+	 * @return the tf
+	 */
 	@DynamoDBIndexRangeKey(attributeName="tf", localSecondaryIndexName="tfIndex")
 	public double getTF() {
 		return tf;
 	}
+	
+	/**
+	 * Sets the tf.
+	 *
+	 * @param tf the new tf
+	 */
 	public void setTF(double tf) {
 		this.tf = tf;
 	}
 
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	@DynamoDBRangeKey(attributeName="id")
 	public ByteBuffer getId() { return ByteBuffer.wrap(id); }
+	
+	/**
+	 * Sets the id.
+	 *
+	 * @param buf the new id
+	 */
 	public void setId(ByteBuffer buf) { 
 		this.id = buf.array(); 
 	}
 
+	/**
+	 * Sets the id by hex string.
+	 *
+	 * @param hexString the new id by hex string
+	 */
 	public void setIdByHexString(String hexString) {
 		id = BinaryUtils.fromDecimal(hexString);
 	}
 
+	/**
+	 * Gets the word.
+	 *
+	 * @return the word
+	 */
 	@DynamoDBHashKey(attributeName="word")
 	public String getWord() { return word; }  
+	
+	/**
+	 * Sets the word.
+	 *
+	 * @param word the new word
+	 */
 	public void setWord(String word) { this.word = word; }
 
+	/**
+	 * Gets the positions.
+	 *
+	 * @return the positions
+	 */
 	@DynamoDBAttribute(attributeName="positions")
 	public Set<Integer> getPositions() {
 		return  positions;
 	}
+	
+	/**
+	 * Sets the positions.
+	 *
+	 * @param positions the new positions
+	 */
 	public void setPositions(Set<Integer> positions) {
 		this.positions = new HashSet<Integer>();
 		this.positions.addAll(positions);
 	}
+	
+	/**
+	 * Adds the position.
+	 *
+	 * @param pos the pos
+	 */
 	public void addPosition(Integer pos) {
 		positions.add(pos);
 	}
 
+	/**
+	 * Positions sorted.
+	 *
+	 * @return the list
+	 */
 	public List<Integer> PositionsSorted() {
 		if(positions == null) {
 			return null;
@@ -133,6 +232,11 @@ public class NewInvertedIndex {
 	//		this.idf = idf;
 	//	}
 
+	/**
+	 * Gets the page rank.
+	 *
+	 * @return the page rank
+	 */
 	@DynamoDBAttribute(attributeName="pagerank")
 	public double getPageRank() {
 		//		if(pagerank == null) {
@@ -140,24 +244,47 @@ public class NewInvertedIndex {
 		//		}
 		return pagerank;
 	}
+	
+	/**
+	 * Sets the page rank.
+	 *
+	 * @param pagerank the new page rank
+	 */
 	public void setPageRank(double pagerank) {
 		this.pagerank = pagerank;
 	}
 
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
 	@DynamoDBAttribute(attributeName="type")
 	public int getType() {
 		return type;
 	}
+	
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
 	public void setType(int type) {
 		this.type = type;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return word +"\n" + BinaryUtils.byteArrayToDecimalString(id)
 				+ "\n" + tf +"\t" + pagerank + "\t" + type;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof NewInvertedIndex)) {
@@ -174,11 +301,19 @@ public class NewInvertedIndex {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return word.hashCode() * 31 + Arrays.hashCode(id);
 	}
 
+	/**
+	 * Positions sorted.
+	 *
+	 * @return the list
+	 */
 	public List<Integer> positionsSorted() {
 		if(positions == null) {
 			return null;
@@ -193,7 +328,10 @@ public class NewInvertedIndex {
 
 
 	/**
-	 * populate DB from S3 input
+	 * populate DB from S3 input.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
 	 */
 	public static void populateFromS3(String bucketName, String prefix) {
 		long lineCount = 0;
@@ -256,6 +394,12 @@ public class NewInvertedIndex {
 		}
 	}
 
+	/**
+	 * Parses the input.
+	 *
+	 * @param line the line
+	 * @return the new inverted index
+	 */
 	public static NewInvertedIndex parseInput(String line) {
 		if (line == null) {
 			System.err.println("parseInput: null line!");
@@ -323,12 +467,17 @@ public class NewInvertedIndex {
 	/*
 	 * hash from word to items that has the word
 	 */
+	/** The items. */
 	private static HashMap<String, HashSet<NewInvertedIndex>> items = null;
+	
+	/** The count buffer. */
 	private static int countBuffer = 0;
+	
 	/**
 	 * insert an item of inverted index from parsed input. The item has fields
 	 * word, docID, positions, tf, and type, but not idf or pagerank
-	 * @param item
+	 *
+	 * @param item the item
 	 * @param flush force dump buffer to DB
 	 */
 	public static void insert(NewInvertedIndex item, boolean flush) {
@@ -372,7 +521,15 @@ public class NewInvertedIndex {
 		//		}
 	}
 
+	/** The ready items. */
 	private static ArrayList<NewInvertedIndex> readyItems; //all items ready to be sent for batchsave
+	
+	/**
+	 * Batch insert.
+	 *
+	 * @param item the item
+	 * @param flush the flush
+	 */
 	private static void batchInsert(NewInvertedIndex item, boolean flush) {
 		//		System.out.println("======BatchInsert: \n" + item);
 		if(readyItems == null) {
@@ -412,6 +569,11 @@ public class NewInvertedIndex {
 		}
 	}
 
+	/**
+	 * Creates the table.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashRange(
 				tableName, hashKey, ScalarAttributeType.S, 
@@ -439,9 +601,10 @@ public class NewInvertedIndex {
 	}
 
 	/**
-	 * query by the given word, order the results by tf from high to low
-	 * @param word
-	 * @return
+	 * query by the given word, order the results by tf from high to low.
+	 *
+	 * @param word the word
+	 * @return the paginated query list
 	 */
 	public static PaginatedQueryList<NewInvertedIndex> query(String word) {
 		NewInvertedIndex item = new NewInvertedIndex();
@@ -457,7 +620,15 @@ public class NewInvertedIndex {
 
 
 
+	/** The job. */
 	public static String job = "";
+	
+	/**
+	 * Run distributed.
+	 *
+	 * @param args the args
+	 * @throws Exception the exception
+	 */
 	public static void runDistributed(String[] args) throws Exception {
 		String bucket = "mapreduce-result";
 		String numberStr = args[0];
@@ -473,6 +644,12 @@ public class NewInvertedIndex {
 		}
 	}
 
+	/**
+	 * Run remaining.
+	 *
+	 * @param number the number
+	 * @throws Exception the exception
+	 */
 	public static void runRemaining(int number) throws Exception {
 		int[] front = {144, 161, 168, 179, 52, 53, 54, 55, 104, 105, 106, 107};
 		ArrayList<Integer> remaining = new ArrayList<Integer>();
@@ -501,6 +678,11 @@ public class NewInvertedIndex {
 		}
 	}
 
+	/**
+	 * Run list.
+	 *
+	 * @throws Exception the exception
+	 */
 	public static void runList() throws Exception {
 		int[] jobs = {120, 185, 123};
 		String bucket = "mapreduce-result";
@@ -520,6 +702,12 @@ public class NewInvertedIndex {
 		}
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		//		IDF.init();
 		//		IDF.populateFromS3("mapreduce-result", "idfmr/part-r-");

@@ -20,15 +20,22 @@ import Utils.BinaryUtils;
 import Utils.ProcessUtils;
 import Utils.TimeUtils;
 
+// TODO: Auto-generated Javadoc
 /**
- * Servlet implementation class Accio
+ * Servlet implementation class Accio.
  */
 
 public class Accio extends HttpServlet {
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The Constant PARSER. */
 	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
 	
     /**
+     * Instantiates a new accio.
+     *
      * @see HttpServlet#HttpServlet()
      */
     public Accio() {
@@ -36,6 +43,9 @@ public class Accio extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
     	super.init(config);
@@ -51,12 +61,18 @@ public class Accio extends HttpServlet {
     }
 
 	/**
+	 * Do get.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @throws ServletException the servlet exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		
 		String path = request.getRequestURI().substring(request.getContextPath().length());
-
+		String webapp = request.getContextPath();
 		if(path.equals("/Accio")){
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
@@ -66,7 +82,9 @@ public class Accio extends HttpServlet {
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
-						+ "background: url('/DynamoDB555/hp.png');"
+						+ "background: url('"
+						+ webapp
+						+ "/hp.png');"
 						+ "background-size: 1280px 800px;"
 						+ "background-repeat:no-repeat;"
 						+ "padding-top: 150px;"
@@ -88,7 +106,7 @@ public class Accio extends HttpServlet {
 						+ "<div class=\"container\">"
 							+ "<h1 class = \"text-center\">Accio</h1>"
 							+ "<div class=\"row\">"
-								+ "<form role=\"form\" action=\"/DynamoDB555/Accio\" method=\"post\">"
+								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 									+ "<div class=\"col-md-3\">"
 									+ "</div>"
 									+ "<div class=\"col-md-6\">"
@@ -147,6 +165,12 @@ public class Accio extends HttpServlet {
 	}
 
 	/**
+	 * Do post.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @throws ServletException the servlet exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -171,7 +195,7 @@ public class Accio extends HttpServlet {
 			
 			
 		}
-		newPhrase.append(phrase);
+//		newPhrase.append(phrase);
 //		
 //		for(int i = 0; i < words.length; i++){
 //			words[i].trim().toLowerCase();
@@ -180,57 +204,57 @@ public class Accio extends HttpServlet {
 //			}
 //			
 //		}
-//		if(path.equals("/Accio")){
-//			SpellChecker sc = new SpellChecker();
-//			
-//			/**
-//			 * spell check part
-//			 * */
-//			
-//			for(i = 0; i < words.size(); i++){
-//				word = words.get(i);
-//				System.out.println("the word is "+word);
-//				if(sc.isWord(word.toLowerCase())){
-//					System.out.println("in the dictionary");
-//					continue;
-//				}
-//				else{
-//					System.out.println("not in the dictionary");
-//					
-//					if(sc.isCommonMisspell(word.toLowerCase())){
-//						correct = false;
-//						System.out.println("is common misspelling");
-//						String right = sc.getRightMisspell(word.toLowerCase());
-//						words.set(i, right);
-//					}
-//					else{
-//						String right = sc.getRightSwap(word.toLowerCase());
-//						if(!words.get(i).equalsIgnoreCase(right)){
-//							correct = false;
-//						}
-//						words.set(i, right);
-//					}
-//				}
-//			}
-//			
-//			for(i = 0 ; i < words.size(); i++){
-//				newPhrase.append(words.get(i)+" ");
-//			}
-//		}
-//		else{
-//			newPhrase.append(phrase);
-//		}
-//		System.out.println(newPhrase.toString());
-//		words = new ArrayList<String>();
-//		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
-//		while (tokenizer.hasMoreTokens()) {
-//			word = tokenizer.nextToken();
-//			if (word.equals("")) continue;
-//			System.out.println(word);
-//			words.add(word);
-//			
-//			
-//		}
+		if(path.equals("/Accio")){
+			SpellChecker sc = new SpellChecker();
+			
+			/**
+			 * spell check part
+			 * */
+			
+			for(i = 0; i < words.size(); i++){
+				word = words.get(i);
+				System.out.println("the word is "+word);
+				if(sc.isWord(word.toLowerCase())){
+					System.out.println("in the dictionary");
+					continue;
+				}
+				else{
+					System.out.println("not in the dictionary");
+					
+					if(sc.isCommonMisspell(word.toLowerCase())){
+						correct = false;
+						System.out.println("is common misspelling");
+						String right = sc.getRightMisspell(word.toLowerCase());
+						words.set(i, right);
+					}
+					else{
+						String right = sc.getRightSwap(word.toLowerCase());
+						if(!words.get(i).equalsIgnoreCase(right)){
+							correct = false;
+						}
+						words.set(i, right);
+					}
+				}
+			}
+			
+			for(i = 0 ; i < words.size(); i++){
+				newPhrase.append(words.get(i)+" ");
+			}
+		}
+		else{
+			newPhrase.append(phrase);
+		}
+		System.out.println(newPhrase.toString());
+		words = new ArrayList<String>();
+		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+		while (tokenizer.hasMoreTokens()) {
+			word = tokenizer.nextToken();
+			if (word.equals("")) continue;
+			System.out.println(word);
+			words.add(word);
+			
+			
+		}
 		
 		/**
 		 * wiki part

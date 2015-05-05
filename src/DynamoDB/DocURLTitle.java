@@ -21,55 +21,130 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+// TODO: Auto-generated Javadoc
+
 /**
- * Object Persistent model, to populate docID-URL table 
+ * Object Persistent model, to populate docID-URL table .
+ *
  * @author dichenli
  */
 @DynamoDBTable(tableName="DocURLTitle")
 public class DocURLTitle {
 	
+	/** The table name. */
 	static String tableName = "DocURLTitle"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = "id";
+	
+	/** The read capacity. */
 	static long readCapacity = 1L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 5000L;
+	
+	/** The inserter. */
 	static Inserter<DocURLTitle> inserter;
 	
+	/** The id. */
 	byte[] id; //binary data
+	
+	/** The url. */
 	String url;
+	
+	/** The title. */
 	String title;
 	
+	/**
+	 * Instantiates a new doc url title.
+	 */
 	public DocURLTitle() {}
 	
+	/**
+	 * Instantiates a new doc url title.
+	 *
+	 * @param decimalID the decimal id
+	 * @param url the url
+	 * @param title the title
+	 */
 	public DocURLTitle(String decimalID, String url, String title) {
 		this.id = BinaryUtils.fromDecimal(decimalID);
 		this.url = url;
 		this.title = title;
 	}
 	
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	@DynamoDBHashKey(attributeName="id")
     public ByteBuffer getId() { return ByteBuffer.wrap(id); }
+    
+    /**
+     * Sets the id.
+     *
+     * @param buf the new id
+     */
     public void setId(ByteBuffer buf) { 
     	this.id = buf.array(); 
     }
+    
+    /**
+     * Id set by string.
+     *
+     * @param decimalString the decimal string
+     */
     public void idSetByString(String decimalString) {
     	id = BinaryUtils.fromDecimal(decimalString);
     }
     
+    /**
+     * Gets the url.
+     *
+     * @return the url
+     */
     @DynamoDBAttribute(attributeName="url")
     public String getURL() { return url; }    
+    
+    /**
+     * Sets the url.
+     *
+     * @param url the new url
+     */
     public void setURL(String url) { this.url = url; }
     
+    /**
+     * Gets the title.
+     *
+     * @return the title
+     */
     @DynamoDBAttribute(attributeName="title")
     public String getTitle() { return title; }    
+    
+    /**
+     * Sets the title.
+     *
+     * @param title the new title
+     */
     public void setTitle(String title) { this.title = title; }
     
     
     
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
        return url;  
     }
     
+    /**
+     * Parses the input.
+     *
+     * @param line the line
+     * @return the doc url title
+     */
     public static DocURLTitle parseInput(String line) {
 		if(line == null) {
 			System.out.println("null line");
@@ -99,14 +174,35 @@ public class DocURLTitle {
 		return item;
 	}
     
+    /**
+     * Load from byte buffer.
+     *
+     * @param bytes the bytes
+     * @return the doc url title
+     * @throws Exception the exception
+     */
     public static DocURLTitle loadFromByteBuffer(ByteBuffer bytes) throws Exception {
     	return load(bytes.array());
     }
     
+    /**
+     * Load from decimal string.
+     *
+     * @param decimalStr the decimal str
+     * @return the doc url title
+     * @throws Exception the exception
+     */
     public static DocURLTitle loadFromDecimalString(String decimalStr) throws Exception {
     	return load(BinaryUtils.fromDecimal(decimalStr));
     }
     
+    /**
+     * Load.
+     *
+     * @param id the id
+     * @return the doc url title
+     * @throws Exception the exception
+     */
     public static DocURLTitle load(byte[] id) throws Exception {
     	if (DynamoTable.mapper == null) {
     		DynamoTable.init();
@@ -116,6 +212,11 @@ public class DocURLTitle {
 
     
 
+	/**
+	 * Creates the table.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashKey(
 				tableName, keyName, ScalarAttributeType.B, 
@@ -123,13 +224,21 @@ public class DocURLTitle {
 		DynamoTable.createTable(tableName, request);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void init() throws InterruptedException {
 		createTable();
 		inserter = new Inserter<DocURLTitle>();
 	}
 
 	/**
-	 * populate DB from S3 input
+	 * populate DB from S3 input.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
 	 */
 	public static void populateFromS3(String bucketName, String prefix) {
 		long lineCount = 0;
@@ -192,7 +301,15 @@ public class DocURLTitle {
 		}
 	}
     
+	/** The job. */
 	static String job = "";
+    
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String... args) throws Exception {
     	init();
     	

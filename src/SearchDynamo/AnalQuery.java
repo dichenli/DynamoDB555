@@ -18,29 +18,47 @@ import SearchUtils.QueryInfo;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AnalQuery.
+ */
 public class AnalQuery {
 	
+	/**
+	 * Sets the click score.
+	 *
+	 * @param query the query
+	 * @param set the set
+	 * @return the int
+	 */
 	public static int setClickScore(String query, HashMap<ByteBuffer, DocResult> set){
 		int maxcount = 0;
 		System.out.println("set click score");
 		PaginatedQueryList<QueryRecord> countlist = QueryRecord.find(query);
 		System.out.println(countlist.size());
 		for(QueryRecord qr:countlist){
-			System.out.println("@@"+qr.getQuery()+"@@");
+//			System.out.println("@@"+qr.getQuery()+"@@");
 			int count = qr.getCount();
-			System.out.println("2");
+//			System.out.println("2");
 			if(count > maxcount) maxcount = count;
-			System.out.println("3");
+//			System.out.println("3");
 			ByteBuffer id = qr.getId();
-			System.out.println(id);
+//			System.out.println(id);
 			if(set.get(id) != null) set.get(id).setClickScore(count);
-			System.out.println("4");
+//			System.out.println("4");
 		}
-		System.out.println("out of loop");
+//		System.out.println("out of loop");
 		return maxcount;
 	}
 	
 
+	/**
+	 * Search.
+	 *
+	 * @param query the query
+	 * @return the list
+	 * @throws Exception the exception
+	 */
 	public static List<DocResult> search(String query) throws Exception {
 		QueryInfo queryInfo = null;
 		try {
@@ -166,6 +184,12 @@ public class AnalQuery {
 	}
 	
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception{
 //		List<SearchResult> response = search("computer science");
 //		for(SearchResult sr:response){

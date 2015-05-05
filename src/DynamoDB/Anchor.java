@@ -17,31 +17,59 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author dichenli
+ * The Class Anchor.
  *
+ * @author dichenli
  */
 @DynamoDBTable(tableName="Anchor")
 public class Anchor {
+	
+	/** The id. */
 	byte[] id; //binary data, docID
+	
+	/** The word. */
 	String word; 
+	
+	/** The types. */
 	HashSet<Integer> types; //position of the word in document
 
 
+	/**
+	 * Instantiates a new anchor.
+	 *
+	 * @param word2 the word2
+	 * @param id2 the id2
+	 * @param types the types
+	 */
 	public Anchor(String word2, byte[] id2, HashSet<Integer> types) {
 		this.word = word2;
 		this.id = id2;
 		this.types = types;
 	}
 
+	/**
+	 * Instantiates a new anchor.
+	 */
 	public Anchor() {
 		types = new HashSet<Integer>();
 		this.id = new byte[20];
 	}
 
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	@DynamoDBRangeKey(attributeName="id")
 	public ByteBuffer getId() { return ByteBuffer.wrap(id); }
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param buf the new id
+	 */
 	public void setId(ByteBuffer buf) {
 		if(buf == null) {
 			System.err.println("ByteBuffer null");
@@ -50,33 +78,73 @@ public class Anchor {
 		id = buf.array();
 	}
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param hexString the new id
+	 */
 	public void setId(String hexString) {
 		id = BinaryUtils.fromDecimal(hexString);
 	}
 
+	/**
+	 * Gets the word.
+	 *
+	 * @return the word
+	 */
 	@DynamoDBHashKey(attributeName="word")
 	public String getWord() { return word; }    
 
+	/**
+	 * Sets the word.
+	 *
+	 * @param word the new word
+	 */
 	public void setWord(String word) { this.word = word; }
 
+	/**
+	 * Gets the types.
+	 *
+	 * @return the types
+	 */
 	@DynamoDBAttribute(attributeName="types")
 	public Set<Integer> getTypes() {
 		return types;
 	}
+	
+	/**
+	 * Sets the types.
+	 *
+	 * @param types the new types
+	 */
 	public void setTypes(Set<Integer> types) {
 		this.types.addAll(types);
 	}
 
+	/**
+	 * Adds the type.
+	 *
+	 * @param type the type
+	 */
 	public void addType(Integer type) {
 		types.add(type);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return word + BinaryUtils.byteArrayToDecimalString(id);
 	}
 
+	/**
+	 * Parses the input.
+	 *
+	 * @param line the line
+	 * @return the anchor
+	 */
 	public static Anchor parseInput(String line) {
 		if (line == null) {
 			System.err.println("parseInput: null line!");
@@ -121,6 +189,14 @@ public class Anchor {
 		return new Anchor(word, id, types);
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @param word the word
+	 * @param id the id
+	 * @return the anchor
+	 * @throws Exception the exception
+	 */
 	public static Anchor load(String word, ByteBuffer id) throws Exception {
 		if (DynamoTable.mapper == null) {
 			DynamoTable.init();
@@ -128,6 +204,12 @@ public class Anchor {
 		return DynamoTable.mapper.load(DynamoDB.Anchor.class, word, id);
 	}
 
+	/**
+	 * Query page.
+	 *
+	 * @param queryWord the query word
+	 * @return the list
+	 */
 	public static List<Anchor> queryPage(String queryWord) {
 		if (DynamoTable.mapper == null) {
 			try {
@@ -145,6 +227,12 @@ public class Anchor {
 		return collection;
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		for(int i = 0; i < 1; i++) {
 			List<Anchor> results = queryPage("the");

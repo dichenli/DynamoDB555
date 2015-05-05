@@ -10,19 +10,40 @@ import java.util.Set;
 
 import BerkeleyDB.DBWrapper;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FileCorrector.
+ */
 public class FileCorrector extends Corrector {
+	
+	/** The correct file. */
 	File correctFile;
+	
+	/** The freader. */
 	FileReader freader;
+	
+	/** The breader. */
 	BufferedReader breader;
 
+	/**
+	 * Instantiates a new file corrector.
+	 *
+	 * @param filePath the file path
+	 */
 	public FileCorrector(String filePath){
 		correctFile = new File(filePath);
 	}
 	
+	/**
+	 * Instantiates a new file corrector.
+	 */
 	public FileCorrector(){
 		
 	}
 	
+	/**
+	 * Write to db.
+	 */
 	public void writeToDB(){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 
@@ -46,6 +67,12 @@ public class FileCorrector extends Corrector {
 		db.closeEnv();
 	}
 	
+	/**
+	 * Contains misspell.
+	 *
+	 * @param wrong the wrong
+	 * @return true, if successful
+	 */
 	public boolean containsMisspell(String wrong){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 		boolean contain = db.containsMisspell(wrong);
@@ -53,6 +80,12 @@ public class FileCorrector extends Corrector {
 		return contain;
 	}
 	
+	/**
+	 * Gets the correction.
+	 *
+	 * @param word the word
+	 * @return the correction
+	 */
 	public String getCorrection(String word){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 		String right = db.getRight(word);
@@ -61,6 +94,9 @@ public class FileCorrector extends Corrector {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see spellchecker.Corrector#getCorrections(java.lang.String)
+	 */
 	@Override
 	public Set<String> getCorrections(String wrong) {
 		Set<String> results = new HashSet<String>();

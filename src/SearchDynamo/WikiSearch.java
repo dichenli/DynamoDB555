@@ -9,8 +9,19 @@ import java.util.ArrayList;
 import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONObject;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class WikiSearch.
+ */
 public class WikiSearch {
 	
+	/**
+	 * Wiki.
+	 *
+	 * @param words the words
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String wiki(ArrayList<String> words) throws Exception{
 		String USER_AGENT = "cis455crawler";
 	

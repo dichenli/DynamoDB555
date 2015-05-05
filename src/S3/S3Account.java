@@ -9,14 +9,27 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class S3Account.
+ */
 public class S3Account {
 
+	/** The s3. */
 	static AmazonS3 s3 = null;
 	
+	/**
+	 * Initialized.
+	 *
+	 * @return true, if successful
+	 */
 	public static boolean initialized() {
 		return s3 != null;
 	}
 
+	/**
+	 * Inits the.
+	 */
 	public static void init() {
 		if(s3 != null) {
 			return;
@@ -42,6 +55,11 @@ public class S3Account {
 		s3.setRegion(usWest2);
 	}
 	
+	/**
+	 * Prints the exception.
+	 *
+	 * @param ase the ase
+	 */
 	public static void printException(AmazonServiceException ase) {
 		System.out.println("Caught an AmazonServiceException, " +
 				"which means your request made it " +
@@ -54,6 +72,11 @@ public class S3Account {
 		System.out.println("Request ID:       " + ase.getRequestId());
 	}
 	
+	/**
+	 * Prints the exception.
+	 *
+	 * @param ace the ace
+	 */
 	public static void printException(AmazonClientException ace) {
 		System.out.println("Caught an AmazonClientException, " +
 				"which means the client encountered " +

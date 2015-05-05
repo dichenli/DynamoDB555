@@ -13,6 +13,10 @@ import com.sleepycat.persist.StoreConfig;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DBWrapper.
+ */
 public class DBWrapper {
 
 	/** The env directory. */
@@ -39,7 +43,7 @@ public class DBWrapper {
 	/**
 	 * Instantiates a new DB wrapper.
 	 *
-	 * @param envDirectory the env directory
+	 * @param input_envDirectory the input_env directory
 	 */
 	public DBWrapper(String input_envDirectory){
 		if(!input_envDirectory.endsWith("/")) input_envDirectory += "/";
@@ -50,7 +54,7 @@ public class DBWrapper {
 		stConfig.setAllowCreate(true); 
 		envDirectory = input_envDirectory;
 		File f = new File(envDirectory);
-		
+		System.out.println(f.getAbsolutePath());
 		try {
 			System.out.println(f.getCanonicalPath());
 		} catch (IOException e) {
@@ -87,11 +91,19 @@ public class DBWrapper {
 		return myEnv;
 	}
 	
+	/**
+	 * Initialize dictionary.
+	 */
 	public void initializeDictionary(){
 		DBDictionary dic = new DBDictionary(dict);
 		dBDictionary.put(dic);
 	}
 	
+	/**
+	 * Adds the word.
+	 *
+	 * @param word the word
+	 */
 	public void addWord(String word){
 		DBDictionary dic = dBDictionary.get(dict);
 //		System.out.println("dic is "+dic+"\nand the word is "+word);
@@ -99,18 +111,36 @@ public class DBWrapper {
 		dBDictionary.put(dic);
 	}
 	
+	/**
+	 * Adds the misspell.
+	 *
+	 * @param wrong the wrong
+	 * @param correct the correct
+	 */
 	public void addMisspell(String wrong, String correct){
 		Misspell misSpell = new Misspell(wrong);
 		misSpell.addRight(correct);
 		misspell.put(misSpell);
 	}
 	
+	/**
+	 * Contains word.
+	 *
+	 * @param word the word
+	 * @return true, if successful
+	 */
 	public boolean containsWord(String word){
 		DBDictionary dic = dBDictionary.get(dict);
 //		System.out.println(dic == null);
 		return dic.containsWord(word);
 	}
 	
+	/**
+	 * Contains misspell.
+	 *
+	 * @param wrong the wrong
+	 * @return true, if successful
+	 */
 	public boolean containsMisspell(String wrong){
 		Misspell miss = misspell.get(wrong);
 		if(miss == null){
@@ -121,6 +151,12 @@ public class DBWrapper {
 		}
 	}
 	
+	/**
+	 * Gets the right.
+	 *
+	 * @param wrong the wrong
+	 * @return the right
+	 */
 	public String getRight(String wrong){
 		Misspell miss = misspell.get(wrong);
 		String right = miss.getRight();
@@ -128,6 +164,9 @@ public class DBWrapper {
 	}
 	
 	
+	/**
+	 * Close env.
+	 */
 	public void closeEnv() {
 		if(store != null){
 			try{

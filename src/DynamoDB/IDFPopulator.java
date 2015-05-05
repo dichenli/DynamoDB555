@@ -20,26 +20,47 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+// TODO: Auto-generated Javadoc
 /**
- * populate IDF table, not used anymore
- * @author dichenli
+ * populate IDF table, not used anymore.
  *
+ * @author dichenli
  */
 @Deprecated
 public class IDFPopulator implements Populator {
 
+	/** The table name. */
 	static String tableName = IDF.tableName; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = IDF.keyName;
+	
+	/** The read capacity. */
 	static long readCapacity = IDF.readCapacity; // 10 at most. Or we will be charged
+	
+	/** The write capacity. */
 	static long writeCapacity = IDF.writeCapacity; // 10 at most. Or we will be charged
 	
+	/** The input. */
 	File input;
+	
+	/** The sc. */
 	Scanner sc;
 	
+	/**
+	 * Instantiates a new IDF populator.
+	 *
+	 * @param fileName the file name
+	 */
 	public IDFPopulator(String fileName) {
 		this(new File(fileName));
 	}
 	
+	/**
+	 * Instantiates a new IDF populator.
+	 *
+	 * @param input the input
+	 */
 	public IDFPopulator(File input) {
 		this.input = input;
 		if(input == null) {
@@ -50,11 +71,17 @@ public class IDFPopulator implements Populator {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return tableName;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTableRequest()
+	 */
 	@Override
 	public CreateTableRequest createTableRequest() {
 		CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
@@ -64,11 +91,17 @@ public class IDFPopulator implements Populator {
 		return createTableRequest;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTable()
+	 */
 	@Override
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#populate()
+	 */
 	@Override
 	public void populate() {
 		long total = IOUtils.countLines(input); 
@@ -125,6 +158,12 @@ public class IDFPopulator implements Populator {
 	}
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if(args.length != 1 || args[0].equals("")) {
 			System.out.println("Usage: <jar_name> <input_file>");

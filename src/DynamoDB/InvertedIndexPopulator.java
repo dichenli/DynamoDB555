@@ -18,28 +18,46 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class InvertedIndexPopulator.
+ *
  * @author dichenli
  * No longer used, used for old sample data
  */
 @Deprecated
 public class InvertedIndexPopulator implements Populator {
 	
+	/** The table name. */
 	static String tableName = NewInvertedIndex.tableName; //need to sync with @DynamoDBTable(tableName="xx")
 //	static String word = "word";
 //	static String id = "id";
-	static String hashKey = NewInvertedIndex.hashKey;
+	/** The hash key. */
+static String hashKey = NewInvertedIndex.hashKey;
+	
+	/** The range key. */
 	static String rangeKey = NewInvertedIndex.rangeKey;
+	
+	/** The read capacity. */
 	static long readCapacity = NewInvertedIndex.readCapacity;
+	
+	/** The write capacity. */
 	static long writeCapacity = NewInvertedIndex.writeCapacity;
 	
+	/** The input. */
 	File input;
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return tableName;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTableRequest()
+	 */
 	@Override
 	public CreateTableRequest createTableRequest() {
 		CreateTableRequest createTableRequest = new CreateTableRequest()
@@ -64,11 +82,17 @@ public class InvertedIndexPopulator implements Populator {
 		return createTableRequest;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTable()
+	 */
 	@Override
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#populate()
+	 */
 	@Override
 	public void populate() {
 		long total = IOUtils.countLines(input); 
@@ -111,6 +135,11 @@ public class InvertedIndexPopulator implements Populator {
 		sc.close();
 	}
 	
+	/**
+	 * Instantiates a new inverted index populator.
+	 *
+	 * @param fileName the file name
+	 */
 	public InvertedIndexPopulator(String fileName) {
 		this.input = new File(fileName);
 		if(input == null) {
@@ -122,6 +151,12 @@ public class InvertedIndexPopulator implements Populator {
 	}
 
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if(args.length != 1 || args[0].equals("")) {
 			System.out.println("Usage: <jar_name> <input_file>");
