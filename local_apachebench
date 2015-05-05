@@ -1,0 +1,1 @@
+ab -n 20 -c 5 -p test_post_request -T 'application/x-www-form-urlencoded' http://localhost:8080/DynamoDB555/Accio

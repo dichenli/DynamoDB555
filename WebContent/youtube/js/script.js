@@ -19,7 +19,7 @@ $(document).ready(function() {
 					videTitle = item.snippet.title;
 					videoId = item.id.videoId;
 					
-					output = '<li><iframe height="'+vidHeight+'" width="'+vidWidth+'" src=\"//www.youtube.com/embed/' + videoId + '\"></iframe</li>';
+					output = '<li margin-left="100em"><iframe height="'+vidHeight+'" width="'+vidWidth+'" src=\"//www.youtube.com/embed/' + videoId + '\"></iframe</li>';
 					
 					//Append to results listStyleType
 					$('#results_youtube').append(output);
