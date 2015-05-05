@@ -11,12 +11,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import spellchecker.SpellChecker;
 import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
+import Utils.TimeUtils;
 
 /**
  * Servlet implementation class Accio
@@ -25,8 +27,7 @@ import Utils.ProcessUtils;
 public class Accio extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
-
-       
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -250,6 +251,13 @@ public class Accio extends HttpServlet {
 			results = new ArrayList<DocResult>(); //no match, return empty result
 		}
 		response.setContentType("text/html");
+
+//		HttpSession session = request.getSession(true);
+//		if(session.isNew()) {
+//			session.setAttribute("searchID", TimeUtils.timeStamp().toString());
+//		}
+//		String searchID = (String) session.getAttribute("searchID");
+		
 		PrintWriter out = response.getWriter();
 		out.write("<!DOCTYPE html>"
 				+ "<html lang=\"en\">"

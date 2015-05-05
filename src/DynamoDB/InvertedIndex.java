@@ -420,9 +420,9 @@ public class InvertedIndex {
 		.withRangeKeyCondition("id", rangeKeyCondition);
 
 
-		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
-				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
-
+//		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
+//				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
+		DynamoDBMapperConfig config = DynamoDBMapperConfig.DEFAULT;
 		return query(word, queryExpression, config);
 	}
 
