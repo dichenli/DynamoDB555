@@ -52,9 +52,7 @@ public class WikiSearch {
 		con.setRequestProperty("User-Agent", USER_AGENT);
  
 		int responseCode = con.getResponseCode();
-//		System.out.println("\nSending 'GET' request to URL : " + url);
-//		System.out.println("Response Code : " + responseCode);
- 
+
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -92,6 +90,12 @@ public class WikiSearch {
 			html = html.replaceAll("<a href=\"/w/index", "<a href=\"http://en.wikipedia.org/w/index");
 			html = html.replaceAll("<a href=\"/wiki/", "<a href=\"http://en.wikipedia.org/wiki/");
 			html = html.replaceAll("src=\"//upload", "src=\"http://upload");
+			html = html.replaceAll(" style=\"width:\\d\\d\\dpx\"", " style=\"width:300px\"");
+			html = html.replaceAll(" style=\"width:\\d\\d\\dpx;\"", " style=\"width:300px\"");
+			html = html.replaceAll(" style=\"width:\\d\\dem\"", " style=\"width:300px\"");
+			html = html.replaceAll("width=\"\\d\\d\\d\"", "width:\"300px\"");
+			
+			System.out.println(html);
 			
 		}
 		return html;
