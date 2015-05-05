@@ -308,7 +308,7 @@ public class Accio extends HttpServlet {
 							+ "<div class=\"row\">"
 								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 									+ "<div class=\"col-md-1\">"
-										+ "<a href=\"/DynamoDB555/Accio\">"
+										+ "<a href=\""+webapp+"/Accio\">"
 										+ "<h4>Accio</h4>"
 										+ "</a>"
 									+ "</div>"
@@ -356,11 +356,12 @@ public class Accio extends HttpServlet {
 			out.write("</li>");
 		} else {
 			for(int j = 0; j < results.size(); j++){
-				out.write("<li class=\"list-group-item\">");
+				out.write("<li id="+j+"class=\"list-group-item\">");
 				out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
 				out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 				out.write("</li>");
 			}
+			out.write("<a onclick=\"nextpage\">Next</a>");
 		}
 									
 						out.write("</ul>"

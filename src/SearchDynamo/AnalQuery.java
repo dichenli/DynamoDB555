@@ -37,17 +37,11 @@ public class AnalQuery {
 		PaginatedQueryList<QueryRecord> countlist = QueryRecord.find(query);
 		System.out.println(countlist.size());
 		for(QueryRecord qr:countlist){
-//			System.out.println("@@"+qr.getQuery()+"@@");
 			int count = qr.getCount();
-//			System.out.println("2");
 			if(count > maxcount) maxcount = count;
-//			System.out.println("3");
 			ByteBuffer id = qr.getId();
-//			System.out.println(id);
 			if(set.get(id) != null) set.get(id).setClickScore(count);
-//			System.out.println("4");
 		}
-//		System.out.println("out of loop");
 		return maxcount;
 	}
 	
@@ -167,7 +161,7 @@ public class AnalQuery {
 	        }
 	    });
 		
-		return minimizedSet.subList(0, Math.min(minimizedSet.size(), 10));
+		return minimizedSet.subList(0, Math.min(minimizedSet.size(), 100));
 //		int responsesize = Math.min(minimizedSet.size(), 20);
 //		List<DocResult> responses = new ArrayList<DocResult>();
 //		for(int i=0;i<responsesize;i++){
