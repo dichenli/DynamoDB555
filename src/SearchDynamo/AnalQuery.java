@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -154,6 +155,9 @@ public class AnalQuery {
 //			doc.secondScore();
 //		}
 		
+		//remove duplicates by url comparison
+		minimizedSet = removeDupURL(minimizedSet);
+		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {
 	        @Override
 	        public int compare(DocResult o1, DocResult o2) {
@@ -177,6 +181,29 @@ public class AnalQuery {
 
 	}
 	
+
+	private static List<DocResult> removeDupURL(List<DocResult> minimizedSet) {
+//		Collections.sort(minimizedSet, new Comparator<DocResult>() {
+//			@Override
+//			public int compare(DocResult o1, DocResult o2) {
+//				return o1.url.compareTo(o2.url);
+//			}
+//		});
+		HashMap<String, DocResult> set = new HashMap<String, DocResult>();
+		for(DocResult item : minimizedSet) {
+			String key = item.title;
+			if(key == null) {
+				System.out.println("======null url=====");
+				continue;
+			}
+//			if(key.charAt(key.length() - 1) != '/') {
+//				key += '/';
+//			}
+			set.put(key, item);
+		}
+		return new ArrayList<DocResult>(set.values());
+	}
+
 
 	/**
 	 * The main method.

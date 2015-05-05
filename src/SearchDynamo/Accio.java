@@ -472,7 +472,7 @@ public class Accio extends HttpServlet {
 					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
 					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
 					+ 			"= xmlhttp.responseText; "
-					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"Fetching response...\"}"
+					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"\"}"
 					+ 	"};"
 					+ 	"xmlhttp.open(\"GET\", path, true); "//false: synchronous
 					+ 	"xmlhttp.send(); "
