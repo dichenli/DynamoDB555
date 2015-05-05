@@ -274,9 +274,9 @@ public class DocResult {
 		if(url == null) url = "";
 		else url = url.toLowerCase();
 		String title = urltitle.getTitle();
+		this.title = title == null ? url:title;
 		if(title == null) title = "";
 		else title= title.toLowerCase();
-		this.title = title.equals("") ? url:title;
 		List<String> urlWords = analyzeURL(url);
 		List<String> titleWords = analyzeTitle(title);
 		List<String> urlcount = new ArrayList<String>();
