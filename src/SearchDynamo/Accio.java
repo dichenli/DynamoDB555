@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spellchecker.SpellChecker;
-import DynamoDB.QueryRecord;
+import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
@@ -32,6 +33,20 @@ public class Accio extends HttpServlet {
     public Accio() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+    	super.init(config);
+    	System.out.println("===================init");
+    	try {
+			DocURLTitle.init();
+			IDF.init();
+			InvertedIndex.init();
+			QueryRecord.init();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 
 	/**
@@ -155,7 +170,7 @@ public class Accio extends HttpServlet {
 			
 			
 		}
-//		newPhrase.append(phrase);
+		newPhrase.append(phrase);
 //		
 //		for(int i = 0; i < words.length; i++){
 //			words[i].trim().toLowerCase();
@@ -164,57 +179,57 @@ public class Accio extends HttpServlet {
 //			}
 //			
 //		}
-		if(path.equals("/Accio")){
-			SpellChecker sc = new SpellChecker();
-			
-			/**
-			 * spell check part
-			 * */
-			
-			for(i = 0; i < words.size(); i++){
-				word = words.get(i);
-				System.out.println("the word is "+word);
-				if(sc.isWord(word.toLowerCase())){
-					System.out.println("in the dictionary");
-					continue;
-				}
-				else{
-					System.out.println("not in the dictionary");
-					
-					if(sc.isCommonMisspell(word.toLowerCase())){
-						correct = false;
-						System.out.println("is common misspelling");
-						String right = sc.getRightMisspell(word.toLowerCase());
-						words.set(i, right);
-					}
-					else{
-						String right = sc.getRightSwap(word.toLowerCase());
-						if(!words.get(i).equalsIgnoreCase(right)){
-							correct = false;
-						}
-						words.set(i, right);
-					}
-				}
-			}
-			
-			for(i = 0 ; i < words.size(); i++){
-				newPhrase.append(words.get(i)+" ");
-			}
-		}
-		else{
-			newPhrase.append(phrase);
-		}
-		System.out.println(newPhrase.toString());
-		words = new ArrayList<String>();
-		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
-		while (tokenizer.hasMoreTokens()) {
-			word = tokenizer.nextToken();
-			if (word.equals("")) continue;
-			System.out.println(word);
-			words.add(word);
-			
-			
-		}
+//		if(path.equals("/Accio")){
+//			SpellChecker sc = new SpellChecker();
+//			
+//			/**
+//			 * spell check part
+//			 * */
+//			
+//			for(i = 0; i < words.size(); i++){
+//				word = words.get(i);
+//				System.out.println("the word is "+word);
+//				if(sc.isWord(word.toLowerCase())){
+//					System.out.println("in the dictionary");
+//					continue;
+//				}
+//				else{
+//					System.out.println("not in the dictionary");
+//					
+//					if(sc.isCommonMisspell(word.toLowerCase())){
+//						correct = false;
+//						System.out.println("is common misspelling");
+//						String right = sc.getRightMisspell(word.toLowerCase());
+//						words.set(i, right);
+//					}
+//					else{
+//						String right = sc.getRightSwap(word.toLowerCase());
+//						if(!words.get(i).equalsIgnoreCase(right)){
+//							correct = false;
+//						}
+//						words.set(i, right);
+//					}
+//				}
+//			}
+//			
+//			for(i = 0 ; i < words.size(); i++){
+//				newPhrase.append(words.get(i)+" ");
+//			}
+//		}
+//		else{
+//			newPhrase.append(phrase);
+//		}
+//		System.out.println(newPhrase.toString());
+//		words = new ArrayList<String>();
+//		tokenizer = new StringTokenizer(newPhrase.toString(),PARSER);
+//		while (tokenizer.hasMoreTokens()) {
+//			word = tokenizer.nextToken();
+//			if (word.equals("")) continue;
+//			System.out.println(word);
+//			words.add(word);
+//			
+//			
+//		}
 		
 		/**
 		 * wiki part

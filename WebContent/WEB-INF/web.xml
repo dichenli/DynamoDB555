@@ -19,6 +19,7 @@
     <display-name>Accio</display-name>
     <servlet-name>Accio</servlet-name>
     <servlet-class>SearchDynamo.Accio</servlet-class>
+    <load-on-startup>2</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>Accio</servlet-name>

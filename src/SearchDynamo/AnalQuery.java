@@ -22,13 +22,21 @@ public class AnalQuery {
 	
 	public static int setClickScore(String query, HashMap<ByteBuffer, DocResult> set){
 		int maxcount = 0;
+		System.out.println("set click score");
 		PaginatedQueryList<QueryRecord> countlist = QueryRecord.find(query);
+		System.out.println(countlist.size());
 		for(QueryRecord qr:countlist){
+			System.out.println("@@"+qr.getQuery()+"@@");
 			int count = qr.getCount();
+			System.out.println("2");
 			if(count > maxcount) maxcount = count;
+			System.out.println("3");
 			ByteBuffer id = qr.getId();
-			set.get(id).setClickScore(count);
+			System.out.println(id);
+			if(set.get(id) != null) set.get(id).setClickScore(count);
+			System.out.println("4");
 		}
+		System.out.println("out of loop");
 		return maxcount;
 	}
 	
@@ -38,6 +46,7 @@ public class AnalQuery {
 		try {
 			queryInfo = new QueryInfo(query);
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Result not found!");
 			throw e;
 		}
@@ -96,6 +105,7 @@ public class AnalQuery {
 		}
 		System.out.println("Minimized Set "+minimizedSet.size());
 		int maxClickCount = setClickScore(query, set);
+		System.out.println(maxClickCount);
 		if(minimizedSet.size()<100 && size != 1){
 			minimizedSet = intersection;
 		}
