@@ -42,6 +42,7 @@ public class WikiSearch {
 		url += fin
 				+ "&rvprop=content&format=json&rvsection=0&rvparse=1";
 		String html = "";
+
 		if(fin.length()!=0){
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -94,6 +95,7 @@ public class WikiSearch {
 					html = html.replaceAll("<a href=\"/wiki/", "<a href=\"http://en.wikipedia.org/wiki/");
 					html = html.replaceAll("src=\"//upload", "src=\"http://upload");
 				}
+
 			
 		}
 		return html;

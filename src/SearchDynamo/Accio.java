@@ -90,14 +90,15 @@ public class Accio extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			out.write("<!DOCTYPE html><html>"
 					+ "<head>"
-					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
+
 						+ "background: url('"
 						+ webapp
 						+ "/hp.png');"
-						+ "background-size: 1280px 800px;"
+						+ "background-size: cover;"
 						+ "background-repeat:no-repeat;"
 						+ "padding-top: 150px;"
 					+ "}"
@@ -305,20 +306,24 @@ public class Accio extends HttpServlet {
 					+ "<head>"
 						+ "<title>Accio</title>"
 						+ "<meta charset=\"utf-8\">"
-						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+
+						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1,  maximum-scale=1, user-scalable=no\">"
 						+ "<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">"
 						+ "<link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">"
 						+ "<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>"
 						+ "<link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>"
 						+ "<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>"
+
 						+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
+						+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://localhost:8080/DynamoDB555/youtube/mystyle.css\">"
 						+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
+						
+						+ "<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script>"
 						
 						// Youtube
 						+ "<script src=\"/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
 						+ "<script src=\"/DynamoDB555/youtube/js/script.js\"></script>"
-//						+ "<script src=\"http://localhost:8080/DynamoDB555/youtube/js/Togglable_tab.js\"></script>"
 
 						+ "<style>"
 							+ "body {"
@@ -335,10 +340,6 @@ public class Accio extends HttpServlet {
 					+ ""
 					+ "</head>"
 					+ "<body>"
-					
-					
-					
-					
 					
 					+ "<h3 hidden id=\"query\">" + newPhrase +"</h3>"
 						+ "<div class=\"container\">"
@@ -389,6 +390,9 @@ public class Accio extends HttpServlet {
 //								+ "</form>"
 
 							+ "</div>");
+		
+
+		
 		if(!correct){
 			out.write("<div class=\"row\">"
 						
@@ -420,13 +424,14 @@ public class Accio extends HttpServlet {
 			out.write("No matching result!");
 			out.write("</li>");
 		} else {
+			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
 					out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 				out.write("</li>");
 			}
-			out.write("<a onclick=\"nextpage\">Next</a>");
+			out.write("<button id=\"next\">next</button>");
 		}
 									
 						out.write("</ul>"
@@ -444,13 +449,13 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\">"+ wiki_html +"</div>"
+								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
 								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
-										+"	<h1>Youtube Videos</h1>"
-										+"	<ul id=\"results_youtube\"></ul>"
+										+"	<h2>Youtube Videos</h2>"
+										+"	<ul style=\"list-style-type:none; margin-left:0px;padding-left:0px;\" id=\"results_youtube\"></ul>"
 										+"</div>"
 								
 									+"</div>"
@@ -507,7 +512,34 @@ public class Accio extends HttpServlet {
 					+ "xmlhttp.open(\"GET\", path, true);"
 					+ "xmlhttp.send();"
 					+ "}"
-					+ "</script>"	
+					+ "</script>"
+					+ "<script>"
+					+ "var resultsize = document.getElementById(\"resultsize\").innerHTML;"
+					+ "$(document).ready(function(){"
+					+ "		$(\".list-group-item\").hide();"
+					+ "		for(var i=0;i<resultsize;i++){"
+					+ "			var id = \"#\"+i.toString();"
+					+ "			if(i<10) $(id).show();"
+					+ "			else $(id).hide();"
+					+ "		}"
+					+ "		var count = 1;"
+					+ "		$(\"#next\").click(function(){"
+					+ "			var linkstart = count*10;"
+					+ "			var linkend = Math.min(resultsize, linkstart+10);"
+					+ "			for(var i=0;i<resultsize;i++){"
+					+ "				var id = \"#\"+i.toString();"
+					+ "				if(i>=linkstart && i<linkend){"
+					+ "					$(id).show();"
+    				+ "				}"
+    				+ "				else{"
+    				+ "					$(id).hide();"
+    				+ "				}"
+    				+ "			}"
+    				+ "			$('html,body').scrollTop(0);"
+    				+ "			count++;"
+					+ "		});"
+					+ "});"
+					+ "</script>"
 
 					
 					+ "</body>"
