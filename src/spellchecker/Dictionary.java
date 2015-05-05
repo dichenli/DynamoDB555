@@ -76,7 +76,9 @@ public class Dictionary {
 	public boolean isWord(String word){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 
-		return db.containsWord(word);
+		boolean contains = db.containsWord(word);
+		db.closeEnv();
+		return contains;
 	}
 
 }

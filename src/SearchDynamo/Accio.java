@@ -281,6 +281,11 @@ public class Accio extends HttpServlet {
 						+ "<title>Accio</title>"
 						+ "<meta charset=\"utf-8\">"
 						+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+						+ "<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">"
+						+ "<link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">"
+						+ "<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>"
+						+ "<link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>"
+						+ "<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>"
 						+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 						+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
@@ -294,6 +299,13 @@ public class Accio extends HttpServlet {
 							+ "body {"
 								+ "padding-top: 15px;"
 							+ "}"
+							+ "div.align{"
+								+ "display:flex;"		
+								+ "align-items:center;"
+							+ "}"
+							+ "div.pad{"
+								+ "padding-top: 40px;"
+							+ "}"
 						+ "</style>"
 					+ ""
 					+ "</head>"
@@ -305,24 +317,32 @@ public class Accio extends HttpServlet {
 					
 					+ "<h3 hidden id=\"query\">" + newPhrase +"</h3>"
 						+ "<div class=\"container\">"
+							
 							+ "<div class=\"row\">"
-								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
-									+ "<div class=\"col-md-1\">"
-										+ "<a href=\"/DynamoDB555/Accio\">"
-										+ "<h4>Accio</h4>"
-										+ "</a>"
-									+ "</div>"
-									+ "<div class=\"col-md-6\">"
-										+ "<input type=\"text\" id=\"inputdefault\" class=\"form-control\" name=\"phrase\" placeholder=\""
-										+ phrase
-										+ "\">"
-									+ "</div>"
-									+ "<div class=\"col-md-3\">"
-										+ "<button type=\"submit\" class=\"btn btn-info\">"
-											+ "<span class=\"glyphicon glyphicon-flash\"></span> search"
-										+ "</button>"
-									+ "</div>"
-								+ "</form>"
+								+ "<div class=\"col-md-1 align\">"
+									+ "<a class=\"navbar-brand page-scroll\" href=\"/DynamoDB555/Accio\">"
+									+ "Accio"
+									+ "</a>"
+								+ "</div>"
+								+"<div class=\"col-md-9 align\">"
+									+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
+	
+//										+ "<div class=\"col-md-10\">"
+											+ "<input type=\"text\" id=\"inputdefault\" class=\"form-control\" name=\"phrase\" placeholder=\""
+											+ phrase
+											+ "\">"
+//										+ "</div>"
+//										+ "<div class=\"col-md-2\">"
+											+ "<button type=\"submit\" class=\"btn btn-info\">"
+												+ "<span class=\"glyphicon glyphicon-flash\"></span> search"
+											+ "</button>"
+//										+ "</div>"
+
+									+ "</form>"
+								+ "</div>"
+								+ "<div class=\"col-md-2 align\">"
+									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
+								+ "</div>"
 							+ "</div>");
 		if(!correct){
 			out.write("<div class=\"row\">"
@@ -347,7 +367,7 @@ public class Accio extends HttpServlet {
 //							+ "<h2>"
 //							+ "important things need to be said three times!"
 //							+ "</h2>"
-		out.write("<div class=\"col-md-8\">"
+		out.write("<div class=\"col-md-8 pad\">"
 					+ "<ul class=\"list-group\">");
 		
 		if(results == null || results.size() == 0) {
@@ -365,7 +385,7 @@ public class Accio extends HttpServlet {
 									
 						out.write("</ul>"
 							+ "</div>"
-						    + "<div class=\"col-md-4\">"
+						    + "<div class=\"col-md-4 pad\">"
 							
 							// Togglable Tab
 								+"<div role=\"tabpanel\">"
