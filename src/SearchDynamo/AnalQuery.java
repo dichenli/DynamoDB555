@@ -11,7 +11,8 @@ import java.util.List;
 import DynamoDB.InvertedIndex;
 import DynamoDB.QueryRecord;
 import SearchUtils.DocResult;
-
+import SearchUtils.FindURLThread;
+import SearchUtils.FindWordThread;
 import SearchUtils.QueryInfo;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
@@ -69,13 +70,13 @@ public class AnalQuery {
 		if(size == 0) return new ArrayList<DocResult>();
 		
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
-//		Thread[] findWordThreads = new FindWordThread[size];
+		Thread[] findWordThreads = new FindWordThread[size];
 		for(int i=0;i<size;i++){
-//			findWordThreads[i] = new FindWordThread(i, wordlist.get(i), set, queryInfo);
-//			findWordThreads[i].start();
+			findWordThreads[i] = new FindWordThread(i, wordlist.get(i), set, queryInfo);
+			findWordThreads[i].start();
 		}
 		for(int i=0;i<size;i++){
-//			findWordThreads[i].join();
+			findWordThreads[i].join();
 		}
 		
 //		for (int i = 0; i < size; i++) {
@@ -137,14 +138,14 @@ public class AnalQuery {
 		minimizedSet = minimizedSet.subList(0, Math.min(setsize, 100));
 		
 		System.out.println("before Thread start: "+minimizedSet.size());
-//		Thread[] urlThreads = new FindURLThread[10];
+		Thread[] urlThreads = new FindURLThread[10];
 		int finalsize = minimizedSet.size();
 		for(int i=0;i<10;i++){
-//			urlThreads[i] = new FindURLThread(i, minimizedSet, finalsize);
-//			urlThreads[i].start();
+			urlThreads[i] = new FindURLThread(i, minimizedSet, finalsize);
+			urlThreads[i].start();
 		}
 		for(int i=0;i<10;i++){
-//			urlThreads[i].join();
+			urlThreads[i].join();
 		}
 		// second score (including url and title check)
 //		for (int i=0;i<minimizedSet.size();i++){
