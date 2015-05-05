@@ -26,13 +26,14 @@ public class FileCorrector extends Corrector {
 	/** The breader. */
 	BufferedReader breader;
 
+	DBWrapper db;
 	/**
 	 * Instantiates a new file corrector.
 	 *
-	 * @param filePath the file path
+	 * @param db the file path
 	 */
-	public FileCorrector(String filePath){
-		correctFile = new File(filePath);
+	public FileCorrector(DBWrapper db){
+		this.db = db;
 	}
 	
 	/**
@@ -75,9 +76,7 @@ public class FileCorrector extends Corrector {
 	 * @return true, if successful
 	 */
 	public boolean containsMisspell(String wrong){
-		DBWrapper db = new DBWrapper(DBdir.dir);
 		boolean contain = db.containsMisspell(wrong);
-		db.closeEnv();
 		return contain;
 	}
 	
@@ -88,9 +87,7 @@ public class FileCorrector extends Corrector {
 	 * @return the correction
 	 */
 	public String getCorrection(String word){
-		DBWrapper db = new DBWrapper(DBdir.dir);
 		String right = db.getRight(word);
-		db.closeEnv();
 		return right;
 		
 	}

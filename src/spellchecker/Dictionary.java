@@ -23,6 +23,7 @@ public class Dictionary {
 	/** The breader. */
 	BufferedReader breader;
 	
+	DBWrapper db;
 	
 	/**
 	 * Instantiates a new dictionary.
@@ -34,10 +35,10 @@ public class Dictionary {
 	/**
 	 * Instantiates a new dictionary.
 	 *
-	 * @param string the string
+	 * @param db the string
 	 */
-	public Dictionary(String string){
-		dictionary = new File(string);
+	public Dictionary(DBWrapper db){
+		this.db = db;
 		
 	}
 	
@@ -74,10 +75,8 @@ public class Dictionary {
 	 * @return true, if is word
 	 */
 	public boolean isWord(String word){
-		DBWrapper db = new DBWrapper(DBdir.dir);
 
 		boolean contains = db.containsWord(word);
-		db.closeEnv();
 		return contains;
 	}
 
