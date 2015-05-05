@@ -65,7 +65,7 @@ public class Accio extends HttpServlet {
 			Files.delete(lockPath);
 			Files.delete(lock2);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
     	db = new DBWrapper(DBdir.dir);
     	System.out.println("===================init");
@@ -89,7 +89,7 @@ public class Accio extends HttpServlet {
 			Files.delete(lockPath);
 			Files.delete(lock2);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
     	System.out.println("in the method of destroy");
 
