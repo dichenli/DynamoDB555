@@ -522,10 +522,13 @@ public class InvertedIndex {
 		createTable();
 //		System.out.println("EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".length());
 		
-		List<InvertedIndex> results = queryRange("walken", 2);
-		Iterator<InvertedIndex> iterator = results.iterator();
-		while(iterator.hasNext()) {
-			System.out.println(BinaryUtils.byteArrayToHexString(iterator.next().id));
+		for(int i=0;i<9;i++){
+			List<InvertedIndex> results = queryRange("scienc", i);
+			Iterator<InvertedIndex> iterator = results.iterator();
+			while(iterator.hasNext()) {
+				System.out.println(BinaryUtils.byteArrayToHexString(iterator.next().id));
+			}
 		}
+		
 	}
 }
