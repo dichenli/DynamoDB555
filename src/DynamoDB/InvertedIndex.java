@@ -124,7 +124,7 @@ public class InvertedIndex {
 
 	public List<Integer> PositionsSorted() {
 		if(positions == null) {
-			return null;
+			return new ArrayList<Integer>();
 		}
 		Integer[] arr = positions.toArray(new Integer[0]);
 		Arrays.sort(arr);
