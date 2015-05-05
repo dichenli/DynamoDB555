@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spellchecker.SpellChecker;
-import DynamoDB.DocURLTitle;
-import DynamoDB.IDF;
 import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
@@ -37,7 +36,9 @@ public class Accio extends HttpServlet {
     }
     
     @Override
-    public void init() {
+    public void init(ServletConfig config) throws ServletException {
+    	super.init(config);
+    	System.out.println("===================init");
     	try {
 			DocURLTitle.init();
 			IDF.init();
