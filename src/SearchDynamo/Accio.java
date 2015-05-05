@@ -1,7 +1,11 @@
 package SearchDynamo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -53,6 +57,16 @@ public class Accio extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
     	super.init(config);
+//    	File lock = new File("/Users/peach/Documents/upenn/dBDictionary/*.lck");
+    	String dbDir = DBdir.dir;
+    	Path lockPath = Paths.get(dbDir+"je.lck");
+    	Path lock2 = Paths.get(dbDir+"je.info.0.lck");
+    	try {
+			Files.delete(lockPath);
+			Files.delete(lock2);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
     	db = new DBWrapper(DBdir.dir);
     	System.out.println("===================init");
     	try {
@@ -68,6 +82,15 @@ public class Accio extends HttpServlet {
     @Override
     public void destroy(){
     	db.closeEnv();
+    	String dbDir = DBdir.dir;
+    	Path lockPath = Paths.get(dbDir+"je.lck");
+    	Path lock2 = Paths.get(dbDir+"je.info.0.lck");
+    	try {
+			Files.delete(lockPath);
+			Files.delete(lock2);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
     	System.out.println("in the method of destroy");
 
     }
