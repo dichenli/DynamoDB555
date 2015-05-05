@@ -1,7 +1,11 @@
 package SearchDynamo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -13,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spellchecker.DBdir;
 import spellchecker.SpellChecker;
+import BerkeleyDB.DBWrapper;
 import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
@@ -33,6 +39,8 @@ public class Accio extends HttpServlet {
 	/** The Constant PARSER. */
 	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
 	
+	private DBWrapper db;
+	
     /**
      * Instantiates a new accio.
      *
@@ -49,6 +57,17 @@ public class Accio extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
     	super.init(config);
+//    	File lock = new File("/Users/peach/Documents/upenn/dBDictionary/*.lck");
+    	String dbDir = DBdir.dir;
+    	Path lockPath = Paths.get(dbDir+"je.lck");
+    	Path lock2 = Paths.get(dbDir+"je.info.0.lck");
+    	try {
+			Files.delete(lockPath);
+			Files.delete(lock2);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    	db = new DBWrapper(DBdir.dir);
     	System.out.println("===================init");
     	try {
 			DocURLTitle.init();
@@ -58,6 +77,22 @@ public class Accio extends HttpServlet {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+    }
+    
+    @Override
+    public void destroy(){
+    	db.closeEnv();
+    	String dbDir = DBdir.dir;
+    	Path lockPath = Paths.get(dbDir+"je.lck");
+    	Path lock2 = Paths.get(dbDir+"je.info.0.lck");
+    	try {
+			Files.delete(lockPath);
+			Files.delete(lock2);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    	System.out.println("in the method of destroy");
+
     }
 
 	/**
@@ -206,7 +241,7 @@ public class Accio extends HttpServlet {
 //			
 //		}
 		if(path.equals("/Accio")){
-			SpellChecker sc = new SpellChecker();
+			SpellChecker sc = new SpellChecker(db);
 			
 			/**
 			 * spell check part
@@ -230,7 +265,9 @@ public class Accio extends HttpServlet {
 					}
 					else{
 						String right = sc.getRightSwap(word.toLowerCase());
+//						System.out.println("the swap suggestion is "+right);
 						if(!words.get(i).equalsIgnoreCase(right)){
+//							System.out.println("found one");
 							correct = false;
 						}
 						words.set(i, right);
@@ -257,6 +294,7 @@ public class Accio extends HttpServlet {
 			
 		}
 		
+		
 		/**
 		 * wiki part
 		 * */
@@ -268,12 +306,14 @@ public class Accio extends HttpServlet {
 		/**
 		 * our own part
 		 * */
-		try {
-			results = AnalQuery.search(newPhrase.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Servlet doPost: no matching result");
-			results = new ArrayList<DocResult>(); //no match, return empty result
+		if(newPhrase.toString().length()!=0){
+			try {
+				results = AnalQuery.search(newPhrase.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Servlet doPost: no matching result");
+				results = new ArrayList<DocResult>(); //no match, return empty result
+			}
 		}
 		response.setContentType("text/html");
 
@@ -483,7 +523,7 @@ public class Accio extends HttpServlet {
 					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
 					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
 					+ 			"= xmlhttp.responseText; "
-					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"Fetching response...\"}"
+					+ 		"} else {document.getElementById(\"match_highlight\" + i).innerHTML = \"\"}"
 					+ 	"};"
 					+ 	"xmlhttp.open(\"GET\", path, true); "//false: synchronous
 					+ 	"xmlhttp.send(); "

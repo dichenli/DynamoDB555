@@ -1,5 +1,7 @@
 package spellchecker;
 
+import BerkeleyDB.DBWrapper;
+
 
 
 // TODO: Auto-generated Javadoc
@@ -19,13 +21,14 @@ public class SpellChecker {
 
 	/**
 	 * Instantiates a new spell checker.
+	 * @param db 
 	 */
-	public SpellChecker(){
-		dict = new Dictionary();
+	public SpellChecker(DBWrapper db){
+		dict = new Dictionary(db);
 //		System.out.println("new dictionary");
-		misspell = new FileCorrector();
+		misspell = new FileCorrector(db);
 //		System.out.println("new file corrector");
-		swap = new SwapCorrector(dict);
+		swap = new SwapCorrector(db);
 //		System.out.println("new swap corrector");
 	}
 	
@@ -34,40 +37,26 @@ public class SpellChecker {
 	 *
 	 * @param args the arguments
 	 */
-	public static void main(String[] args) {
-//		Dictionary dict = new Dictionary();
-//		FileCorrector misspell = new FileCorrector();
-//		SwapCorrector swap = new SwapCorrector(dict);
-//		
-////		misspell.writeToDB();
-////		dict.writeToDB();
-//		String test = "Zyzzogeton";
-//		
-//		String wrong = "embarrased";
-//		System.out.println(misspell.getCorrection(wrong));
-//		
-////		System.out.println(swap.getCorrection(test));
-////		System.out.println(dict.isWord(test));
-		SpellChecker test = new SpellChecker();
-		test.test();
-
-	}
+//	public static void main(String[] args) {
+////		Dictionary dict = new Dictionary();
+////		FileCorrector misspell = new FileCorrector();
+////		SwapCorrector swap = new SwapCorrector(dict);
+////		
+//////		misspell.writeToDB();
+//////		dict.writeToDB();
+////		String test = "Zyzzogeton";
+////		
+////		String wrong = "embarrased";
+////		System.out.println(misspell.getCorrection(wrong));
+////		
+//////		System.out.println(swap.getCorrection(test));
+//////		System.out.println(dict.isWord(test));
+//		SpellChecker test = new SpellChecker();
+//		test.test();
+//
+//	}
 	
-	/**
-	 * Test.
-	 */
-	public void test(){
-		Dictionary dict = new Dictionary();
-		FileCorrector misspell = new FileCorrector();
-		SwapCorrector swap = new SwapCorrector(dict);
-		
-//		misspell.writeToDB();
-//		dict.writeToDB();
-//		String test = "Zyzzogeton";
-		
-		String wrong = "abondon";
-		System.out.println(misspell.getCorrection(wrong));
-	}
+
 	
 	/**
 	 * Checks if is word.

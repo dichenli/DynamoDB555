@@ -69,10 +69,10 @@ public class DocResult {
 	int[] windowlist;
 	
 	/** The url. */
-	String url;
+	public String url;
 	
 	/** The title. */
-	String title;
+	public String title;
 	
 	/** The size. */
 	int size;

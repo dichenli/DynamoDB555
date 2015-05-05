@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import BerkeleyDB.DBWrapper;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class SwapCorrector.
@@ -13,13 +15,15 @@ public class SwapCorrector extends Corrector {
 	/** The dict. */
 	Dictionary dict;
 
+	DBWrapper db;
+	
 	/**
 	 * Instantiates a new swap corrector.
 	 *
-	 * @param dict the dict
+	 * @param db the dict
 	 */
-	public SwapCorrector(Dictionary dict) {
-		this.dict = dict;
+	public SwapCorrector(DBWrapper db) {
+		this.db = db;
 		
 	}
 	
@@ -32,8 +36,8 @@ public class SwapCorrector extends Corrector {
 	public String getCorrection(String wrong){
 		for(int i = 0; i < wrong.length()-1; i++){
 			String maybe = swap(wrong, i, i+1);
-			
-			if(dict.isWord(maybe)){
+			System.out.println("the maybe word is "+maybe);
+			if(db.containsWord(maybe)){
 				return maybe;
 			}
 			
@@ -87,19 +91,6 @@ public class SwapCorrector extends Corrector {
 		return result.toString();
 	}
 	
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 */
-	public static void main(String[] args){
-		Dictionary dic = new Dictionary("words");
-		SwapCorrector a = new SwapCorrector(dic);
-		String wrong = "wrong";
-		
-//		System.out.println(a.swap(wrong, 0, 2));
-		Set<String> result = a.getCorrections("fuor");
-		System.out.println(result);
-	}
+
 
 }
