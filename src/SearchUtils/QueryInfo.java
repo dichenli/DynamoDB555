@@ -7,17 +7,38 @@ import java.util.StringTokenizer;
 import snowballstemmer.PorterStemmer;
 import DynamoDB.IDF;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class QueryInfo.
+ */
 public class QueryInfo {
 
+	/** The Constant PARSER. */
 	public static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
+	
+	/** The Constant LIMIT. */
 	private static final double LIMIT = 1;
+	
+	/** The Constant WINDOW. */
 	private static final int WINDOW = 3;
 	
+	/** The wordlist. */
 	List<String> wordlist = new ArrayList<String>();
+	
+	/** The indexlist. */
 	List<Integer> indexlist = new ArrayList<Integer>();
+	
+	/** The idflist. */
 	List<Double> idflist = new ArrayList<Double>();
+	
+	/** The windowlist. */
 	int[] windowlist;
 	
+	/**
+	 * Instantiates a new query info.
+	 *
+	 * @param query the query
+	 */
 	public QueryInfo(String query){
 		List<String> parseQuery = stemContent(query.toLowerCase());
 		List<String> finalWords = new ArrayList<String>();
@@ -56,28 +77,59 @@ public class QueryInfo {
 		}
 	}
 	
+	/**
+	 * Gets the wordlist.
+	 *
+	 * @return the wordlist
+	 */
 	public List<String> getWordlist(){
 		return wordlist;
 	}
 	
+	/**
+	 * Gets the indexlist.
+	 *
+	 * @return the indexlist
+	 */
 	public List<Integer> getIndexlist(){
 		return indexlist;
 	}
 	
+	/**
+	 * Gets the ID flist.
+	 *
+	 * @return the ID flist
+	 */
 	public List<Double> getIDFlist(){
 		return idflist;
 	}
 	
+	/**
+	 * Gets the windowlist.
+	 *
+	 * @return the windowlist
+	 */
 	public int[] getWindowlist(){
 		return windowlist;
 	}
 	
 	
 	
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
 	public int getSize(){
 		return wordlist.size();
 	}
 	
+	/**
+	 * Stem content.
+	 *
+	 * @param content the content
+	 * @return the list
+	 */
 	public static List<String> stemContent(String content) {
 		StringTokenizer tokenizer = new StringTokenizer(content, PARSER);
 		String word = "";

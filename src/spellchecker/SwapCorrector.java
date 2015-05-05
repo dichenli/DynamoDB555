@@ -4,14 +4,31 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SwapCorrector.
+ */
 public class SwapCorrector extends Corrector {
+	
+	/** The dict. */
 	Dictionary dict;
 
+	/**
+	 * Instantiates a new swap corrector.
+	 *
+	 * @param dict the dict
+	 */
 	public SwapCorrector(Dictionary dict) {
 		this.dict = dict;
 		
 	}
 	
+	/**
+	 * Gets the correction.
+	 *
+	 * @param wrong the wrong
+	 * @return the correction
+	 */
 	public String getCorrection(String wrong){
 		for(int i = 0; i < wrong.length()-1; i++){
 			String maybe = swap(wrong, i, i+1);
@@ -27,6 +44,9 @@ public class SwapCorrector extends Corrector {
 
 
 
+	/* (non-Javadoc)
+	 * @see spellchecker.Corrector#getCorrections(java.lang.String)
+	 */
 	@Override
 	public Set<String> getCorrections(String wrong) {
 		Set<String> results = new HashSet<String>();
@@ -44,6 +64,14 @@ public class SwapCorrector extends Corrector {
 
 
 
+	/**
+	 * Swap.
+	 *
+	 * @param wrong the wrong
+	 * @param i the i
+	 * @param j the j
+	 * @return the string
+	 */
 	private String swap(String wrong, int i, int j) {
 		int first, second;
 		if(i < j){
@@ -59,6 +87,11 @@ public class SwapCorrector extends Corrector {
 		return result.toString();
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args){
 		Dictionary dic = new Dictionary("words");
 		SwapCorrector a = new SwapCorrector(dic);

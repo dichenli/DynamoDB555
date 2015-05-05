@@ -39,6 +39,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.Tables;
 
+// TODO: Auto-generated Javadoc
 /**
  * This sample demonstrates how to perform a few simple operations with the
  * Amazon DynamoDB service.
@@ -58,6 +59,7 @@ public class AmazonDynamoDBSample {
      *      the credentials file in your source directory.
      */
 
+    /** The dynamo db. */
     static AmazonDynamoDBClient dynamoDB;
 
     /**
@@ -67,6 +69,7 @@ public class AmazonDynamoDBSample {
      * automatically. Client parameters, such as proxies, can be specified in an
      * optional ClientConfiguration object when constructing a client.
      *
+     * @throws Exception the exception
      * @see com.amazonaws.auth.BasicAWSCredentials
      * @see com.amazonaws.auth.ProfilesConfigFile
      * @see com.amazonaws.ClientConfiguration
@@ -92,6 +95,12 @@ public class AmazonDynamoDBSample {
         dynamoDB.setRegion(usWest2);
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     * @throws Exception the exception
+     */
     public static void main(String[] args) throws Exception {
         init();
 
@@ -158,6 +167,15 @@ public class AmazonDynamoDBSample {
         }
     }
 
+    /**
+     * New item.
+     *
+     * @param name the name
+     * @param year the year
+     * @param rating the rating
+     * @param fans the fans
+     * @return the map
+     */
     private static Map<String, AttributeValue> newItem(String name, int year, String rating, String... fans) {
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         item.put("name", new AttributeValue(name));

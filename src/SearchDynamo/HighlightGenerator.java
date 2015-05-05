@@ -24,7 +24,10 @@ import SearchUtils.QueryInfo;
 import Utils.ArrayUtils;
 import snowballstemmer.PorterStemmer;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class HighlightGenerator.
+ *
  * @author dichenli
  * given a DocID, find the document content, then find the string that match the
  * given positions. Reverse Engineer of IndexerMapper code
@@ -32,10 +35,11 @@ import snowballstemmer.PorterStemmer;
 public class HighlightGenerator {
 
 	/**
-	 * core function to generate match highlight
+	 * core function to generate match highlight.
+	 *
 	 * @param rawContent content before stem
 	 * @param words words that are already stemmed
-	 * @return
+	 * @return the string
 	 */
 	public static String findPosition(String rawContent, String[] words) {
 		//remove all tags, keep only words
@@ -122,15 +126,22 @@ public class HighlightGenerator {
 	}
 
 
+	/**
+	 * Html2text.
+	 *
+	 * @param content the content
+	 * @return the string
+	 */
 	public static String html2text(String content) {
 		return Jsoup.parse(content).text();
 	}
 	
 	/**
 	 * given a decimal docID string and a query list (the order of the words must be
-	 * the same as the order of matching of the search
-	 * @param decimalID: id of the document in decimal string
-	 * @param query: word list that has the same order as they appear in the document  
+	 * the same as the order of matching of the search.
+	 *
+	 * @param decimalID the decimal id
+	 * @param query the query
 	 * @return a piece of text that highlight the matching content from the query
 	 */
 	public static String generate(String decimalID, String[] query) {
@@ -140,6 +151,13 @@ public class HighlightGenerator {
 		return findPosition(result, query);
 	}
 	
+	/**
+	 * Generate.
+	 *
+	 * @param decimalID the decimal id
+	 * @param phrase the phrase
+	 * @return the string
+	 */
 	public static String generate(String decimalID, String phrase) {
 		StringTokenizer tokenizer = new StringTokenizer(phrase, QueryInfo.PARSER);
 		String word = "";
@@ -153,6 +171,11 @@ public class HighlightGenerator {
 		return generate(decimalID, ArrayUtils.toArray(query));
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		String[] words = {"regular", "expressions"};
 		System.out.println(findPosition("Regular expressions are an incredibly powerful tool, "

@@ -28,47 +28,98 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class IDF.
+ *
  * @author dichenli
  * data of page idf
  */
 @DynamoDBTable(tableName="IDF2")
 public class IDF extends Item{
 
+	/** The table name. */
 	static String tableName = "IDF2"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = "word";
+	
+	/** The read capacity. */
 	static long readCapacity = 500L; // 10 at most. Or we will be charged
+	
+	/** The write capacity. */
 	static long writeCapacity = 1000L; // 10 at most. Or we will be charged
+	
+	/** The inserter. */
 	static Inserter<IDF> inserter;
 
+	/** The word. */
 	String word; //binary data
+	
+	/** The idf. */
 	double idf; //page idf
 
+	/**
+	 * Instantiates a new idf.
+	 */
 	public IDF() {
 		super();
 	}
 
+	/**
+	 * Gets the word.
+	 *
+	 * @return the word
+	 */
 	@DynamoDBHashKey(attributeName="word")
 	public String getWord() { return word; }
+	
+	/**
+	 * Sets the word.
+	 *
+	 * @param word the new word
+	 */
 	public void setWord(String word) {
 		this.word = word;
 	}
 
+	/**
+	 * Gets the idf.
+	 *
+	 * @return the idf
+	 */
 	@DynamoDBAttribute(attributeName="idf")
 	public double getidf() { return idf; }    
+	
+	/**
+	 * Sets the idf.
+	 *
+	 * @param idf the new idf
+	 */
 	public void setidf(double idf) {
 		this.idf = idf;
 	}
 
+	/**
+	 * Instantiates a new idf.
+	 *
+	 * @param line the line
+	 */
 	public IDF(String line) {
 		super(line);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return word + idf;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object other) {
 		if(other == null || !(other instanceof IDF)) {
@@ -82,12 +133,18 @@ public class IDF extends Item{
 		return this.word.equals(other2.word);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return word.hashCode();
 	}
 
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Item#parse(java.lang.String)
+	 */
 	@Override
 	public void parse(String line) {
 		if(line == null) {
@@ -149,6 +206,13 @@ public class IDF extends Item{
 	//		return item;
 	//	}
 
+	/**
+	 * Load.
+	 *
+	 * @param word the word
+	 * @return the idf
+	 * @throws Exception the exception
+	 */
 	public static IDF load(String word) throws Exception {
 		if (DynamoTable.mapper == null) {
 			DynamoTable.init();
@@ -156,6 +220,12 @@ public class IDF extends Item{
 		return DynamoTable.mapper.load(DynamoDB.IDF.class, word);
 	}
 
+	/**
+	 * Batchload.
+	 *
+	 * @param words the words
+	 * @return the list
+	 */
 	public static List<IDF> batchload(Set<String> words) {
 		//		System.out.println("batchload IDF words size: " + words.size());
 		ArrayList<Object> keys = new ArrayList<Object>();
@@ -198,6 +268,11 @@ public class IDF extends Item{
 		}
 	}
 
+	/**
+	 * Creates the table.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void createTable() throws InterruptedException {
 		CreateTableRequest request = DynamoUtils.createTableHashKey(
 				tableName, keyName, ScalarAttributeType.S, 
@@ -205,13 +280,21 @@ public class IDF extends Item{
 		DynamoTable.createTable(tableName, request);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static void init() throws InterruptedException {
 		createTable();
 		inserter = new Inserter<IDF>();
 	}
 
 	/**
-	 * populate DB from S3 input
+	 * populate DB from S3 input.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
 	 */
 	public static void populateFromS3(String bucketName, String prefix) {
 		long lineCount = 0;
@@ -270,6 +353,12 @@ public class IDF extends Item{
 	}
 
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String... args) throws Exception {
 		//		HashSet<String> words = new HashSet<String>();
 		//		words.add("anyth");

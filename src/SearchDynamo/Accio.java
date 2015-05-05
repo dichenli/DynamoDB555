@@ -18,16 +18,23 @@ import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
 
+// TODO: Auto-generated Javadoc
 /**
- * Servlet implementation class Accio
+ * Servlet implementation class Accio.
  */
 
 public class Accio extends HttpServlet {
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The Constant PARSER. */
 	private static final String PARSER = " \t\n\r\"'-_/.,:;|{}[]!@#%^&*()<>=+`~?";
 
        
     /**
+     * Instantiates a new accio.
+     *
      * @see HttpServlet#HttpServlet()
      */
     public Accio() {
@@ -35,6 +42,9 @@ public class Accio extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
     	super.init(config);
@@ -50,6 +60,12 @@ public class Accio extends HttpServlet {
     }
 
 	/**
+	 * Do get.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @throws ServletException the servlet exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
@@ -65,7 +81,9 @@ public class Accio extends HttpServlet {
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
-						+ "background: url('/DynamoDB555/hp.png');"
+						+ "background: url('"
+						+ webapp
+						+ "/hp.png');"
 						+ "background-size: 1280px 800px;"
 						+ "background-repeat:no-repeat;"
 						+ "padding-top: 150px;"
@@ -146,6 +164,12 @@ public class Accio extends HttpServlet {
 	}
 
 	/**
+	 * Do post.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 * @throws ServletException the servlet exception
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

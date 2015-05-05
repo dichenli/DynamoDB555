@@ -30,14 +30,27 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.model.TableStatus;
 
+// TODO: Auto-generated Javadoc
 /**
  * example from http://www.javacodegeeks.com/2013/08/amazon-dynamodb.html
  */
 public class ObjectPersistenceCRUDExample {
+	
+	/** The client. */
 	static AmazonDynamoDBClient client;
+	
+	/** The mapper. */
 	private DynamoDBMapper mapper;
+	
+	/** The product id. */
 	private static int PRODUCT_ID;
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 		ObjectPersistenceCRUDExample demo = new ObjectPersistenceCRUDExample();
 		demo.init();
@@ -56,6 +69,9 @@ public class ObjectPersistenceCRUDExample {
 		System.out.println("Example complete!");
 	}
 
+	/**
+	 * Inits the.
+	 */
 	private void init() {
 		PRODUCT_ID = new Random().nextInt(1000);
 		AWSCredentials credentials = new ClasspathPropertiesFileCredentialsProvider()
@@ -66,6 +82,11 @@ public class ObjectPersistenceCRUDExample {
 		mapper = new DynamoDBMapper(client);
 	}
 
+	/**
+	 * Creates the table.
+	 *
+	 * @param tableName the table name
+	 */
 	private void createTable(String tableName) {
 		try {
 			CreateTableRequest createTableRequest = new CreateTableRequest()
@@ -92,6 +113,11 @@ public class ObjectPersistenceCRUDExample {
 		}
 	}
 
+	/**
+	 * Wait for table to become available.
+	 *
+	 * @param tableName the table name
+	 */
 	private void waitForTableToBecomeAvailable(String tableName) {
 		System.out.println("Waiting for " + tableName + " to become ACTIVE...");
 		long startTime = System.currentTimeMillis();
@@ -119,6 +145,9 @@ public class ObjectPersistenceCRUDExample {
 		throw new RuntimeException("Table " + tableName + " never went active");
 	}
 
+	/**
+	 * Insert.
+	 */
 	private void insert() {
 		CatalogItem item = new CatalogItem();
 		item.setId(PRODUCT_ID);
@@ -130,6 +159,11 @@ public class ObjectPersistenceCRUDExample {
 		mapper.save(item);
 	}
 
+	/**
+	 * Update.
+	 *
+	 * @param itemRetrieved the item retrieved
+	 */
 	private void update(CatalogItem itemRetrieved) {
 		itemRetrieved.setISBN("622-2222222222");
 		itemRetrieved.setBookAuthors(new HashSet(Arrays.asList(
@@ -139,11 +173,22 @@ public class ObjectPersistenceCRUDExample {
 		System.out.println(itemRetrieved);
 	}
 
+	/**
+	 * Delete.
+	 *
+	 * @param updatedItem the updated item
+	 */
 	private void delete(CatalogItem updatedItem) {
 		// Delete the item.
 		mapper.delete(updatedItem);
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @param id the id
+	 * @return the catalog item
+	 */
 	private CatalogItem load(int id) {
 		// Retrieve the updated item.
 		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
@@ -158,6 +203,11 @@ public class ObjectPersistenceCRUDExample {
 		return updatedItem;
 	}
 
+	/**
+	 * Gets the all rows.
+	 *
+	 * @return the all rows
+	 */
 	private void getAllRows() {
 		ScanRequest scanRequest = new ScanRequest()
 		.withTableName("ProductCatalog");

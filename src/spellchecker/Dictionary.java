@@ -8,21 +8,42 @@ import java.io.IOException;
 
 import BerkeleyDB.DBWrapper;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Dictionary.
+ */
 public class Dictionary {
+	
+	/** The dictionary. */
 	File dictionary;
+	
+	/** The freader. */
 	FileReader freader;
+	
+	/** The breader. */
 	BufferedReader breader;
 	
 	
+	/**
+	 * Instantiates a new dictionary.
+	 */
 	public Dictionary(){
 		
 	}
 	
+	/**
+	 * Instantiates a new dictionary.
+	 *
+	 * @param string the string
+	 */
 	public Dictionary(String string){
 		dictionary = new File(string);
 		
 	}
 	
+	/**
+	 * Write to db.
+	 */
 	public void writeToDB(){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 
@@ -46,6 +67,12 @@ public class Dictionary {
 		db.closeEnv();
 	}
 
+	/**
+	 * Checks if is word.
+	 *
+	 * @param word the word
+	 * @return true, if is word
+	 */
 	public boolean isWord(String word){
 		DBWrapper db = new DBWrapper(DBdir.dir);
 

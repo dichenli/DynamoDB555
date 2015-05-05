@@ -1,23 +1,53 @@
 package SearchUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AnchorResult.
+ */
 public class AnchorResult {
 	
+	/** The Constant W_URL. */
 	private static final double W_URL = 0.5;
+	
+	/** The Constant W_TITLE. */
 	private static final double W_TITLE = 0.5;
+	
+	/** The Constant W_META. */
 	private static final double W_META = 0.2;
+	
+	/** The Constant W_ANCHOR. */
 	private static final double W_ANCHOR = 0.4;
 	
+	/** The Constant BASE_COUNT. */
 	private static final int BASE_COUNT = 1;
+	
+	/** The Constant BASE_SHARE. */
 	private static final int BASE_SHARE = 10;
 	
 	//type: 0:url, 1:meta, 2:anchor, 3:title
+	/** The size. */
 	int size;
+	
+	/** The url. */
 	int[] url;
+	
+	/** The meta. */
 	int[] meta;
+	
+	/** The anchor. */
 	int[] anchor;
+	
+	/** The title. */
 	int[] title;
+	
+	/** The anchor score. */
 	double anchorScore = 0;
 	
+	/**
+	 * Instantiates a new anchor result.
+	 *
+	 * @param size the size
+	 */
 	public AnchorResult(int size){
 		this.size = size;
 		this.url = new int[2];
@@ -26,6 +56,12 @@ public class AnchorResult {
 		this.title = new int[2];
 	}
 	
+	/**
+	 * Sets the type.
+	 *
+	 * @param index the index
+	 * @param type the type
+	 */
 	public void setType(int index, int type){
 		switch (type){
 			case 1: url[index]++;
@@ -35,14 +71,27 @@ public class AnchorResult {
 		}
 	}
 	
+	/**
+	 * Checks if is useful anchor.
+	 *
+	 * @return true, if is useful anchor
+	 */
 	public boolean isUsefulAnchor(){
 		return anchorScore > 0;
 	}
 	
+	/**
+	 * Gets the anchor score.
+	 *
+	 * @return the anchor score
+	 */
 	public double getAnchorScore(){
 		return anchorScore;
 	}
 	
+	/**
+	 * Sets the anchor score.
+	 */
 	public void setAnchorScore(){
 		double urlscore = 0;
 		int urlcount = 0;

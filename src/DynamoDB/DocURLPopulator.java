@@ -26,25 +26,49 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import Utils.nameUtils;
 
 
+// TODO: Auto-generated Javadoc
 /**
- * @author dichenli
+ * The Class DocURLPopulator.
  *
+ * @author dichenli
  */
 public class DocURLPopulator implements Populator {
 	
+	/** The table name. */
 	static String tableName = "DocURL"; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = "id";
+	
+	/** The read capacity. */
 	static long readCapacity = 1L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 1000L;
 	
+	/** The input. */
 	File input;
+	
+	/** The sc. */
 	Scanner sc;
 	
+	/**
+	 * Instantiates a new doc url populator.
+	 *
+	 * @param fileName the file name
+	 * @throws Exception the exception
+	 */
 	public DocURLPopulator(String fileName) throws Exception {
 		this(new File(fileName));
 	}
 	
 	
+	/**
+	 * Instantiates a new doc url populator.
+	 *
+	 * @param input the input
+	 * @throws Exception the exception
+	 */
 	public DocURLPopulator(File input) throws Exception {
 		this.input = input;
 		if(input == null) {
@@ -55,11 +79,17 @@ public class DocURLPopulator implements Populator {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTable()
+	 */
 	@Override
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#populate()
+	 */
 	@Override
 	public void populate() {
 		long total = IOUtils.countLines(input); 
@@ -112,14 +142,18 @@ public class DocURLPopulator implements Populator {
 		sc.close();
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return tableName;
 	}
 	
 	/**
-	 * Create a table with "Hash" key type and String key as the table key
-	 * @param key the key of the table
+	 * Create a table with "Hash" key type and String key as the table key.
+	 *
+	 * @return the creates the table request
 	 */
 	@Override
 	public CreateTableRequest createTableRequest() {
@@ -131,6 +165,12 @@ public class DocURLPopulator implements Populator {
 	}
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if(args.length != 1 || args[0].equals("")) {
 			System.out.println("Usage: <jar_name> <input_file>");

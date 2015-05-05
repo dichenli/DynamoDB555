@@ -11,43 +11,107 @@ import Utils.ProcessUtils;
 import DynamoDB.DocURLTitle;
 import DynamoDB.QueryRecord;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DocResult.
+ */
 public class DocResult {
+	
+	/** The Constant BASE. */
 	private static final int BASE = 30;
+	
+	/** The Constant WINDOW. */
 	private static final int WINDOW = 3;
 	
+	/** The Constant W_POSITION_MULTIPLE. */
 	private static final double W_POSITION_MULTIPLE = 0.5;
+	
+	/** The Constant W_PAGERANK_MULTIPLE. */
 	private static final double W_PAGERANK_MULTIPLE = 0.2;
+	
+	/** The Constant W_TFIDF. */
 	private static final double W_TFIDF = 0.2;
+	
+	/** The Constant W_CLICK_MULTIPLE. */
 	private static final double W_CLICK_MULTIPLE = 0.2;
 	
+	/** The Constant W_PAGERANK. */
 	private static final double W_PAGERANK = 0.3;
+	
+	/** The Constant W_TF. */
 	private static final double W_TF = 0.4;
+	
+	/** The Constant W_CLICK. */
 	private static final double W_CLICK = 0.3;
 	
+	/** The Constant BASE_URL. */
 	private static final double BASE_URL = 5;
+	
+	/** The Constant BASE_TITLE. */
 	private static final double BASE_TITLE = 10;
 	
+	/** The wordlist. */
 	List<String> wordlist;
+	
+	/** The id. */
 	ByteBuffer id;
+	
+	/** The wordtf. */
 	double[] wordtf;
+	
+	/** The positions. */
 	List<Integer>[] positions;
+	
+	/** The idflist. */
 	List<Double> idflist;
+	
+	/** The windowlist. */
 	int[] windowlist;
+	
+	/** The url. */
 	String url;
+	
+	/** The title. */
 	String title;
+	
+	/** The size. */
 	int size;
+	
+	/** The anchors. */
 	AnchorResult anchors;
+	
+	/** The clickcount. */
 	int clickcount;
 	
 	// different factors
+	/** The tfidf. */
 	double tfidf;
+	
+	/** The count. */
 	int count = 0;
+	
+	/** The position score. */
 	int positionScore = 0;
+	
+	/** The anchor score. */
 	double anchorScore = 0;
+	
+	/** The page rank. */
 	double pageRank;
+	
+	/** The page score. */
 	double pageScore;
+	
+	/** The final score. */
 	double finalScore;
 
+	/**
+	 * Instantiates a new doc result.
+	 *
+	 * @param queryInfo the query info
+	 * @param id the id
+	 * @param pageRank the page rank
+	 */
 	public DocResult(QueryInfo queryInfo, ByteBuffer id, double pageRank) {
 		this.wordlist = queryInfo.wordlist;
 		this.size = wordlist.size();
@@ -61,6 +125,11 @@ public class DocResult {
 		for(int i=0;i<size;i++) wordtf[i] = 0;
 	}
 
+	/**
+	 * Contains all.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean containsAll() {
 		return size == count;
 	}
@@ -70,15 +139,32 @@ public class DocResult {
 //		return anchors.isUsefulAnchor();
 //	}
 	
-	public void setClickScore(int count){
+	/**
+ * Sets the click score.
+ *
+ * @param count the new click score
+ */
+public void setClickScore(int count){
 		clickcount = count;
 	}
 
+	/**
+	 * Sets the position list.
+	 *
+	 * @param index the index
+	 * @param position the position
+	 */
 	public void setPositionList(int index, List<Integer> position) {
 		positions[index] = position;
 		count++;
 	}
 	
+	/**
+	 * Sets the tf.
+	 *
+	 * @param index the index
+	 * @param tf the tf
+	 */
 	public void setTF(int index, double tf){
 		wordtf[index] = tf;
 	}
@@ -91,27 +177,57 @@ public class DocResult {
 //		anchorScore = anchors.getAnchorScore();
 //	}
 
-	public void setFinalScore(double finalScore) {
+	/**
+ * Sets the final score.
+ *
+ * @param finalScore the new final score
+ */
+public void setFinalScore(double finalScore) {
 		this.finalScore = finalScore;
 	}
 	
+	/**
+	 * Gets the click count.
+	 *
+	 * @return the click count
+	 */
 	public int getClickCount(){
 		return clickcount;
 	}
 
+	/**
+	 * Gets the positions.
+	 *
+	 * @return the positions
+	 */
 	public List<Integer>[] getPositions() {
 		return positions;
 	}
 	
+	/**
+	 * Gets the position score.
+	 *
+	 * @return the position score
+	 */
 	public double getPositionScore(){
 		return positionScore;
 	}
 	
+	/**
+	 * Gets the doc id.
+	 *
+	 * @return the doc id
+	 */
 	public ByteBuffer getDocID(){
 		return id;
 	}
 
 	// calculate position score
+	/**
+	 * Sets the position score.
+	 *
+	 * @return the int
+	 */
 	public int setPositionScore() {
 		
 		for (int i = 0; i < positions.length - 1; i++) {
@@ -154,6 +270,9 @@ public class DocResult {
 	}
 
 	// calculate tf score
+	/**
+	 * Sets the tf score.
+	 */
 	public void setTFScore() {
 		tfidf = 0;
 		for(int i=0;i<size;i++){
@@ -161,16 +280,29 @@ public class DocResult {
 		}
 	}
 	
+	/**
+	 * Gets the anchor score.
+	 *
+	 * @return the anchor score
+	 */
 	public double getAnchorScore() {
 		return anchorScore;
 	}
 	
 	// calculate pageRank score
+	/**
+	 * Sets the page score.
+	 */
 	public void setPageScore(){
 		pageScore = Math.log(pageRank + 1);
 		pageScore = pageScore/5;
 	}
 	
+	/**
+	 * First score.
+	 *
+	 * @param maxClickCount the max click count
+	 */
 	public void firstScore(int maxClickCount){
 		setPageScore();
 //		calculateAnchor();
@@ -189,22 +321,47 @@ public class DocResult {
 		}
 	}
 	
+	/**
+	 * Second score.
+	 */
 	public void secondScore(){
 		finalScore += anchorScore;
 	}
 	
+	/**
+	 * Gets the page rank.
+	 *
+	 * @return the page rank
+	 */
 	public double getPageRank() {
 		return pageRank;
 	}
 
+	/**
+	 * Gets the tf.
+	 *
+	 * @param index the index
+	 * @return the tf
+	 */
 	public double getTF(int index) {
 		return wordtf[index];
 	}
 
+	/**
+	 * Gets the final score.
+	 *
+	 * @return the final score
+	 */
 	public double getFinalScore() {
 		return finalScore;
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @param other the other
+	 * @return the int
+	 */
 	public int compareTo(Object other) {
 		if (this.finalScore == ((DocResult) other).finalScore)
 			return 0;
@@ -214,14 +371,32 @@ public class DocResult {
 			return -1;
 	}
 	
+	/**
+	 * Gets the url.
+	 *
+	 * @return the url
+	 */
 	public String getUrl(){
 		return url;
 	}
 	
+	/**
+	 * Gets the title.
+	 *
+	 * @return the title
+	 */
 	public String getTitle(){
 		return title;
 	}
 	
+	/**
+	 * Analyze url.
+	 *
+	 * @param url the url
+	 * @return the list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public List<String> analyzeURL(String url) throws IOException, InterruptedException {
 		List<String> urlWords = new ArrayList<String>();
 		if(url.startsWith("http://")){
@@ -247,6 +422,12 @@ public class DocResult {
 		return urlWords;
 	}
 	
+	/**
+	 * Analyze title.
+	 *
+	 * @param content the content
+	 * @return the list
+	 */
 	public List<String> analyzeTitle(String content){
 		List<String> titleWords = new ArrayList<String>();
 		String store_text = ProcessUtils.stemContent(content);
@@ -268,6 +449,11 @@ public class DocResult {
 		return titleWords;
 	}
 	
+	/**
+	 * Analyze url title.
+	 *
+	 * @throws Exception the exception
+	 */
 	public void analyzeURLTitle() throws Exception{
 		DocURLTitle urltitle = DocURLTitle.load(id.array());
 		url = urltitle.getURL();

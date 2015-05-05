@@ -2,40 +2,68 @@ package Utils;
 
 import java.math.BigInteger;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BinaryUtils.
+ */
 public class BinaryUtils {
 	
+	/**
+	 * From decimal to big integer.
+	 *
+	 * @param hex the hex
+	 * @return the big integer
+	 */
 	public static BigInteger fromDecimalToBigInteger(String hex) {
 		return new BigInteger(hex);
 	}
 	
 	/**
-	 * convert from string representation of decimal bytes to byte[]
-	 * @throws NumberFormatException
-	 * @param hex
-	 * @return
+	 * convert from string representation of decimal bytes to byte[].
+	 *
+	 * @param decimalString the decimal string
+	 * @return the byte[]
 	 */
 	public static byte[] fromDecimal(String decimalString) {
 		return fromDecimalToBigInteger(decimalString).toByteArray();
 	}
 
+	/**
+	 * From hex to big integer.
+	 *
+	 * @param hex the hex
+	 * @return the big integer
+	 */
 	public static BigInteger fromHexToBigInteger(String hex) {
 		return new BigInteger(hex, 16);
 	}
 	
 	/**
-	 * convert from string representation of hex bytes to byte[]
-	 * @throws NumberFormatException
-	 * @param hex
-	 * @return
+	 * convert from string representation of hex bytes to byte[].
+	 *
+	 * @param hex the hex
+	 * @return the byte[]
 	 */
 	public static byte[] fromHex(String hex) {
 		return fromHexToBigInteger(hex).toByteArray();
 	}
 	
+	/**
+	 * From base64.
+	 *
+	 * @param base64 the base64
+	 * @return the byte[]
+	 */
 	public static byte[] fromBase64(String base64) {
 		return fromBase64ToBigInteger(base64).toByteArray();
 	}
 	
+	/**
+	 * From base64 to big integer.
+	 *
+	 * @param base64 the base64
+	 * @return the big integer
+	 */
 	public static BigInteger fromBase64ToBigInteger(String base64) {
 		return new BigInteger(base64, 64);
 	}
@@ -53,16 +81,35 @@ public class BinaryUtils {
 //       return sb.toString();
 //	}
 	
+	/**
+	 * Byte array to decimal string.
+	 *
+	 * @param array the array
+	 * @return the string
+	 */
 	public static String byteArrayToDecimalString(byte[] array) {
 		BigInteger i = new BigInteger(array);
 		return i.toString();
 	}
 	
+	/**
+	 * Byte array to hex string.
+	 *
+	 * @param array the array
+	 * @return the string
+	 */
 	public static String byteArrayToHexString(byte[] array) {
 		BigInteger i = new BigInteger(array);
 		return i.toString(16);
 	}
 	
+	/**
+	 * Array equals.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return true, if successful
+	 */
 	public static boolean arrayEquals(byte[] a, byte[] b) {
 		if(a == b) {
 			return true;
@@ -80,6 +127,12 @@ public class BinaryUtils {
 		}
 	}
 	
+	/**
+	 * To object.
+	 *
+	 * @param array the array
+	 * @return the byte[]
+	 */
 	public static Byte[] toObject(byte[] array) {
 		if(array == null) {
 			return null;
@@ -92,11 +145,10 @@ public class BinaryUtils {
 	}
 	
 	/**
-	 * convert Bye[] to byte[], takes O(n) time complexity
-	 * @param array
-	 * @throws NullPointerException if any element of array is null, but returns null
-	 * if array is null
-	 * @return
+	 * convert Bye[] to byte[], takes O(n) time complexity.
+	 *
+	 * @param array the array
+	 * @return the byte[]
 	 */
 	public static byte[] toPrimary(Byte[] array) {
 		if(array == null) {
@@ -110,9 +162,10 @@ public class BinaryUtils {
 	}
 	
 	/**
-	 * get a bit from the int "b" with given position "pos"
-	 * @param b: a byte number
-	 * @param pos: a position, 1 ... 32, (1 means the least significant bit)
+	 * get a bit from the int "b" with given position "pos".
+	 *
+	 * @param b the b
+	 * @param pos the pos
 	 * @return 0 or 1
 	 */
 	public static int getBit(int b, int pos) {
@@ -123,6 +176,11 @@ public class BinaryUtils {
 		return (b >>> (pos - 1)) & 1;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		String decimal = "1000016645993763646612612913273621633656175576825";
 		byte[] id = fromDecimal(decimal);

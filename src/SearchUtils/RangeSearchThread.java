@@ -7,14 +7,36 @@ import java.util.List;
 
 import DynamoDB.InvertedIndex;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RangeSearchThread.
+ */
 public class RangeSearchThread extends Thread{
 	
+	/** The threadindex. */
 	int threadindex;
+	
+	/** The wordindex. */
 	int wordindex;
+	
+	/** The word. */
 	String word;
+	
+	/** The set. */
 	HashMap<ByteBuffer, DocResult> set;
+	
+	/** The query info. */
 	QueryInfo queryInfo;
 	
+	/**
+	 * Instantiates a new range search thread.
+	 *
+	 * @param index the index
+	 * @param wordindex the wordindex
+	 * @param word the word
+	 * @param set the set
+	 * @param queryInfo the query info
+	 */
 	public RangeSearchThread(int index, int wordindex, String word, HashMap<ByteBuffer, DocResult> set, QueryInfo queryInfo){
 		this.wordindex = wordindex;
 		this.threadindex = index;
@@ -23,6 +45,9 @@ public class RangeSearchThread extends Thread{
 		this.queryInfo = queryInfo;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
+	 */
 	public void run(){
 		System.out.println("get collection "+threadindex);
 		List<InvertedIndex> collection = InvertedIndex.queryRange(word, threadindex);

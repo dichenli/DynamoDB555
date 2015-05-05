@@ -14,20 +14,38 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+// TODO: Auto-generated Javadoc
 /**
- * mimic the behavior of an iterator to iterate an bucket of S3
- * @author dichenli
+ * mimic the behavior of an iterator to iterate an bucket of S3.
  *
+ * @author dichenli
  */
 public class S3Iterator {
 
+	/** The bucket name. */
 	private String bucketName;
+	
+	/** The prefix. */
 	private String prefix;
+	
+	/** The delimiter. */
 	private String delimiter;
+	
+	/** The list objects request. */
 	private ListObjectsRequest listObjectsRequest;
+	
+	/** The object listing. */
 	private ObjectListing objectListing;
+	
+	/** The iter. */
 	private Iterator<S3ObjectSummary> iter;
 
+	/**
+	 * Gets the next list.
+	 *
+	 * @return the next list
+	 * @throws Exception the exception
+	 */
 	private void getNextList() throws Exception {
 		try {
 			objectListing = S3Account.s3.listObjects(listObjectsRequest);
@@ -43,6 +61,12 @@ public class S3Iterator {
 		}
  	}
 
+	/**
+	 * Instantiates a new s3 iterator.
+	 *
+	 * @param bucketName the bucket name
+	 * @param prefix the prefix
+	 */
 	public S3Iterator(String bucketName, String prefix) {
 		if(!S3Account.initialized()) {
 			S3Account.init();
@@ -70,9 +94,6 @@ public class S3Iterator {
 	 * which has "nextList" and "hasNext" methods, once the nextList() is called, continue 
 	 * calling the method won't retrieve the previous information again
 	 * example: bucketName = "mapreduce-result", prefix = "1000files/part", 
-	 * @param bucketName
-	 * @param prefix
-	 * @return
 	 */
 	private void nextList() {
 		if(objectListing == null) {
@@ -97,7 +118,8 @@ public class S3Iterator {
 	}
 
 	/**
-	 * get the next file summary from s3
+	 * get the next file summary from s3.
+	 *
 	 * @return next file summary, or null if no next file exists
 	 */
 	public S3ObjectSummary next() {
@@ -111,8 +133,9 @@ public class S3Iterator {
 	}
 
 	/**
-	 * next file (object) exists for the given bucket name and prefix
-	 * @return
+	 * next file (object) exists for the given bucket name and prefix.
+	 *
+	 * @return true, if successful
 	 */
 	public boolean hasNext() {
 		if (objectListing == null || iter == null) {//first request
@@ -124,6 +147,12 @@ public class S3Iterator {
 		return true;
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 		S3Iterator s3Iterator = new S3Iterator("crawler-content", "content/");
 		while(s3Iterator.hasNext()) {

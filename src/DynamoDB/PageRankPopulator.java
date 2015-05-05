@@ -14,20 +14,44 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PageRankPopulator.
+ */
 public class PageRankPopulator implements Populator {
 
+	/** The table name. */
 	static String tableName = PageRank.tableName; //need to sync with @DynamoDBTable(tableName="xx")
+	
+	/** The key name. */
 	static String keyName = PageRank.keyName;
+	
+	/** The read capacity. */
 	static long readCapacity = PageRank.readCapacity; // 10 at most. Or we will be charged
+	
+	/** The write capacity. */
 	static long writeCapacity = PageRank.writeCapacity; // 10 at most. Or we will be charged
 	
+	/** The input. */
 	File input;
+	
+	/** The sc. */
 	Scanner sc;
 	
+	/**
+	 * Instantiates a new page rank populator.
+	 *
+	 * @param fileName the file name
+	 */
 	public PageRankPopulator(String fileName) {
 		this(new File(fileName));
 	}
 	
+	/**
+	 * Instantiates a new page rank populator.
+	 *
+	 * @param input the input
+	 */
 	public PageRankPopulator(File input) {
 		this.input = input;
 		if(input == null) {
@@ -38,11 +62,17 @@ public class PageRankPopulator implements Populator {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return tableName;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTableRequest()
+	 */
 	@Override
 	public CreateTableRequest createTableRequest() {
 		CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
@@ -52,11 +82,17 @@ public class PageRankPopulator implements Populator {
 		return createTableRequest;
 	}
 
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTable()
+	 */
 	@Override
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#populate()
+	 */
 	@Override
 	public void populate() {
 		long total = IOUtils.countLines(input); 
@@ -113,6 +149,12 @@ public class PageRankPopulator implements Populator {
 	}
 	
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if(args.length != 1 || args[0].equals("")) {
 			System.out.println("Usage: <jar_name> <input_file>");

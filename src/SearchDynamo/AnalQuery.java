@@ -18,8 +18,19 @@ import SearchUtils.QueryInfo;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AnalQuery.
+ */
 public class AnalQuery {
 	
+	/**
+	 * Sets the click score.
+	 *
+	 * @param query the query
+	 * @param set the set
+	 * @return the int
+	 */
 	public static int setClickScore(String query, HashMap<ByteBuffer, DocResult> set){
 		int maxcount = 0;
 		System.out.println("set click score");
@@ -41,6 +52,13 @@ public class AnalQuery {
 	}
 	
 
+	/**
+	 * Search.
+	 *
+	 * @param query the query
+	 * @return the list
+	 * @throws Exception the exception
+	 */
 	public static List<DocResult> search(String query) throws Exception {
 		QueryInfo queryInfo = null;
 		try {
@@ -166,6 +184,12 @@ public class AnalQuery {
 	}
 	
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception{
 //		List<SearchResult> response = search("computer science");
 //		for(SearchResult sr:response){

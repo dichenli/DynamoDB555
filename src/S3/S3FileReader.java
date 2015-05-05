@@ -16,16 +16,26 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class S3FileReader.
+ *
  * @author dichenli
  * read file lines from S3 bucket
  */
 public class S3FileReader {
 	
+	/** The content dir. */
 	static String contentDir = "crawler-content/content/";
 	
+	/** The s3 summary. */
 	S3ObjectSummary s3Summary;
 	
+	/**
+	 * Instantiates a new s3 file reader.
+	 *
+	 * @param obj the obj
+	 */
 	public S3FileReader(S3ObjectSummary obj) {
 		this.s3Summary = obj;
 	}
@@ -44,10 +54,20 @@ public class S3FileReader {
 		}
 	}
 	
+	/**
+	 * Gets the object stream.
+	 *
+	 * @return the object stream
+	 */
 	S3ObjectInputStream getObjectStream() {
 		return getObject().getObjectContent();
 	}
 	
+	/**
+	 * Gets the object.
+	 *
+	 * @return the object
+	 */
 	S3Object getObject() {
 		String bucketName = s3Summary.getBucketName();
 		String key = s3Summary.getKey();
@@ -56,9 +76,10 @@ public class S3FileReader {
 	
 	/**
 	 * split a S3 path to a bucket name and a prefix, the path must be a valid
-	 * S3 path with "bucketname/following-paths" format
-	 * @param path
-	 * @return
+	 * S3 path with "bucketname/following-paths" format.
+	 *
+	 * @param path the path
+	 * @return the string[]
 	 */
 	public static String[] splitPath(String path) {
 		if(path == null) {
@@ -85,10 +106,9 @@ public class S3FileReader {
 	/**
 	 * get a buffered reader of a file on S3 from given path.
 	 * returns null if no results were found
-	 * @throws IllegalArgumentException if more than one file found which
-	 * match result
-	 * @param path
-	 * @return
+	 *
+	 * @param path the path
+	 * @return the file reader
 	 */
 	public static BufferedReader getFileReader(String path) {
 		String[] splited = splitPath(path);
@@ -111,9 +131,10 @@ public class S3FileReader {
 	}
 
 	/**
-	 * get the full content of a file from given file ID
-	 * @param decimalID
-	 * @return
+	 * get the full content of a file from given file ID.
+	 *
+	 * @param decimalID the decimal id
+	 * @return the file content
 	 */
 	public static String getFileContent(String decimalID) {
 		if(decimalID == null) {
@@ -137,6 +158,12 @@ public class S3FileReader {
 		return sb.toString();
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 //		S3Iterator s3Iterator = new S3Iterator("crawler-content", "content/11336");
 //		while(s3Iterator.hasNext()) {
@@ -173,12 +200,18 @@ public class S3FileReader {
 			}
 		}
 	}
+	
+	/** The query. */
 	static String[] query = {"nets", "adidas"};
+	
+	/** The filename. */
 	static String[] filename = {"1000016645993763646612612913273621633656175576825",
 			"1000033548111337632249107769061580264517257318070",
 			"1000038001979123892805870222863680232910468531648",
 			"1000040082942895680512083852335399031460963509561",
 			"1000046092798133031507036078583383187932828878225",
 			"1000063444022270000724386391770168457269810013194"};
+	
+	/** The i. */
 	static int i = 0;
 }

@@ -15,25 +15,52 @@ import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+// TODO: Auto-generated Javadoc
+
 /**
- * for experiment only, populate a string-string database table
- * @author dichenli
+ * for experiment only, populate a string-string database table.
  *
+ * @author dichenli
  */
 public class StrStrPopulator implements Populator {
+	
+	/** The table name. */
 	static String tableName = "StrStr"; //need to sync with @DynamoDBTable(tableName="XXX")
+	
+	/** The key name. */
 	static String keyName = "id";
+	
+	/** The read capacity. */
 	static long readCapacity = 1L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 1L;
 	
+	/** The input. */
 	File input;
+	
+	/** The table. */
 	DynamoTable table;
+	
+	/** The sc. */
 	Scanner sc;
 	
+	/**
+	 * Instantiates a new str str populator.
+	 *
+	 * @param fileName the file name
+	 * @throws Exception the exception
+	 */
 	public StrStrPopulator(String fileName) throws Exception {
 		this(new File(fileName));
 	}
 	
+	/**
+	 * Instantiates a new str str populator.
+	 *
+	 * @param input the input
+	 * @throws Exception the exception
+	 */
 	public StrStrPopulator(File input) throws Exception {
 		if(input == null) {
 			throw new IllegalArgumentException();
@@ -47,11 +74,17 @@ public class StrStrPopulator implements Populator {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#createTable()
+	 */
 	@Override
 	public void createTable() throws Exception {
 		DynamoTable.creatTable(this);
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#populate()
+	 */
 	@Override
 	public void populate() {
 		while(sc.hasNextLine()) {
@@ -63,14 +96,18 @@ public class StrStrPopulator implements Populator {
 		sc.close();
 	}
 	
+	/* (non-Javadoc)
+	 * @see DynamoDB.Populator#getTableName()
+	 */
 	@Override
 	public String getTableName() {
 		return tableName;
 	}
 	
 	/**
-	 * Create a table with "Hash" key type and String key as the table key
-	 * @param key the key of the table
+	 * Create a table with "Hash" key type and String key as the table key.
+	 *
+	 * @return the creates the table request
 	 */
 	@Override
 	public CreateTableRequest createTableRequest() {
@@ -82,6 +119,12 @@ public class StrStrPopulator implements Populator {
 	}
 	
 	
+	/**
+	 * Parses the str str.
+	 *
+	 * @param line the line
+	 * @return the str str
+	 */
 	private StrStr parseStrStr(String line) {
 		if(line == null) {
 			System.out.println("null line");
@@ -106,6 +149,12 @@ public class StrStrPopulator implements Populator {
 		return item;
 	}
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		StrStrPopulator instance = new StrStrPopulator("/Users/dichenli/Documents/course materials/eclipse/DynamoDB555/id-1.txt");
 		instance.createTable();

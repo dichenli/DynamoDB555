@@ -10,23 +10,55 @@ import Utils.IOUtils;
 
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AbsPopulator.
+ */
 public abstract class AbsPopulator {
 	
+	/** The read capacity. */
 	static long readCapacity = 1L;
+	
+	/** The write capacity. */
 	static long writeCapacity = 1000L;
 	
+	/** The input. */
 	File input;
 
 	
+	/**
+	 * Gets the table name.
+	 *
+	 * @return the table name
+	 */
 	public abstract String getTableName();
 	
+	/**
+	 * Creates the table request.
+	 *
+	 * @return the creates the table request
+	 */
 	public abstract CreateTableRequest createTableRequest();
 	
+	/**
+	 * Creates the table.
+	 *
+	 * @throws Exception the exception
+	 */
 	public abstract void createTable() throws Exception;
 	
+	/**
+	 * Parses the input.
+	 *
+	 * @param line the line
+	 * @return the object
+	 */
 	public abstract Object parseInput(String line);
 
 	
+	/**
+	 * Populate.
+	 */
 	public void populate() {
 		long total = IOUtils.countLines(input); 
 		Scanner sc = IOUtils.getScanner(input);
@@ -74,6 +106,12 @@ public abstract class AbsPopulator {
 		sc.close();
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws Exception the exception
+	 */
 	public static void main(String[] args) throws Exception {
 		if(args.length != 5 || args[0].equals("")) {
 			System.out.println("Usage: <DocURL> <Anchor> <InvertedIndex> <PageRank> <IDF>, use \"no\" to mean you don't need to populate this one");
