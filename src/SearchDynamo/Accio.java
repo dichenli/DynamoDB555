@@ -411,10 +411,21 @@ public class Accio extends HttpServlet {
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-					out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
+					out.write("<p>"
+							+ "<font style=\"color:DarkSlateGray;font-size:5px\">"+results.get(j).getUrl()+"</font><br>");
+					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey;font-size:10px\">loading...</font></p>");
 				out.write("</li>");
 			}
-			out.write("<button id=\"next\">next</button>");
+			out.write("<div>"
+					+ "<ul class=\"nav navbar-nav\">");
+			int pages = results.size()/10;
+			pages = results.size()%10 == 0? pages:(pages+1);
+			for(int p=0;p<pages;p++){
+				int pageNo = p+1;
+				out.write("<li><a class = \"page\" id=\"page"+pageNo+"\">"+pageNo+"</a></li>");
+			}
+			out.write("<li><a id=\"next\">Next</a></li>");
+			out.write("</div>");
 		}
 									
 						out.write("</ul>"
@@ -505,8 +516,9 @@ public class Accio extends HttpServlet {
 					+ "			if(i<10) $(id).show();"
 					+ "			else $(id).hide();"
 					+ "		}"
-					+ "		var count = 1;"
+					+ "		var count = 0;"
 					+ "		$(\"#next\").click(function(){"
+					+ "			count++;"
 					+ "			var linkstart = count*10;"
 					+ "			var linkend = Math.min(resultsize, linkstart+10);"
 					+ "			for(var i=0;i<resultsize;i++){"
@@ -519,8 +531,26 @@ public class Accio extends HttpServlet {
     				+ "				}"
     				+ "			}"
     				+ "			$('html,body').scrollTop(0);"
-    				+ "			count++;"
 					+ "		});"
+					+ "		$(\".page\").click(function(event){"
+					+ "			$(\".page\").css(\"color\", \"SteelBlue\");"
+					+ "			var id = event.target.innerHTML;"
+					+ "			var getid = \"#page\" + id;"
+					+ "			$(getid).css(\"color\", \"IndianRed\");"
+					+ "			count = parseInt(id)-1;"
+					+ "			var linkstart = count*10;"
+					+ "			var linkend = Math.min(resultsize, linkstart+10);"
+					+ "			for(var i=0;i<resultsize;i++){"
+					+ "				var id = \"#\"+i.toString();"
+					+ "				if(i>=linkstart && i<linkend){"
+					+ "					$(id).show();"
+    				+ "				}"
+    				+ "				else{"
+    				+ "					$(id).hide();"
+    				+ "				}"
+    				+ "			}"
+    				+ "			$('html,body').scrollTop(0);"
+    				+ "		});"
 					+ "});"
 					+ "</script>"
 
