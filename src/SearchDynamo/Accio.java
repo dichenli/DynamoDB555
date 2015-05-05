@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import spellchecker.SpellChecker;
-import DynamoDB.QueryRecord;
+import DynamoDB.DocURLTitle;
+import DynamoDB.IDF;
+import DynamoDB.*;
 import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
@@ -32,6 +34,18 @@ public class Accio extends HttpServlet {
     public Accio() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    
+    @Override
+    public void init() {
+    	try {
+			DocURLTitle.init();
+			IDF.init();
+			InvertedIndex.init();
+			QueryRecord.init();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
 
 	/**

@@ -6,15 +6,7 @@ package DynamoDB;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.*;
-import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import S3.S3FileReader;
@@ -480,6 +472,10 @@ public class InvertedIndex {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void init () throws InterruptedException {
+		createTable();
 	}
 
 	public static String job = "";

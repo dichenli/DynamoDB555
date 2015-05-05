@@ -137,6 +137,11 @@ public class QueryRecord {
 		DynamoTable.createTable(tableName, request);
 	}
 	
+	public static void init() throws InterruptedException {
+		createTable();
+		inserter = new Inserter<QueryRecord>();
+	}
+	
 	public static void insert(QueryRecord item) {
 		inserter.insert(item, true);
 	}
