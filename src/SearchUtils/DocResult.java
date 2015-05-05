@@ -27,7 +27,6 @@ public class DocResult {
 	private static final double BASE_URL = 5;
 	private static final double BASE_TITLE = 10;
 	
-	String query;
 	List<String> wordlist;
 	ByteBuffer id;
 	double[] wordtf;
@@ -49,18 +48,17 @@ public class DocResult {
 	double pageScore;
 	double finalScore;
 
-	public DocResult(List<String> wordlist, String query, ByteBuffer id, double pageRank, int size, int[] windowlist, List<Double> idflist) {
-		this.wordlist = wordlist;
-		this.query = query;
+	public DocResult(QueryInfo queryInfo, ByteBuffer id, double pageRank) {
+		this.wordlist = queryInfo.wordlist;
+		this.size = wordlist.size();
+		this.windowlist = queryInfo.getWindowlist();
+		this.idflist = queryInfo.getIDFlist();
+		
 		this.id = id;
-		this.size = size;
 		this.pageRank = pageRank;
 		positions = (List<Integer>[])new List[size];
-		this.windowlist = windowlist;
 		this.wordtf = new double[size];
 		for(int i=0;i<size;i++) wordtf[i] = 0;
-		this.idflist = idflist;
-//		anchors = new AnchorResult(size);
 	}
 
 	public boolean containsAll() {
