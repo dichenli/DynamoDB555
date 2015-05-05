@@ -245,6 +245,7 @@ public class Accio extends HttpServlet {
 		try {
 			results = AnalQuery.search(newPhrase.toString());
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Servlet doPost: no matching result");
 			results = new ArrayList<DocResult>(); //no match, return empty result
 		}

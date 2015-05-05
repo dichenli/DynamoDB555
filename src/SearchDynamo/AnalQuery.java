@@ -98,6 +98,7 @@ public class AnalQuery {
 		if(size == 1) minimizedSet = intersection;
 		else{
 			for (DocResult doc : intersection) {
+				if(!doc.containsAll()) System.out.println("doc does not contains all");
 				int positionScore = doc.setPositionScore();
 				if(positionScore > 0) minimizedSet.add(doc);
 			}
