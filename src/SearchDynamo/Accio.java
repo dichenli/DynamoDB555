@@ -396,7 +396,7 @@ public class Accio extends HttpServlet {
 					+ "}"
 					+ "else{ xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\");}"
 					+ "var getquery = \"url=\" + url + \"&query=\" + query;"
-					+ "var path = \"/DynamoDB555/insertquery?\" + getquery;"
+					+ "var path = \""+webapp+"/insertquery?\" + getquery;"
 					+ "console.log(path);"
 					+ "xmlhttp.open(\"GET\", path, true);"
 					+ "xmlhttp.send();"

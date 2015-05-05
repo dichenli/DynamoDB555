@@ -94,14 +94,14 @@ public class AnalQuery {
 			}
 		}
 		System.out.println("Minimized Set "+minimizedSet.size());
-//		int maxClickCount = setClickScore(query, set);
+		int maxClickCount = setClickScore(query, set);
 		if(minimizedSet.size()<100 && size != 1){
 			minimizedSet = intersection;
 		}
 		
 		// first score (including position check, page rank, tfidf)
 		for (DocResult doc : minimizedSet){
-			doc.firstScore(1);
+			doc.firstScore(maxClickCount);
 		}
 		
 		Collections.sort(minimizedSet, new Comparator<DocResult>() {
