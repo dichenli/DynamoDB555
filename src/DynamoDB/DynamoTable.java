@@ -77,6 +77,8 @@ public class DynamoTable {
 		dynamoDB = new AmazonDynamoDBClient(credentials);
 		Region usWest2 = Region.getRegion(Regions.US_WEST_2);
 		dynamoDB.setRegion(usWest2);
+//		System.setProperty("com.amazonaws.sdk.disableCertChecking", "true");
+		
 		mapper = new DynamoDBMapper(dynamoDB);
 	}
 	

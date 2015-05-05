@@ -1,3 +1,4 @@
+
 package spellchecker;
 
 import java.io.BufferedReader;

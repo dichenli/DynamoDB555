@@ -1,0 +1,101 @@
+
+=================Test with and without using iteration only mode============
+10 requests with one concurrent request each time. 
+With Iteration Only: 5.4 s/req
+Without: 6.9 s/req
+
+
+543 dichenli:DynamoDB555$ ./local_apachebench 
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient).....done
+
+
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /DynamoDB555/Accio
+Document Length:        16883 bytes
+
+Concurrency Level:      1
+Time taken for tests:   53.836 seconds
+Complete requests:      10
+Failed requests:        0
+Write errors:           0
+Total transferred:      170290 bytes
+Total POSTed:           1830
+HTML transferred:       168830 bytes
+Requests per second:    0.19 [#/sec] (mean)
+Time per request:       5383.578 [ms] (mean)
+Time per request:       5383.578 [ms] (mean, across all concurrent requests)
+Transfer rate:          3.09 [Kbytes/sec] received
+                        0.03 kb/s sent
+                        3.12 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:  4170 5383 1380.3   5017    8022
+Waiting:     4170 5383 1380.3   5017    8022
+Total:       4170 5384 1380.3   5017    8022
+
+Percentage of the requests served within a certain time (ms)
+  50%   5017
+  66%   5033
+  75%   5593
+  80%   7719
+  90%   8022
+  95%   8022
+  98%   8022
+  99%   8022
+ 100%   8022 (longest request)
+544 dichenli:DynamoDB555$ ./local_apachebench 
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient).....done
+
+
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /DynamoDB555/Accio
+Document Length:        16883 bytes
+
+Concurrency Level:      1
+Time taken for tests:   68.614 seconds
+Complete requests:      10
+Failed requests:        0
+Write errors:           0
+Total transferred:      170290 bytes
+Total POSTed:           1830
+HTML transferred:       168830 bytes
+Requests per second:    0.15 [#/sec] (mean)
+Time per request:       6861.419 [ms] (mean)
+Time per request:       6861.419 [ms] (mean, across all concurrent requests)
+Transfer rate:          2.42 [Kbytes/sec] received
+                        0.03 kb/s sent
+                        2.45 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:  4311 6861 3089.2   7506   14186
+Waiting:     4310 6861 3089.2   7505   14186
+Total:       4311 6861 3089.2   7506   14186
+
+Percentage of the requests served within a certain time (ms)
+  50%   7506
+  66%   7530
+  75%   7938
+  80%   8698
+  90%  14186
+  95%  14186
+  98%  14186
+  99%  14186
+ 100%  14186 (longest request)

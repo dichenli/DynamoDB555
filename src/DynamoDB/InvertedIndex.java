@@ -613,10 +613,10 @@ public class InvertedIndex {
 		= new DynamoDBQueryExpression<InvertedIndex>().withHashKeyValues(item)
 		.withRangeKeyCondition("id", rangeKeyCondition);
 
-
-//		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
-//				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
-		DynamoDBMapperConfig config = DynamoDBMapperConfig.DEFAULT;
+		//switch: iteration only or default
+		DynamoDBMapperConfig config = new DynamoDBMapperConfig(
+				DynamoDBMapperConfig.PaginationLoadingStrategy.ITERATION_ONLY);
+//		DynamoDBMapperConfig config = DynamoDBMapperConfig.DEFAULT;
 		return query(word, queryExpression, config);
 	}
 
