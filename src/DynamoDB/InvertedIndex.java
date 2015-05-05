@@ -124,7 +124,7 @@ public class InvertedIndex {
 
 	public List<Integer> PositionsSorted() {
 		if(positions == null) {
-			return null;
+			return new ArrayList<Integer>();
 		}
 		Integer[] arr = positions.toArray(new Integer[0]);
 		Arrays.sort(arr);
@@ -400,8 +400,14 @@ public class InvertedIndex {
 		byte[] start = spliter[index];
 		byte[] end = null;
 		if(index == 7) {
+			System.out.println("7777");
 			end = BinaryUtils.fromHex("ffffffffffffffffffffffffffffffffffffffff");
+		} else if(index == 8) {
+			System.out.println("8888");
+			start = BinaryUtils.fromHex("ffffffffffffffffffffffffffffffffffffffff");
+			end = BinaryUtils.fromHex("0fffffffffffffffffffffffffffffffffffffff");
 		} else {
+			System.out.println(index);
 			end = spliter[index + 1];
 		}
 		Condition rangeKeyCondition = new Condition()
@@ -527,7 +533,7 @@ public class InvertedIndex {
 		//		System.out.println("EFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".length());
 		for(int i = 0; i < 16; i++) {
 			System.out.println("===========" + i + "\t" + BinaryUtils.byteArrayToHexString(spliter[i]) + "\t" + BinaryUtils.byteArrayToHexString(spliter[i + 1]));			
-			List<InvertedIndex> results = queryRange("scienc", i);
+			List<InvertedIndex> results = queryRange("kwanyama", i);
 			Iterator<InvertedIndex> iterator = results.iterator();
 			while(iterator.hasNext()) {
 				System.out.println(BinaryUtils.byteArrayToHexString(iterator.next().id));
