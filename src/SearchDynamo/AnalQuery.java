@@ -46,6 +46,8 @@ public class AnalQuery {
 		List<String> wordlist = queryInfo.getWordlist();
 		List<Double> idflist = queryInfo.getIDFlist();
 		int size = wordlist.size();
+		if(size == 0) return new ArrayList<DocResult>();
+		
 		HashMap<ByteBuffer, DocResult> set = new HashMap<ByteBuffer, DocResult>();
 		Thread[] findWordThreads = new FindWordThread[size];
 		for(int i=0;i<size;i++){
