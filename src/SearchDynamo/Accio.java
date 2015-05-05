@@ -302,6 +302,8 @@ public class Accio extends HttpServlet {
 						+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 						+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
 						
+						+ "<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js\"></script>"
+						
 						// Youtube
 						+ "<script src=\"/DynamoDB555/youtube/js/jquery-1.11.2.min.js\"></script>"
 						+ "<script src=\"/DynamoDB555/youtube/js/script.js\"></script>"
@@ -405,13 +407,14 @@ public class Accio extends HttpServlet {
 			out.write("No matching result!");
 			out.write("</li>");
 		} else {
+			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
 					out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
 				out.write("</li>");
 			}
-			out.write("<a onclick=\"nextpage\">Next</a>");
+			out.write("<button id=\"next\">next</button>");
 		}
 									
 						out.write("</ul>"
@@ -492,7 +495,34 @@ public class Accio extends HttpServlet {
 					+ "xmlhttp.open(\"GET\", path, true);"
 					+ "xmlhttp.send();"
 					+ "}"
-					+ "</script>"	
+					+ "</script>"
+					+ "<script>"
+					+ "var resultsize = document.getElementById(\"resultsize\").innerHTML;"
+					+ "$(document).ready(function(){"
+					+ "		$(\".list-group-item\").hide();"
+					+ "		for(var i=0;i<resultsize;i++){"
+					+ "			var id = \"#\"+i.toString();"
+					+ "			if(i<10) $(id).show();"
+					+ "			else $(id).hide();"
+					+ "		}"
+					+ "		var count = 1;"
+					+ "		$(\"#next\").click(function(){"
+					+ "			var linkstart = count*10;"
+					+ "			var linkend = Math.min(resultsize, linkstart+10);"
+					+ "			for(var i=0;i<resultsize;i++){"
+					+ "				var id = \"#\"+i.toString();"
+					+ "				if(i>=linkstart && i<linkend){"
+					+ "					$(id).show();"
+    				+ "				}"
+    				+ "				else{"
+    				+ "					$(id).hide();"
+    				+ "				}"
+    				+ "			}"
+    				+ "			$('html,body').scrollTop(0);"
+    				+ "			count++;"
+					+ "		});"
+					+ "});"
+					+ "</script>"
 
 					
 					+ "</body>"
