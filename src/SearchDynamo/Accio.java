@@ -324,12 +324,14 @@ public class Accio extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
+		
 		
 		/**
 		 * our own part
 		 * */
+		List<Node> amazonSearch = new ArrayList<Node>();
 		if(newPhrase.toString().length()!=0){
+			amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
 			try {
 				results = AnalQuery.search(newPhrase.toString());
 			} catch (Exception e) {
@@ -548,14 +550,14 @@ public class Accio extends HttpServlet {
 									out.write("<ul class=\"list-group\">");
 								
 								if(amazonSearch == null || amazonSearch.size() == 0) {
-									out.write("<li style=\"red\" class=\"list-amazon-results\">");
+									out.write("<li style=\"red\" class=\"list-group-item\">");
 									out.write("No matching result!");
 									out.write("</li>");
 								} else {
 									out.write("<h3>"+amazonSearch.size()+"</h3>");
 									for(int j = 0; j < amazonSearch.size(); j++){
 										Node item = amazonSearch.get(j);
-										out.write("<li class=\"list-amazon-results\">");
+										out.write("<li class=\"list-group-item\">");
 											out.write("<a size=\"30\" href="
 										+ AmazonProductAPI.getUrl(item) + ">"
 										+ AmazonProductAPI.getTitleOrUrl(item) + "</a>");
