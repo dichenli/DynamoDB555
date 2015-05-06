@@ -457,10 +457,10 @@ public class Accio extends HttpServlet {
 			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
-					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"4\">"+results.get(j).getTitle()+"</font></a>");
+					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"3\">"+results.get(j).getTitle()+"</font></a>");
 					out.write("<p>"
-							+ "<font style=\"color:DarkSlateGray\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
-					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey\" size=\"2.5\">loading...</font></p>");
+							+ "<font style=\"color:SeaGreen\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
+					out.write("<font id=\"match_highlight" + j + "\" style=\"color:SlateGrey\" size=\"2.5\">loading...</font></p>");
 				out.write("</li>");
 			}
 			
@@ -515,7 +515,7 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
+								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\"><font size=\"2\">"+ wiki_html +"</font></div>"
 								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
