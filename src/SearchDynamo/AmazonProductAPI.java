@@ -123,6 +123,7 @@ public class AmazonProductAPI {
 	public static List<Node> searchAmazonProducts(String phrase) {
 		try {
 			Document doc = getDocumentByQuery(phrase);
+			System.out.println(XMLUtils.toXMLString(doc));
 			NodeList items = doc.getElementsByTagName("Item");
 			if(items == null || items.getLength() == 0) {
 				return new ArrayList<Node>();

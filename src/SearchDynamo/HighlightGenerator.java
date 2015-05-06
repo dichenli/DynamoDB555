@@ -49,8 +49,8 @@ public class HighlightGenerator {
 		String content = html2text(rawContent);
 		
 		
-		int prefix = 50;
-		int suffix = 50;
+		int prefix = 100;
+		int suffix = 100;
 		String begin = "(.{0," + prefix + "})";
 		String end = "(.{0," + suffix + "})";
 		String regex = begin;

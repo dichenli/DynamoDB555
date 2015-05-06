@@ -68,7 +68,7 @@ public class Accio extends HttpServlet {
 			Files.delete(lockPath);
 			Files.delete(lock2);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
     	db = new DBWrapper(DBdir.dir);
     	System.out.println("===================init");
@@ -92,7 +92,7 @@ public class Accio extends HttpServlet {
 			Files.delete(lockPath);
 			Files.delete(lock2);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		}
     	System.out.println("in the method of destroy");
 
@@ -116,22 +116,29 @@ public class Accio extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			out.write("<!DOCTYPE html><html>"
 					+ "<head>"
-					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">"
+					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=10, user-scalable=no\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
+					+ "<link href='http://fonts.googleapis.com/css?family=Old+Standard+TT' rel='stylesheet'  type='text/css'>"
 					+ "<style>"
 					+ "body {"
 
 						+ "background: url('"
 						+ webapp
-						+ "/hp.png');"
+						+ "/hp1.jpg');"
 						+ "background-size: cover;"
-						+ "background-repeat:no-repeat;"
+						
 						+ "padding-top: 150px;"
 					+ "}"
 					+ "@media (max-width: 980px) {"
 					+ "body {"
 					+ "padding-top: 0;"
 					+ "}"
+					+ "}"
+					+ "div.aboutus{"
+					+	"padding-top: 180px;"
+					+ "}"
+					+ "h1.bigtitle{"
+					+	"padding-top: 50px;"
 					+ "}"
 					+ "</style>"
 					+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
@@ -143,7 +150,7 @@ public class Accio extends HttpServlet {
 						
 						+ "<div class = \"row\"></div>"
 						+ "<div class=\"container\">"
-							+ "<h1 class = \"text-center\">Accio</h1>"
+							+ "<h1 style=\"font-family: 'Old Standard TT', sans-serif\" class = \"text-center\"> <font size=\"10\">Accio</font></h1>"
 							+ "<div class=\"row\">"
 								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 									+ "<div class=\"col-md-3\">"
@@ -159,6 +166,16 @@ public class Accio extends HttpServlet {
 								+ "</form>"
 							+ "</div>"
 		
+						+ "</div>"
+						
+						+ "<div class=\"aboutus\" align=\"center\">"
+						+ "<h3><a style=\"font-family: 'Old Standard TT', sans-serif\" href=\""
+						+ webapp
+						+ "/AboutUs.html\">"
+							+ "<font style=\"color:black\">"
+								+ "About us"
+							+ "</font>"
+						+ "</a></h3>"
 						+ "</div>"
 						
 						+ "</body> "
@@ -393,9 +410,9 @@ public class Accio extends HttpServlet {
 
 									+ "</form>"
 								+ "</div>"
-								+ "<div class=\"col-md-2 align\">"
-									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
-								+ "</div>"
+//								+ "<div class=\"col-md-2 align\">"
+//									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
+//								+ "</div>"
 
 //								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 //									+ "<div class=\"col-md-1\">"
@@ -453,11 +470,47 @@ public class Accio extends HttpServlet {
 			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
-					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
-					out.write("<p id=\"match_highlight" + j + "\" style=\"color:grey\">loading...</p>");
+					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"3\">"+results.get(j).getTitle()+"</font></a>");
+					out.write("<p>"
+							+ "<font style=\"color:SeaGreen\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
+					out.write("<font id=\"match_highlight" + j + "\" style=\"color:SlateGrey\" size=\"2.5\">loading...</font></p>");
 				out.write("</li>");
 			}
-			out.write("<button id=\"next\">next</button>");
+			
+			
+//			out.write("<nav>"
+//					+"  <ul class=\"pagination\">"
+//					+"    <li>"
+//					+"      <a href=\"#\" aria-label=\"Previous\">"
+//					+"        <span aria-hidden=\"true\">&laquo;</span>"
+//					+"      </a>"
+//					+"    </li>"
+//					+"    <li><a href=\"#\">1</a></li>"
+//					+"    <li><a href=\"#\">2</a></li>"
+//					+"    <li><a href=\"#\">3</a></li>"
+//					+"    <li><a href=\"#\">4</a></li>"
+//					+"    <li><a href=\"#\">5</a></li>"
+//					+"    <li>"
+//					+"      <a href=\"#\" aria-label=\"Next\">"
+//					+"        <span aria-hidden=\"true\">&raquo;</span>"
+//					+"      </a>"
+//					+"    </li>"
+//					+"  </ul>"
+//				+ "</nav>");
+
+			
+			
+			out.write("<nav>"
+					+ "<ul class=\"pagination\">");
+			int pages = results.size()/10;
+			pages = results.size()%10 == 0? pages:(pages+1);
+			for(int p=0;p<pages;p++){
+				int pageNo = p+1;
+				out.write("<li><a class = \"page\" id=\"page"+pageNo+"\">"+pageNo+"</a></li>");
+			}
+			out.write("<li><a id=\"next\">Next</a></li>");
+			out.write("</ul>");
+			out.write("</nav>");
 		}
 									
 						out.write("</ul>"
@@ -471,12 +524,13 @@ public class Accio extends HttpServlet {
 									+" <ul class=\"nav nav-tabs\" role=\"tablist\">"
 									+"    <li role=\"presentation\" class=\"active\"><a href=\"#wiki\" aria-controls=\"wiki\" role=\"tab\" data-toggle=\"tab\">Wikipedia</a></li>"
 									+"    <li role=\"presentation\"><a href=\"#youtube\" aria-controls=\"youtube\" role=\"tab\" data-toggle=\"tab\">Youtube</a></li>"
+									+"    <li role=\"presentation\"><a href=\"#Amazon\" aria-controls=\"amazon\" role=\"tab\" data-toggle=\"tab\">Amazon</a></li>"
 									+" </ul>"
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"//end of wiki
-								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
+								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\"><font size=\"2\">"+ wiki_html +"</font></div>"
+								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
@@ -485,21 +539,20 @@ public class Accio extends HttpServlet {
 										+"</div>"
 								
 									+"</div>");//end of Youtube
-							out.write("<div role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
+							out.write("<div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
 									+"	<h2>Amazon Products</h2>"); //Amazon tab
-									List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(phrase);
-									out.write("<div class=\"col-md-12\">"
-											+ "<ul class=\"list-group\">");
+									List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
+									out.write("<ul class=\"list-group\">");
 								
 								if(amazonSearch == null || amazonSearch.size() == 0) {
-									out.write("<li style=\"red\" class=\"list-group-item\">");
+									out.write("<li style=\"red\" class=\"list-amazon-results\">");
 									out.write("No matching result!");
 									out.write("</li>");
 								} else {
 									out.write("<h3>"+amazonSearch.size()+"</h3>");
 									for(int j = 0; j < amazonSearch.size(); j++){
 										Node item = amazonSearch.get(j);
-										out.write("<li class=\"list-group-item\">");
+										out.write("<li class=\"list-amazon-results\">");
 											out.write("<a size=\"30\" href="
 										+ AmazonProductAPI.getUrl(item) + ">"
 										+ AmazonProductAPI.getTitleOrUrl(item) + "</a>");
@@ -519,9 +572,8 @@ public class Accio extends HttpServlet {
 									}
 								}
 															
-												out.write("</ul>"
-													+ "</div>");
-								out.write("</div>"//end of Amazon
+							out.write("</ul>");
+						out.write("</div>"//end of Amazon
 								+"</div>"//end of side bars
 
 							  + "</div>"
@@ -547,7 +599,9 @@ public class Accio extends HttpServlet {
 					+ 	"} else { "
 					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
 					+ 	"} "
-					+ 	"var path = \"/DynamoDB555/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
+					+ 	"var path = \""
+					+ 	webapp
+					+ "/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
 					+	"xmlhttp.onreadystatechange=function() { "
 					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
 					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
@@ -585,8 +639,9 @@ public class Accio extends HttpServlet {
 					+ "			if(i<10) $(id).show();"
 					+ "			else $(id).hide();"
 					+ "		}"
-					+ "		var count = 1;"
+					+ "		var count = 0;"
 					+ "		$(\"#next\").click(function(){"
+					+ "			count++;"
 					+ "			var linkstart = count*10;"
 					+ "			var linkend = Math.min(resultsize, linkstart+10);"
 					+ "			for(var i=0;i<resultsize;i++){"
@@ -599,8 +654,26 @@ public class Accio extends HttpServlet {
     				+ "				}"
     				+ "			}"
     				+ "			$('html,body').scrollTop(0);"
-    				+ "			count++;"
 					+ "		});"
+					+ "		$(\".page\").click(function(event){"
+					+ "			$(\".page\").css(\"color\", \"SteelBlue\");"
+					+ "			var id = event.target.innerHTML;"
+					+ "			var getid = \"#page\" + id;"
+					+ "			$(getid).css(\"color\", \"IndianRed\");"
+					+ "			count = parseInt(id)-1;"
+					+ "			var linkstart = count*10;"
+					+ "			var linkend = Math.min(resultsize, linkstart+10);"
+					+ "			for(var i=0;i<resultsize;i++){"
+					+ "				var id = \"#\"+i.toString();"
+					+ "				if(i>=linkstart && i<linkend){"
+					+ "					$(id).show();"
+    				+ "				}"
+    				+ "				else{"
+    				+ "					$(id).hide();"
+    				+ "				}"
+    				+ "			}"
+    				+ "			$('html,body').scrollTop(0);"
+    				+ "		});"
 					+ "});"
 					+ "</script>"
 
