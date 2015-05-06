@@ -115,7 +115,7 @@ public class Accio extends HttpServlet {
 					+ "<head>"
 					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=10, user-scalable=no\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
-					+ "<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet'  type='text/css'>"
+					+ "<link href='http://fonts.googleapis.com/css?family=Old+Standard+TT' rel='stylesheet'  type='text/css'>"
 					+ "<style>"
 					+ "body {"
 
@@ -132,7 +132,10 @@ public class Accio extends HttpServlet {
 					+ "}"
 					+ "}"
 					+ "div.aboutus{"
-					+	"padding-top: 160px;"
+					+	"padding-top: 180px;"
+					+ "}"
+					+ "h1.bigtitle{"
+					+	"padding-top: 50px;"
 					+ "}"
 					+ "</style>"
 					+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
@@ -144,7 +147,7 @@ public class Accio extends HttpServlet {
 						
 						+ "<div class = \"row\"></div>"
 						+ "<div class=\"container\">"
-							+ "<h1 class = \"text-center\">Accio</h1>"
+							+ "<h1 style=\"font-family: 'Old Standard TT', sans-serif\" class = \"text-center\"> <font size=\"10\">Accio</font></h1>"
 							+ "<div class=\"row\">"
 								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 									+ "<div class=\"col-md-3\">"
@@ -163,7 +166,11 @@ public class Accio extends HttpServlet {
 						+ "</div>"
 						
 						+ "<div class=\"aboutus\" align=\"center\">"
-						+ "<a href=\"/DynamoDB555/AboutUs.html\">About us</a>"
+						+ "<h3><a style=\"font-family: 'Old Standard TT', sans-serif\" href=\"/DynamoDB555/AboutUs.html\">"
+							+ "<font style=\"color:black\">"
+								+ "About us"
+							+ "</font>"
+						+ "</a></h3>"
 						+ "</div>"
 						
 						+ "</body> "
