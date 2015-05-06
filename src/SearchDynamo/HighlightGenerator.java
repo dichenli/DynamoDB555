@@ -24,7 +24,6 @@ import SearchUtils.QueryInfo;
 import Utils.ArrayUtils;
 import snowballstemmer.PorterStemmer;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class HighlightGenerator.
  *

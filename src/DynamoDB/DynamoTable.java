@@ -46,6 +46,7 @@ public class DynamoTable {
 	/** The mapper. */
 	static DynamoDBMapper mapper;
 	
+	public static final AWSCredentials credentials = getCredentials();
 	/**
 	 * The only information needed to create a client are security credentials
 	 * consisting of the AWS Access Key ID and Secret Access Key. All other
@@ -58,12 +59,7 @@ public class DynamoTable {
 	 * @see com.amazonaws.auth.ProfilesConfigFile
 	 * @see com.amazonaws.ClientConfiguration
 	 */
-	static void init() throws Exception {
-		/*
-		 * The ProfileCredentialsProvider will return your [aws150415]
-		 * credential profile by reading from the credentials file located at
-		 * (/Users/dichenli/.aws/credentials).
-		 */
+	public static AWSCredentials getCredentials() {
 		AWSCredentials credentials = null;
 		try {
 			credentials = new ProfileCredentialsProvider("aws150415").getCredentials();
@@ -74,6 +70,16 @@ public class DynamoTable {
 							"location (/Users/dichenli/.aws/credentials), and is in valid format.",
 							e);
 		}
+		return credentials;
+	}
+	
+	static void init() throws Exception {
+		/*
+		 * The ProfileCredentialsProvider will return your [aws150415]
+		 * credential profile by reading from the credentials file located at
+		 * (/Users/dichenli/.aws/credentials).
+		 */
+
 		dynamoDB = new AmazonDynamoDBClient(credentials);
 		Region usWest2 = Region.getRegion(Regions.US_WEST_2);
 		dynamoDB.setRegion(usWest2);

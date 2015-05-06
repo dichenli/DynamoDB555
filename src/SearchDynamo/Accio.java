@@ -25,6 +25,9 @@ import SearchUtils.DocResult;
 import Utils.BinaryUtils;
 import Utils.ProcessUtils;
 import Utils.TimeUtils;
+import Utils.XMLUtils;
+
+import org.w3c.dom.*;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -472,7 +475,7 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
+								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"//end of wiki
 								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
@@ -481,8 +484,45 @@ public class Accio extends HttpServlet {
 										+"	<ul style=\"list-style-type:none; margin-left:0px;padding-left:0px;\" id=\"results_youtube\"></ul>"
 										+"</div>"
 								
-									+"</div>"
-								+"</div>"
+									+"</div>");//end of Youtube
+							out.write("<div role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
+									+"	<h2>Amazon Products</h2>"); //Amazon tab
+									List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(phrase);
+									out.write("<div class=\"col-md-12\">"
+											+ "<ul class=\"list-group\">");
+								
+								if(amazonSearch == null || amazonSearch.size() == 0) {
+									out.write("<li style=\"red\" class=\"list-group-item\">");
+									out.write("No matching result!");
+									out.write("</li>");
+								} else {
+									out.write("<h3>"+amazonSearch.size()+"</h3>");
+									for(int j = 0; j < amazonSearch.size(); j++){
+										Node item = amazonSearch.get(j);
+										out.write("<li class=\"list-group-item\">");
+											out.write("<a size=\"30\" href="
+										+ AmazonProductAPI.getUrl(item) + ">"
+										+ AmazonProductAPI.getTitleOrUrl(item) + "</a>");
+											ArrayList<Node> itemAttributesList = XMLUtils.getChildrenByTagName(item, "ItemAttributes");
+											if (!itemAttributesList.isEmpty()) {												
+												Node itemAttributes = itemAttributesList.get(0);
+												ArrayList<Node> attributes = XMLUtils.convertNodeList(itemAttributes.getChildNodes());
+												for(Node node : attributes) {													
+													out.write("<p style=\"color:grey\"><b>" 
+													+ node.getNodeName()
+													+ ":</b>\t"
+													+ node.getTextContent()
+													+ "</p>");
+												}
+											}
+										out.write("</li>");
+									}
+								}
+															
+												out.write("</ul>"
+													+ "</div>");
+								out.write("</div>"//end of Amazon
+								+"</div>"//end of side bars
 
 							  + "</div>"
 								
