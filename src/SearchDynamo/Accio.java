@@ -323,6 +323,9 @@ public class Accio extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
+		
 		/**
 		 * our own part
 		 * */
@@ -541,7 +544,7 @@ public class Accio extends HttpServlet {
 									+"</div>");//end of Youtube
 							out.write("<div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
 									+"	<h2>Amazon Products</h2>"); //Amazon tab
-									List<Node> amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
+									
 									out.write("<ul class=\"list-group\">");
 								
 								if(amazonSearch == null || amazonSearch.size() == 0) {
