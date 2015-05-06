@@ -472,7 +472,7 @@ public class Accio extends HttpServlet {
 		} else {
 			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
-				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
+				out.write("<li id=\""+j+"\" class=\"list-group-item links\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"3\">"+results.get(j).getTitle()+"</font></a>");
 					out.write("<p>"
 							+ "<font style=\"color:SeaGreen\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
@@ -636,7 +636,7 @@ public class Accio extends HttpServlet {
 					+ "<script>"
 					+ "var resultsize = document.getElementById(\"resultsize\").innerHTML;"
 					+ "$(document).ready(function(){"
-					+ "		$(\".list-group-item\").hide();"
+					+ "		$(\".links\").hide();"
 					+ "		for(var i=0;i<resultsize;i++){"
 					+ "			var id = \"#\"+i.toString();"
 					+ "			if(i<10) $(id).show();"
