@@ -115,12 +115,13 @@ public class Accio extends HttpServlet {
 					+ "<head>"
 					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=10, user-scalable=no\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
+					+ "<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet'  type='text/css'>"
 					+ "<style>"
 					+ "body {"
 
 						+ "background: url('"
 						+ webapp
-						+ "/hp.png');"
+						+ "/hp1.jpg');"
 						+ "background-size: cover;"
 						
 						+ "padding-top: 150px;"
