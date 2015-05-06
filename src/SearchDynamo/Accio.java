@@ -486,8 +486,12 @@ public class Accio extends HttpServlet {
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item links\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"3\">"+results.get(j).getTitle()+"</font></a>");
+					String url = results.get(j).getUrl();
+					if(url.length() > 50) {
+						url = url.substring(0, 50) + "...";
+					}
 					out.write("<p>"
-							+ "<font style=\"color:SeaGreen\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
+							+ "<font style=\"color:SeaGreen\" size=\"2\">" + url + "</font><br>");
 					out.write("<font id=\"match_highlight" + j + "\" style=\"color:SlateGrey\" size=\"2.5\">loading...</font></p>");
 				out.write("</li>");
 			}
@@ -542,8 +546,8 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\"><font size=\"2\">"+ wiki_html +"</font></div>"
-								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
+								+"    <div style=\"overflow:scroll;height:1500px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\"><font size=\"2\">"+ wiki_html +"</font></div>"
+								+"    <div style=\"overflow:scroll;height:1500px\" role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
@@ -552,7 +556,7 @@ public class Accio extends HttpServlet {
 										+"</div>"
 								
 									+"</div>");//end of Youtube
-							out.write("<div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
+							out.write("<div style=\"overflow:scroll;height:1500px\" role=\"tabpanel\" class=\"tab-pane\" id=\"Amazon\">"
 									+"	<h2>Amazon Products</h2>"); //Amazon tab
 									
 									out.write("<ul class=\"list-group\">");
@@ -572,7 +576,10 @@ public class Accio extends HttpServlet {
 											if (!itemAttributesList.isEmpty()) {												
 												Node itemAttributes = itemAttributesList.get(0);
 												ArrayList<Node> attributes = XMLUtils.convertNodeList(itemAttributes.getChildNodes());
-												for(Node node : attributes) {													
+												for(Node node : attributes) {	
+													if(node.getNodeName().equals("Title")) {
+														continue;
+													}
 													out.write("<p style=\"color:grey\"><b>" 
 													+ node.getNodeName()
 													+ ":</b>\t"

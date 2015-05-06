@@ -1,1 +1,1 @@
-ab -n 20 -c 5 -p test_post_request -T 'application/x-www-form-urlencoded' http://ec2-52-10-23-185.us-west-2.compute.amazonaws.com/DynamoDB555/Accio
+ab -n 20 -c 1 -p test_post_request -T 'application/x-www-form-urlencoded' http://ec2-52-10-23-185.us-west-2.compute.amazonaws.com/DynamoDB555/Accio
