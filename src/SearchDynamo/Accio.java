@@ -166,7 +166,9 @@ public class Accio extends HttpServlet {
 						+ "</div>"
 						
 						+ "<div class=\"aboutus\" align=\"center\">"
-						+ "<h3><a style=\"font-family: 'Old Standard TT', sans-serif\" href=\"/DynamoDB555/AboutUs.html\">"
+						+ "<h3><a style=\"font-family: 'Old Standard TT', sans-serif\" href=\""
+						+ webapp
+						+ "/AboutUs.html\">"
 							+ "<font style=\"color:black\">"
 								+ "About us"
 							+ "</font>"
@@ -558,7 +560,9 @@ public class Accio extends HttpServlet {
 					+ 	"} else { "
 					+ 		"xmlhttp = new ActiveXObject(\"Microsoft.XMLHTTP\"); "
 					+ 	"} "
-					+ 	"var path = \"/DynamoDB555/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
+					+ 	"var path = \""
+					+ 	webapp
+					+ "/match_highlight?\" + \"decimalID=\" + decimalID + \"&query=\" + query;"
 					+	"xmlhttp.onreadystatechange=function() { "
 					+		"if (xmlhttp.readyState==4 && xmlhttp.status==200) {"
 					+ 			"document.getElementById(\"match_highlight\" + i).innerHTML "
