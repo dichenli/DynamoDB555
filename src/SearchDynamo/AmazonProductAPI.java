@@ -53,7 +53,7 @@ import DynamoDB.DynamoTable;
  * @author dichenli
  *
  */
-public class AmazonProductAPI {
+public class AmazonProductAPI extends Thread {
 
 	private static final String AWS_ACCESS_KEY_ID = DynamoTable.credentials.getAWSAccessKeyId();
 	private static final String AWS_SECRET_KEY = DynamoTable.credentials.getAWSSecretKey();
@@ -179,6 +179,18 @@ public class AmazonProductAPI {
 			throw new IllegalArgumentException();
 		}
 		return XMLUtils.getFirstElementTextByTagName((Element) item, "DetailPageURL");
+	}
+	
+	public List<Node> searchResults;
+	public String phrase;
+	
+	public AmazonProductAPI(String phrase) {
+		this.phrase = phrase;
+	}
+
+	@Override
+	public void run() {
+		searchResults = searchAmazonProducts(phrase);
 	}
 
 }

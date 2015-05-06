@@ -13,7 +13,24 @@ import com.amazonaws.util.json.JSONObject;
 /**
  * The Class WikiSearch.
  */
-public class WikiSearch {
+public class WikiSearch extends Thread  {
+	
+	ArrayList<String> words;
+	String result;
+	
+	public WikiSearch(ArrayList<String> words) {
+		this.words = words;
+		result = null;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			result = wiki(words);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Wiki.

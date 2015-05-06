@@ -28,6 +28,7 @@ import Utils.TimeUtils;
 import Utils.XMLUtils;
 
 import org.w3c.dom.*;
+import com.amazonaws.services.autoscaling.AmazonAutoScalingAsyncClient;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -318,20 +319,16 @@ public class Accio extends HttpServlet {
 		/**
 		 * wiki part
 		 * */
-		try {
-			wiki_html = WikiSearch.wiki(words);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
+		WikiSearch threadWiki = new WikiSearch(words);
+		threadWiki.start();
+		//start Amazon API search
+		AmazonProductAPI threadAmazon = new AmazonProductAPI(newPhrase.toString());
+		threadAmazon.start();
 		
 		/**
 		 * our own part
 		 * */
-		List<Node> amazonSearch = new ArrayList<Node>();
 		if(newPhrase.toString().length()!=0){
-			amazonSearch = AmazonProductAPI.searchAmazonProducts(newPhrase.toString());
 			try {
 				results = AnalQuery.search(newPhrase.toString());
 			} catch (Exception e) {
@@ -340,6 +337,19 @@ public class Accio extends HttpServlet {
 				results = new ArrayList<DocResult>(); //no match, return empty result
 			}
 		}
+		
+		List<Node> amazonSearch = new ArrayList<Node>();
+		try {
+			threadAmazon.join();
+			amazonSearch = threadAmazon.searchResults;
+			threadWiki.join();
+			wiki_html = threadWiki.result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			wiki_html = "";
+		}
+		
+		
 		response.setContentType("text/html");
 
 //		HttpSession session = request.getSession(true);
@@ -503,8 +513,6 @@ public class Accio extends HttpServlet {
 //					+"  </ul>"
 //				+ "</nav>");
 
-			
-			
 			out.write("<nav>"
 					+ "<ul class=\"pagination\">");
 			int pages = results.size()/10;
@@ -554,7 +562,6 @@ public class Accio extends HttpServlet {
 									out.write("No matching result!");
 									out.write("</li>");
 								} else {
-									out.write("<h3>"+amazonSearch.size()+"</h3>");
 									for(int j = 0; j < amazonSearch.size(); j++){
 										Node item = amazonSearch.get(j);
 										out.write("<li class=\"list-group-item\">");
