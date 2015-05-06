@@ -452,8 +452,8 @@ public class Accio extends HttpServlet {
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
 					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
 					out.write("<p>"
-							+ "<font style=\"color:DarkSlateGray;font-size:8px\">"+results.get(j).getUrl()+"</font><br>");
-					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey;font-size:11px\">loading...</font></p>");
+							+ "<font style=\"color:DarkSlateGray;font-size:5px\">"+results.get(j).getUrl()+"</font><br>");
+					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey;font-size:10px\">loading...</font></p>");
 				out.write("</li>");
 			}
 			out.write("<div>"
@@ -483,12 +483,12 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div style=\"font-size:11px;overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
-								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"youtube\">"
+								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
+								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
-//										+"	<h2>Youtube Videos</h2>"
+										+"	<h2>Youtube Videos</h2>"
 										+"	<ul style=\"list-style-type:none; margin-left:0px;padding-left:0px;\" id=\"results_youtube\"></ul>"
 										+"</div>"
 								
