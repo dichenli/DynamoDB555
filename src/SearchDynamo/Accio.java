@@ -113,7 +113,7 @@ public class Accio extends HttpServlet {
 			PrintWriter out = response.getWriter();
 			out.write("<!DOCTYPE html><html>"
 					+ "<head>"
-					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">"
+					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=10, user-scalable=no\">"
 					+ "<link rel=\"stylesheet\" href=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css\">"
 					+ "<style>"
 					+ "body {"
@@ -122,7 +122,7 @@ public class Accio extends HttpServlet {
 						+ webapp
 						+ "/hp.png');"
 						+ "background-size: cover;"
-						+ "background-repeat:no-repeat;"
+						
 						+ "padding-top: 150px;"
 					+ "}"
 					+ "@media (max-width: 980px) {"
@@ -456,8 +456,32 @@ public class Accio extends HttpServlet {
 					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey;font-size:10px\">loading...</font></p>");
 				out.write("</li>");
 			}
-			out.write("<div>"
-					+ "<ul class=\"nav navbar-nav\">");
+			
+			
+//			out.write("<nav>"
+//					+"  <ul class=\"pagination\">"
+//					+"    <li>"
+//					+"      <a href=\"#\" aria-label=\"Previous\">"
+//					+"        <span aria-hidden=\"true\">&laquo;</span>"
+//					+"      </a>"
+//					+"    </li>"
+//					+"    <li><a href=\"#\">1</a></li>"
+//					+"    <li><a href=\"#\">2</a></li>"
+//					+"    <li><a href=\"#\">3</a></li>"
+//					+"    <li><a href=\"#\">4</a></li>"
+//					+"    <li><a href=\"#\">5</a></li>"
+//					+"    <li>"
+//					+"      <a href=\"#\" aria-label=\"Next\">"
+//					+"        <span aria-hidden=\"true\">&raquo;</span>"
+//					+"      </a>"
+//					+"    </li>"
+//					+"  </ul>"
+//				+ "</nav>");
+
+			
+			
+			out.write("<nav>"
+					+ "<ul class=\"pagination\">");
 			int pages = results.size()/10;
 			pages = results.size()%10 == 0? pages:(pages+1);
 			for(int p=0;p<pages;p++){
@@ -465,7 +489,8 @@ public class Accio extends HttpServlet {
 				out.write("<li><a class = \"page\" id=\"page"+pageNo+"\">"+pageNo+"</a></li>");
 			}
 			out.write("<li><a id=\"next\">Next</a></li>");
-			out.write("</div>");
+			out.write("</ul>");
+			out.write("</nav>");
 		}
 									
 						out.write("</ul>"
