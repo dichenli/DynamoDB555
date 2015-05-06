@@ -130,6 +130,9 @@ public class Accio extends HttpServlet {
 					+ "padding-top: 0;"
 					+ "}"
 					+ "}"
+					+ "div.aboutus{"
+					+	"padding-top: 160px;"
+					+ "}"
 					+ "</style>"
 					+ "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>"
 					+ "<script src=\"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js\"></script>"
@@ -156,6 +159,10 @@ public class Accio extends HttpServlet {
 								+ "</form>"
 							+ "</div>"
 		
+						+ "</div>"
+						
+						+ "<div class=\"aboutus\" align=\"center\">"
+						+ "<a href=\"/DynamoDB555/AboutUs.html\">About us</a>"
 						+ "</div>"
 						
 						+ "</body> "
@@ -390,9 +397,9 @@ public class Accio extends HttpServlet {
 
 									+ "</form>"
 								+ "</div>"
-								+ "<div class=\"col-md-2 align\">"
-									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
-								+ "</div>"
+//								+ "<div class=\"col-md-2 align\">"
+//									+ "<a href=\""+webapp+"/AboutUs.html\">About us</a>"
+//								+ "</div>"
 
 //								+ "<form role=\"form\" action=\""+webapp+"/Accio\" method=\"post\">"
 //									+ "<div class=\"col-md-1\">"
@@ -508,8 +515,8 @@ public class Accio extends HttpServlet {
 
 							 
 								+"<div class=\"tab-content\">"
-								+"    <div role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
-								+"    <div role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
+								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"well tab-pane active\" id=\"wiki\" align=\"justify\" style=\"width:350px;\">"+ wiki_html +"</div>"
+								+"    <div style=\"overflow:scroll;height:400px\" role=\"tabpanel\" class=\"tab-pane\" id=\"youtube\">"
 								
 										// Youtube
 										+ "<div id=\"container_youtube\">"
