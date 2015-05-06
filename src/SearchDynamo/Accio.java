@@ -450,10 +450,10 @@ public class Accio extends HttpServlet {
 			out.write("<h3 hidden id=\"resultsize\">"+results.size()+"</h3>");
 			for(int j = 0; j < results.size(); j++){
 				out.write("<li id=\""+j+"\" class=\"list-group-item\">");
-					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\">"+results.get(j).getTitle()+"</a>");
+					out.write("<a size=\"30\" href="+results.get(j).getUrl()+" onclick=\"sendRequest()\"><font size=\"4\">"+results.get(j).getTitle()+"</font></a>");
 					out.write("<p>"
-							+ "<font style=\"color:DarkSlateGray;font-size:5px\">"+results.get(j).getUrl()+"</font><br>");
-					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey;font-size:10px\">loading...</font></p>");
+							+ "<font style=\"color:DarkSlateGray\" size=\"2\">"+results.get(j).getUrl()+"</font><br>");
+					out.write("<font id=\"match_highlight" + j + "\" style=\"color:grey\" size=\"2.5\">loading...</font></p>");
 				out.write("</li>");
 			}
 			
